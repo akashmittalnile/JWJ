@@ -1,0 +1,38 @@
+
+
+.myprofile-section{margin-bottom: 1rem; position: relative;}
+.user-side-profile {border: 1px solid var(--border); border-radius: 0.4rem; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);padding: 1rem; background-color: var(--white);  }
+
+.side-profile-item {padding: 0 0 2rem 0;display: flex;align-items: center;} 
+.side-profile-text h2 {font-size: 14px;font-weight: 600;margin: 0 0 5px 0;padding: 0;color: var(--gray);}
+.side-profile-text p {font-size: 13px;margin: 0;color:var(--gray);line-height: 24px;font-weight: normal;}
+.side-profile-media {width: 75px; height: 75px; position: relative; overflow: hidden; border-radius: 50%; margin: 0 10px 0 0; border: 1px solid var(--border); }
+
+.side-profile-media img {object-fit: cover; width: 100%; height: 100%; }
+
+.side-profile-order-info {margin-bottom: 0;border-bottom: 1px solid var(--border);padding:1rem 0;border-top: 1px solid var(--border);}
+
+.side-profile-total-order{position: relative;margin-bottom: 0;width: 100%;border-radius: 0;padding: 1rem 0;display: flex;/* align-items: center; */margin-bottom: 0rem;border-top: 1px solid var(--border);}
+.side-profile-total-content h2 {font-size: 14px;font-weight: 600;margin: 0;padding: 0;color: var(--gray);}
+.side-profile-total-content p {font-size: 13px;margin: 0;color:var(--gray);line-height: 24px;font-weight: normal;}
+.side-profile-total-icon {width: 40px;height: 40px;margin-right: 10px;line-height: 40px;}
+.side-profile-total-icon img {height: 32px;}
+
+.myprofile-form-section {background-color:var(--white); border:1px solid var(--border); border-radius: 0.4rem; box-shadow: 0 0.15rem 0.1rem rgba(0, 0, 0, 0.04); position: relative; margin-bottom:1rem }
+.myprofile-form-heading {padding: 1rem; border-bottom: 1px solid #e8ecf2; display: flex; justify-content: space-between; align-items: center; }
+.myprofile-form-heading h3 {font-size: 14px; font-weight: 700; margin: 0; padding: 0; color: var(--gray); }
+.myprofile-form{padding: 1rem}
+.myprofile-form .form-group{margin-bottom: 1rem}
+.myprofile-form .form-group h4 {font-size: 13px; color: var(--gray); font-weight: 600; margin: 0 0 5px 0; padding: 0; }
+
+.myprofile-form .search-form-group {position: relative; }
+.myprofile-form .form-group input.form-control {position: relative; color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 10px 15px 10px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+.myprofile-form .form-group select.form-control {position: relative;     appearance: auto;color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 12px 15px 12px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+.myprofile-form .form-group textaera.form-control {position: relative; color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 10px 15px 10px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+.myprofile-form .form-control:focus {border: 1px solid var(--blue);}
+.myprofile-form .search-form-group{position: relative;}
+.myprofile-form .search-form-group input.form-control{padding: 10px 15px 10px 40px;}
+.myprofile-form .search-form-group span.search-icon {position: absolute; top: 50%; left: 10px; pointer-events: none; transform: translateY(-50%) scaleX(-1); color: #6362e7; font-size: 18px; }
+
+.cancelbtn {background: var(--gray); border: 1px solid var(--gray); padding: 5px 20px; display: inline-block; font-size: 12px; color: var(--white); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; }
+.Savebtn{background: var(--blue);border: 1px solid var(--blue);padding: 5px 20px;display: inline-block;font-size: 12px; color:var(--white);border-radius: 5px;text-transform: uppercase;font-weight: bold; text-align: center;}

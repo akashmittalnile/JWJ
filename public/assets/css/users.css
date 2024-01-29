@@ -1,0 +1,55 @@
+.page-filter-title-section {flex-wrap: wrap;position: relative;border: 1px solid transparent;border-radius: 0px;/* background: var(--gray); */margin: 0px 0px 0px 0px;/* color: #fff; */display: flex;justify-content: space-between;padding: 15px 0;align-items: center;}
+.page-filter-title-section h4 {font-size: 16px; font-weight: 600; margin: 0; padding: 0; }
+
+
+
+.User-profile-section {background-color: #ffffff; border: 1px solid var(--border); border-radius: 0.4rem; padding: 1rem; margin-bottom: 1rem; position: relative; }
+.side-profile-item {padding: 0 0 0rem 0; display: flex; align-items: center; }
+.side-profile-media {width: 60px; height: 60px; position: relative; overflow: hidden; border-radius: 50%; margin: 0 10px 0 0; border: 1px solid #eaedf7; }
+.side-profile-media img {object-fit: cover; width: 100%; height: 100%; }
+.side-profile-text h2 {font-size: 16px; font-weight: 600; margin: 0 0 5px 0; padding: 0; color: #263238; }
+a.blocked-btn {background: #fff; color: #ff0a32; padding: 1px 12px; border-radius: 4px; display: inline-block; font-size: 12px; font-weight: 500; border: 1px solid #ff0a32; }
+
+.User-contact-info {position: relative; width: 100%; border-radius: 0; padding:  0; display: flex;  margin-bottom: 0rem; }
+.User-contact-info-icon {width: 40px; height: 40px; margin-right: 10px; line-height: 40px; }
+.User-contact-info-icon img {height: 32px; }
+.User-contact-info-content h2 {    font-size: 12px; font-weight: 700; margin: 0 0 5px 0; padding: 0; color: #4f5168; }
+
+.User-contact-info-content p {font-size: 12px; margin: 0; color: #8C9AA1; line-height: normal; font-weight: normal; }
+
+
+.switch-toggle {display: flex; justify-content: space-evenly; padding: 0px 0 0 0; gap: 10px;height: 24px;} 
+.switch-toggle p {font-size: 13px; margin: 0; color: #CECECE; line-height: 24px; font-weight: 400; } 
+.switch-toggle a {color: #007ADF; }
+.toggle {--width: 40px; --height: calc(40px / 2); --border-radius: calc(40px / 2); display: inline-block; cursor: pointer; }
+.toggle__input {display: none; }
+.toggle__fill {position: relative; width: 50px; height: calc(50px / 2); border-radius: 50px; background: #e5e5f5; transition: background 0.2s; }
+.toggle__fill::after {content: ""; position: absolute; top: 0; left: 0; height: calc(50px / 2); background: #ffffff; box-shadow: 0px 0px 13px rgb(0 0 0 / 5%); border-radius: 40px; transition: transform 0.2s; width: calc(50px / 2);} 
+.toggle__input:checked ~ .toggle__fill {background:#4cba08; }
+.toggle__input:checked ~ .toggle__fill::after {transform: translateX(24px); }
+
+
+
+
+
+
+ .overview-card {position: relative; } 
+ .overview-card-body {border-radius: 0.4rem; border: 1px solid var(--border); background-color: var(--white); position: relative; margin-block-end: 1.5rem; width: 100%; padding: 2.3rem 1rem; } 
+ .overview-content {display: flex; align-items: center; min-height: 60px; } 
+ .overview-content-text h2 {font-size: 22px; font-weight: 600; margin: 0; padding: 0; color: #263238; } 
+ .overview-content-text p {font-size: 12px; margin: 0; color: #c3c3c3; line-height: 16px; font-weight: normal; } 
+ .overview-content-icon {width: 45px; height: 45px; text-align: center; border-radius: 5px; line-height: 45px; margin-left: auto; /* background: rgb(61 161 227 / 11%); */ }
+
+.plan-card {border-radius: 0.4rem; border: 1px solid var(--border); background-color: var(--white); position: relative; margin-block-end: 1.5rem; width: 100%; padding: 2.3rem 1rem; }
+.plan-content {display: flex; align-items: center; min-height: 60px;    justify-content: space-between; } 
+.plan-content-text p {font-size: 16px; margin: 0 0 10px 0; color: #1079c0; line-height: 16px; font-weight: 600; }
+.plan-content-text h2 {font-size: 14px; font-weight: 600; margin: 0; padding: 0; display: flex; gap: 20px; color: var(--gray); }
+.plan-content-text h2 span {color: var(--lightgray); }
+
+
+.feeling-card {border-radius: 0.4rem; border: 1px solid var(--border); background-color: var(--white); position: relative; margin-block-end: 1.5rem; width: 100%; padding: 1rem; }
+.feeling-emoj-icon{text-align: center;}
+.feeling-emoj-icon img {height: 60px; }
+.feeling-content-item{text-align: center;}
+.feeling-content-item  h2 {font-size: 22px; font-weight: 600; margin: 0; padding: 0;     color: var(--gray); } 
+.feeling-content-item p {font-size: 12px; margin: 0; color: var(--blue); line-height: 16px; font-weight: 500; }

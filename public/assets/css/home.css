@@ -1,0 +1,43 @@
+.overview-card {position: relative; }
+.overview-card::before {position: absolute; margin-block-start: -10px; content: ""; width: 85%; background-color: rgb(16 121 192 / 5%); height: 90%; box-shadow: 0 0.15rem 0.1rem rgba(0, 0, 0, 0.04); border-radius: 0.4rem; margin-inline: auto; inset-inline: 0; }
+.overview-card-body {border-radius: 0.4rem; border: 1px solid var(--border); background-color: var(--white); box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); position: relative; margin-block-end: 1.5rem; width: 100%; padding: 1rem; }
+.overview-content {display: flex; align-items: center; min-height: 60px; }
+.overview-content-text h2 {font-size: 22px; font-weight: 600; margin: 0; padding: 0; color: #263238; }
+.overview-content-text p {font-size: 12px; margin: 0; color: #c3c3c3; line-height: 16px; font-weight: normal; }
+.overview-content-icon {width: 45px; height: 45px; text-align: center; border-radius: 5px; line-height: 45px; margin-left: auto; /* background: rgb(61 161 227 / 11%); */ }
+
+
+
+.earnings-section{margin-bottom: 1rem;}
+
+
+.jwj-review-card {border: 1px solid var(--border); position: relative; padding: 1rem; border-radius: 10px; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
+.jwj-review-card:after {background: url(../images/quote.svg); content: ''; position: absolute; left: 25px; top: 80px; background-repeat: no-repeat; width: 100px; height: 100px; }
+.review-rating-user-avtar {width: 40px; height: 40px; border-radius: 50%; position: relative; overflow: hidden; text-align: center; background: #e9f6ff; }
+.review-rating-user-avtar span {color: var(--blue); font-size: 13px; line-height: 40px; font-weight: 600; }
+.review-rating-user-avtar img{object-fit: cover; width: 100%; height: 100%;}
+
+.jwj-review-card-head {display: flex; align-items: center; margin-bottom: 10px; gap:10px }
+.review-rating-user-text h3 {font-size: 14px; margin: 0; padding: 0px; color: var(--gray); font-weight: 600; }
+.review-rating {display: flex; gap: 20px; align-items: center; }
+.review-desc {color: var(--gray); text-align: justify; font-size: 14px; font-style: normal; font-weight: 400; line-height: 24px; }
+.review-date {color: var(--lightgray); font-size: 14px; font-style: normal; font-weight: 400; line-height: 20px; letter-spacing: 0.25px; }
+.review-rating-icon span {color: var(--lightgray); }
+.review-rating-icon span.activerating{color: var(--yellow);}
+
+
+.subscription-card {background: url(../images/money.svg), #ffffff;border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: start; justify-content: space-between; background-size: cover; background-repeat: no-repeat; padding: 30px 25px; background-position: right; background-size: 300px; }
+
+.subscription-card1 {background:#ffffff;min-height: 270px;border: 1px solid var(--border);     position: relative;border-radius: 12px; margin-bottom: 1rem; display: flex; align-items: start; justify-content: space-between; background-size: cover; background-repeat: no-repeat; padding: 30px 25px; background-position: right; background-size: 300px; }
+
+.subscription-chart{position: absolute;right: 10px;}
+
+.subscription-title {margin: 0 0 20px 0; padding: 0; color: var(--blue); font-size: 28px; font-weight: 700; width: 50%; }
+p.subscription-price {font-size: 22px; font-weight: 600; margin: 0; padding: 0; color: var(--gray); }
+p.subscription-text {font-size: 14px; font-weight: 500; margin: 0; padding: 0; color: var(--blue); }
+
+.subscription-button {margin-top: 30px; display: flex; align-items: center; gap:10px; }
+a.Plan-btn {background: #e8f6ff; border: 1px solid var(--blue); padding: 6px 20px; display: inline-block; font-size: 12px; color: var(--blue); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
+a.Plan-btn-1 {background: var(--blue); border: 1px solid var(--white); padding: 6px 20px; display: inline-block; font-size: 12px; color: var(--white); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
+
+.TotalRequestoverview {border-radius: 0.4rem; border: 1px solid var(--border); background-color: var(--white); box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); position: relative; width: 100%; padding: 6px; }

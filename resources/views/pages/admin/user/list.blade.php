@@ -1,0 +1,158 @@
+@extends('layouts.app')
+
+@push('css')
+<link rel="stylesheet" type="text/css" href="{{ assets('assets/css/user.css') }}">
+@endpush
+
+@section('title','Journey with Journals - User Management')
+@section('content')
+<div class="page-breadcrumb-title-section">
+    <h4>User Management</h4>
+    <div class="search-filter wd5">
+        <div class="row g-1">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <a href="javascript:void(0)" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <div class="form-group">
+                    <div class="search-form-group">
+                        <input type="text" id="searchInput" name="" class="form-control" placeholder="Search by name, email & contact no.">
+                        <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+<div class="body-main-content">
+    <div class="booking-availability-section">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="jwjcard">
+                    <div class="card-body">
+                        <div class="jwj-table">
+                            <table class="table xp-table" id="customer-table">
+                                <thead>
+                                    <tr class="table-hd">
+                                        <th>Sr No.</th>
+                                        <th>Name</th>
+                                        <th>Email ID</th>
+                                        <th>Contact number</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="appendData">
+
+
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="jwj-table-pagination">
+                            <ul class="jwj-pagination" id="appendPagination">
+
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('js')
+<script type="text/javascript">
+    $(document).ready(function() {
+        const getList = (page, search = null) => {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.users.list') }}",
+                data: {
+                    page, search
+                },
+                dataType: 'json',
+                success: function(result) {
+                    if (result.status) {
+                        let userData = result.data.html.data;
+                        let html = ``;
+                        $("#appendData").html("");
+                        for (let index = 0; index < userData.length; index++) {
+                            let urll = '{{ route('admin.users.details', ':id' ) }}';
+                            urll = urll.replace(':id', userData[index].id);
+                            html = `<tr>
+                                        <td>
+                                            <div class="sno">${index+1}</div>
+                                        </td>
+                                        <td>
+                                            ${userData[index].name ?? 'NA'}
+                                        </td>
+
+                                        <td>
+                                            ${userData[index].email ?? 'NA'}
+                                        </td>
+                                        <td>
+                                            ${userData[index].country_code ?? ''} ${userData[index].mobile ?? 'NA'}
+                                        </td>
+                                        <td>
+                                            <div class="action-btn-info">
+                                                <a class="action-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="las la-ellipsis-v"></i>
+                                                </a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item view-btn" href="javascript:void(0)"><i class="las la-eye"></i> Restrict</a>
+                                                    <a class="dropdown-item view-btn" href="${urll}"><i class="las la-eye"></i> View</a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>`;
+                            $("#appendData").append(html);
+                        }
+                        $("#appendPagination").html('');
+                        if(result.data.lastPage!=1){
+                           let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">
+                                    <a href="javascript:void(0)" data-page="${result.data.currentPage-1}" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                </li>`;
+                            for (let i = 1; i <= result.data.lastPage; i++) {
+                                paginate += `<li class="${result.data.currentPage==i ? 'active' : ''}">
+                                        <a href="javascript:void(0)" data-page="${i}" class="page-link">${i}</a>
+                                    </li>`;
+                            }
+                            paginate += `<li class="${result.data.currentPage==result.data.lastPage ? 'disabled next' : 'next'}" id="example_next">
+                                        <a href="javascript:void(0)" data-page="${result.data.currentPage+1}" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                    </li>`;
+                            $("#appendPagination").append(paginate); 
+                        }
+                    } else {
+                        let html = `<tr class="text-center">
+                                        <td colspan="5"> No record found</td>
+                                    </tr>`;
+                        $("#appendData").html(html);
+                        $("#appendPagination").html('');
+                    }
+                },
+                error: function(data, textStatus, errorThrown) {
+                    jsonValue = jQuery.parseJSON( data.responseText );
+                    toastr.error(jsonValue.message);
+                },
+            });
+        };
+        getList(1);
+        $(document).on('click', '.page-link', function (e) {
+            e.preventDefault();
+            getList($(this).data('page'));
+        })
+        $(document).on('keyup', '#searchInput', function () {
+            let search = $(this).val();
+            getList($(this).data('page'), search);
+        })
+    })
+</script>
+@endpush

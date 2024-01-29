@@ -1,0 +1,56 @@
+.support-page-header{margin-bottom: 1rem;}
+
+.jwj-support-card {background-color: #ffffff; border: 1px solid var(--border); border-radius: 0.4rem; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); margin-bottom: 1rem; }
+.jwjcard-support-head {display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 10px; border-bottom: 1px solid var(--border); }
+
+.jwjcard-user-card {display: flex; align-items: center; gap: 10px; }
+.jwjcard-user-card h4 {font-weight: 500;font-size: 14px;line-height: 100%;letter-spacing: -0.01em;color: #455A64;padding: 0;margin: 0;} 
+.jwjcard-user-avtar {position: relative;width: 48px;height: 48px;border: 2px solid #FFFFFF;filter: drop-shadow(0px 10px 30px rgba(0, 0, 0, 0.05));border-radius: 50px;overflow: hidden;/* margin-right: 10px; */} 
+.jwjcard-user-avtar img {width: 100%; height: 100%; object-fit: cover; } 
+.jwjcard-user-avtar {margin-left: auto; }
+
+a.phone-btn {background: var(--blue); border: 1px solid var(--blue); width: 30px; display: inline-block; color: var(--white); border-radius: 5px; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); height: 30px; line-height: 27px; text-align: center; }
+a.email-btn {background: var(--yellow); border: 1px solid var(--yellow); width: 30px; display: inline-block; color: var(--white); border-radius: 5px; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); height: 30px; line-height: 27px; text-align: center; }
+
+.jwjcard-support-body{padding: 10px;}
+.support-desc p {color: var(--gray); text-align: justify;    margin-bottom: 10px; font-size: 14px; font-style: normal; font-weight: 400; line-height: 24px; }
+.support-action-info a.Sendreply-btn{background: var(--blue);border: 1px solid var(--blue);padding: 7px 20px;display: inline-block;font-size: 12px;width: 100%;color: var(--white);border-radius: 5px;text-transform: uppercase;font-weight: bold;text-align: center;box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+.support-action-info  select.form-control {position: relative;     appearance: auto;color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 12px 15px 12px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+
+.support-option-info{margin-bottom: 10px;}
+.support-option-info p{color: var(--gray); margin-bottom: 0; font-size: 13px; font-style: normal; font-weight: 500; line-height: 20px; letter-spacing: 0.1px;}
+.support-option-info h2 {font-style: normal; letter-spacing: 0.1px; margin: 0; background: #e8f6ff; border: 1px solid var(--blue); padding: 5px 10px; display: inline-block; font-size: 12px; color: var(--blue); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; line-height: normal; }
+
+
+.jwjcard-support-foot {padding: 10px; border-top: 1px solid var(--border); display:flex;justify-content:space-between; }
+.support-date-info p{color: var(--gray); margin-bottom: 0; font-size: 13px; font-style: normal; font-weight: 500; line-height: 20px; letter-spacing: 0.1px;}
+
+
+.Sendreply-modal-form h2 {font-size: 16px; font-weight: 600; margin: 0 0 1rem 0; padding: 0; }
+.Sendreply-modal-form .form-group{margin-bottom: 10px;}
+.Sendreply-modal-form .search-form-group {position: relative; }
+.Sendreply-modal-form .form-group input.form-control {position: relative; color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 10px 15px 10px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+.Sendreply-modal-form .form-group select.form-control {position: relative;     appearance: auto;color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 12px 15px 12px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+.Sendreply-modal-form .form-group textarea.form-control {position: relative; color: var(--gray); border-radius: 5px; font-weight: 400; font-size: 12px; box-sizing: border-box; padding: 10px 15px 10px 15px; border: 1px solid var(--border); width: 100%; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05);}
+
+.Sendreply-modal-form .search-form-group input.form-control{padding: 10px 15px 10px 40px;}
+.Sendreply-modal-form .search-form-group span.search-icon {position: absolute; top: 50%; left: 10px; pointer-events: none; transform: translateY(-50%) scaleX(-1); color: #6362e7; font-size: 18px; }
+
+.cancel-btn{text-align: center;border: none; padding: 8px 30px; color: #fff; font-size: 13px; font-weight: 500; display: inline-block; background:var(--gray); box-shadow: 0px 4px 18px rgb(74 149 207 / 11%); border-radius: 5px; }
+.save-btn{text-align: center;border: none; padding: 8px 30px; color: #fff; font-size: 13px; font-weight: 500; display: inline-block; background:var(--blue); box-shadow: 0px 4px 18px rgb(74 149 207 / 11%); border-radius: 5px; }
+
+
+.jwj-review-card {border: 1px solid var(--border); position: relative; padding: 1rem; border-radius: 10px; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
+.jwj-review-card:after {background: url(../images/quote.svg); content: ''; position: absolute; left: 25px; top: 80px; background-repeat: no-repeat; width: 100px; height: 100px; }
+.review-rating-user-avtar {width: 40px; height: 40px; border-radius: 50%; position: relative; overflow: hidden; text-align: center; background: #e9f6ff; }
+.review-rating-user-avtar span {color: var(--blue); font-size: 13px; line-height: 40px; font-weight: 600; }
+.review-rating-user-avtar img{object-fit: cover; width: 100%; height: 100%;}
+
+.jwj-review-card-head {display: flex; align-items: center; margin-bottom: 10px; gap:10px }
+.review-rating-user-text h3 {font-size: 14px; margin: 0; padding: 0px; color: var(--gray); font-weight: 600; }
+.review-rating {display: flex; gap: 20px; align-items: center; }
+.review-desc {color: var(--gray); text-align: justify; font-size: 14px; font-style: normal; font-weight: 400; line-height: 24px; }
+.review-date {color: var(--lightgray); font-size: 14px; font-style: normal; font-weight: 400; line-height: 20px; letter-spacing: 0.25px; }
+.review-rating-icon span {color: var(--lightgray); }
+.review-rating-icon span.activerating{color: var(--yellow);}
+
