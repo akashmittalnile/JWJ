@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 
@@ -64,7 +65,7 @@ class AuthController extends Controller
             } else {
                 $user = User::where('email', $request->email)->where('otp', $request->otp)->where('status', -1)->first();
                 if(isset($user->id)) {
-                    if (date("Y-m-d H:i:s", strtotime("+600 sec", strtotime($user->created_at))) >= date('Y-m-d H:i:s')){
+                    if (date("Y-m-d H:i:s", strtotime("+600 sec", strtotime($user->updated_at))) >= date('Y-m-d H:i:s')){
                         User::where('id', $user->id)->update([
                             'email_verified_at' => 1,
                             'otp' => null,
@@ -153,6 +154,120 @@ class AuthController extends Controller
                     } else return errorMsg('Your account was temporily inactive by administrator!');
                 } else return errorMsg('Invalid Email or Password!');
             }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to sending the otp to email address for reset password
+    public function forgotPassword(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $user = User::where('email', $request->email)->first();
+                if(isset($user->id)){
+                    $code = rand(1000,9999);
+                    $user->otp = $code;
+                    $user->updated_at = date('Y-m-d H:i:s');
+                    $data['site_title'] = 'Forgot Password OTP';
+                    $data['subject'] = 'Forgot Password OTP';
+                    $data['view'] = 'pages.user.email.send-otp';
+                    $data['to_email'] = $request->email;
+                    $data['otp'] = $code;
+                    sendEmail($data);
+                    $user->save();
+                    return successMsg('OTP sended to your email address.', ['otp' => $code]);
+                } else return errorMsg('Invalid Email or Password!');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to verify the otp is correct or not for reset password
+    public function otpVerification(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'otp' => 'required',
+                'email' => 'required|email',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
+                if(isset($user->id)) {
+                    if (date("Y-m-d H:i:s", strtotime("+600 sec", strtotime($user->updated_at))) >= date('Y-m-d H:i:s')){
+                        return successMsg('OTP verified successfully.');
+                    } else return errorMsg('Timeout. Please try again...');
+                } else return errorMsg('Wrong OTP Entered!');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to update the password
+    public function resetPassword(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'otp' => 'required',
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $user = User::where('email', $request->email)->where('otp', $request->otp)->first();
+                if(isset($user->id)) {
+                    $user->password = Hash::make($request->password);
+                    $user->save();
+                    return successMsg('Password reset successfully.');
+                } else return errorMsg('Wrong OTP Entered!');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the particular user all details
+    public function profile() {
+        try{
+            $user = Auth::user();
+            $response = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'country_code' => $user->country_code,
+                'mobile' => $user->mobile,
+                'role' => $user->role,
+                'status' => $user->status,
+                'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
+                'created_at' => date('d M, Y h:i A', strtotime($user->created_at))
+            ];
+            return successMsg('Profile data.', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+
+    // Dev name : Dishant Gupta
+    // This function is used to user logging out
+    public function logout() {
+        try{
+            User::where('id', auth()->user()->id)->update([
+                'fcm_token' => null
+            ]);
+            Auth::user()->tokens()->delete();
+            return successMsg('Logout successfully.');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
