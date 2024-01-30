@@ -12,6 +12,8 @@ use function PHPUnit\Framework\returnSelf;
 
 class AuthController extends Controller
 {
+    // Dev name : Dishant Gupta
+    // This function is used to send otp to registered email address for email verification
     public function sendOtp(Request $request) {
         try{
             $validator = Validator::make($request->all(), [
@@ -49,6 +51,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to verify OTP for email verification
     public function verifyOtp(Request $request){
         try{
             $validator = Validator::make($request->all(), [
@@ -75,6 +79,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to register user
     public function register(Request $request){
         try{
             $validator = Validator::make($request->all(), [
@@ -115,6 +121,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to login in app
     public function login(Request $request) {
         try{
             $validator = Validator::make($request->all(), [

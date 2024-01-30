@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    // Dev name : Dishant Gupta
+    // This function is used to show the registered users
     public function users(Request $request)
     {
         try {
@@ -33,6 +35,8 @@ class UserController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to show user details page
     public function userDetails($id)
     {
         try {
@@ -43,6 +47,8 @@ class UserController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to change user status (active/inactive) by admin
     public function userChangeStatus(Request $request)
     {
         try {

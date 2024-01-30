@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
 {
+    // Dev name : Dishant Gupta
+    // This function is used to show admin login page
     public function login()
     {
         try {
@@ -20,6 +22,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to check authentication credentials
     public function checkUser(Request $request)
     {
         try {
@@ -46,6 +50,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to show profile page
     public function profile()
     {
         try {
@@ -55,6 +61,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to update admin profile details
     public function updateData(Request $request)
     {
         try {
@@ -97,6 +105,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to check current password is matched with current password (input field) or not
     public function checkPassword(Request $request)
     {
         try{
@@ -109,6 +119,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to update admin login password
     public function updatePassword(Request $request)
     {
         try{
@@ -133,6 +145,8 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to admin logout
     public function logout(Request $request)
     {
         try{

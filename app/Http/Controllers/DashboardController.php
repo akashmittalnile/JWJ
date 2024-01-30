@@ -10,6 +10,8 @@ use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
+    // Dev name : Dishant Gupta
+    // This function is used to show dashboard screen along with data
     public function dashboard()
     {
         try {

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
 use App\Models\User;
 
+// Dev name : Dishant Gupta
+// This function is used to encrypt decrypt data
 if (!function_exists('encrypt_decrypt')) {
     function encrypt_decrypt($action, $string)
     {
@@ -24,6 +26,7 @@ if (!function_exists('encrypt_decrypt')) {
     }
 }
 
+// Dev name : Dishant Gupta
 if (!function_exists('successMsg')) {
     function successMsg($msg, $data = [])
     {
@@ -31,6 +34,7 @@ if (!function_exists('successMsg')) {
     }
 }
 
+// Dev name : Dishant Gupta
 if (!function_exists('errorMsg')) {
     function errorMsg($msg, $data = [])
     {
@@ -38,6 +42,8 @@ if (!function_exists('errorMsg')) {
     }
 }
 
+// Dev name : Dishant Gupta
+// This function is used to change the existing function asset because of its path
 if (!function_exists('assets')) {
     function assets($path)
     {
@@ -45,6 +51,8 @@ if (!function_exists('assets')) {
     }
 }
 
+// Dev name : Dishant Gupta
+// This function is used to send mail
 if (!function_exists('sendEmail')) {
     function sendEmail($data)
     {
@@ -53,6 +61,8 @@ if (!function_exists('sendEmail')) {
     }
 }
 
+// Dev name : Dishant Gupta
+// This function is used to check email address is exist or not 
 if (!function_exists('emailExist')) {
     function emailExist($email)
     {
