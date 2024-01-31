@@ -101,7 +101,7 @@ class AuthController extends Controller
                     if(isset($user->id)) {
                         if ($request->hasFile("file")) {
                             $file = $request->file('file');
-                            $name = "JWJ_" .  time() . "." . $file->getClientOriginalExtension();
+                            $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
                             $user->profile = $name;
                             $file->move("public/uploads/profile", $name);
                         }
@@ -258,6 +258,73 @@ class AuthController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to update the profile data of user
+    public function updateProfile(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'mobile' => 'required',
+                'country_code' => 'required',
+                'file' => 'required|mimes:jpeg,png,jpg|image',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $user = User::where('id', auth()->user()->id)->first();
+                if(isset($user->id)) {
+                    if ($request->hasFile("file")) {
+                        $file = $request->file('file');
+                        $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
+
+                        $link = public_path() . "/uploads/profile/" . $user->profile;
+                        if (file_exists($link)) {
+                            unlink($link);
+                        }
+
+                        $user->profile = $name;
+                        $file->move("public/uploads/profile", $name);
+                    }
+                    $user->name = ucwords($request->name);
+                    $user->country_code = $request->country_code;
+                    $user->mobile = $request->mobile;
+                    $user->updated_at = date('Y-m-d H:i:s');
+                    $user->save();
+                    return successMsg('Updated successfully.');
+                } else return errorMsg('Invalid user!');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to change the password
+    public function changePassword(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'old_password' => 'required',
+                'new_password' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $user = User::where('id', auth()->user()->id)->first();
+                if (isset($user->id)) {
+                    if (Hash::check($request->old_password, $user->password)) {
+                        if (!Hash::check($request->new_password, $user->password)) {
+                            $user->password = Hash::make($request->new_password);
+                            if ($user->save()) {
+                                return successMsg('Password changes successfully.');
+                            }
+                        } else return errorMsg('New password cannot same as old password.');
+                    } else  return errorMsg('Old password is incorrect.');
+                } else return errorMsg('Invalid user!');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
 
     // Dev name : Dishant Gupta
     // This function is used to user logging out
@@ -268,6 +335,16 @@ class AuthController extends Controller
             ]);
             Auth::user()->tokens()->delete();
             return successMsg('Logout successfully.');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show error message when bearer token expired
+    public function tokenExpire() {
+        try{
+            return errorMsg('Token expired! Please login....');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

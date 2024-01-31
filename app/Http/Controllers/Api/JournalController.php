@@ -1,0 +1,185 @@
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Journal;
+use App\Models\JournalImage;
+use App\Models\JournalSearchCriteria;
+use App\Models\MoodMaster;
+use App\Models\SearchCriteria;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class JournalController extends Controller
+{
+    // Dev name : Dishant Gupta
+    // This function is used to show the list of all moods for journals like, happy, sad, anger & anxiety
+    public function mood() {
+        try{
+            $mood = MoodMaster::where('status', 1)->get();
+            $response = array();
+            foreach($mood as $val){
+                $temp['id'] = $val->id;
+                $temp['name'] = $val->name;
+                $temp['logo'] = isset($val->logo) ? assets('assets/images/'.$val->logo) : null;
+                $temp['status'] = $val->status;
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
+                $response[] = $temp;
+            }
+            return successMsg('Moods', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show the list of search criteria for journals
+    public function searchCriteria(Request $request) {
+        try{
+            $mood = SearchCriteria::where('status', 1);
+            if($request->filled('name')) $mood->where('name', 'LIKE', '%'.$request->name.'%');
+            $mood = $mood->get();
+            $response = array();
+            foreach($mood as $val){
+                $temp['id'] = $val->id;
+                $temp['name'] = $val->name;
+                $temp['description'] = $val->description;
+                $temp['status'] = $val->status;
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
+                $response[] = $temp;
+            }
+            return successMsg('Search Criteria', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show the list of journals
+    public function journal(Request $request) {
+        try{
+            $mood = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id');
+            if($request->filled('journal_id')) {
+                $mood->where('journals.id', $request->journal_id);
+            } else {
+                if($request->filled('title')) $mood->where('journals.title', 'LIKE', '%'.$request->title.'%');
+                if($request->filled('status')) $mood->where('journals.status', $request->status);
+                if($request->filled('mood_id')) $mood->where('journals.mood_id', $request->mood_id);
+                if($request->filled('search_criteria_id')) $mood->whereIn('jsc.search_id', $request->search_criteria_id);
+            }
+            $mood = $mood->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
+            $response = array();
+            foreach($mood as $val){
+                $imgs = JournalImage::where('journal_id', $val->id)->get();
+                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $val->id)->select('sc.id', 'sc.name')->get();
+                $mood = MoodMaster::where('id', $val->mood_id)->first();
+                $path = array();
+                foreach($imgs as $item){
+                    $temp1['id'] = $item->id;
+                    $temp1['img_path'] = isset($item->name) ? assets('uploads/journal/'.$item->name) : null;
+                    $path[] = $temp1;
+                }
+                $search = array();
+                foreach($criteria as $item){
+                    $temp2['id'] = $item->id;
+                    $temp2['name'] = $item->name;
+                    $search[] = $temp2;
+                }
+                $temp['id'] = $val->id;
+                $temp['title'] = $val->title;
+                $temp['content'] = $val->content;
+                $temp['status'] = $val->status;
+                $temp['mood_id'] = $val->mood_id;
+                $temp['mood_name'] = $mood->name;
+                $temp['mood_logo'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
+                $temp['images'] = $path;
+                $temp['search_criteria'] = $search;
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
+                $response[] = $temp;
+            }
+            return successMsg('Journals', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete the journal
+    public function deleteJournal(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                Journal::where('id', $request->id)->delete();
+                JournalSearchCriteria::where('journal_id', $request->id)->delete();
+                $img = JournalImage::where('journal_id', $request->id)->get();
+                foreach($img as $val){
+                    $link = public_path() . "/uploads/journal/" . $val->name;
+                    if (file_exists($link)) {
+                        unlink($link);
+                    }
+                }
+                JournalImage::where('journal_id', $request->id)->delete();
+                return successMsg('Journal deleted successfully.');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a journal
+    public function createJournal(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'title' => 'required',
+                'content' => 'required',
+                'mood_id' => 'required',
+                'file' => 'required',
+                'criteria' => 'required|array',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $journal = new Journal;
+                $journal->title = $request->title;
+                $journal->content = $request->content;
+                $journal->mood_id = $request->mood_id;
+                $journal->status = 1;
+                $journal->save();
+
+                if ($request->hasFile("file")) {
+                    foreach ($request->file('file') as $value) {
+                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
+                        $value->move("public/uploads/journal", $name);
+                        $journalImage = new JournalImage;
+                        $journalImage->journal_id = $journal->id;
+                        $journalImage->name = $name;
+                        $journalImage->type = 'image';
+                        $journalImage->save();
+                    }
+                }
+
+                if(count($request->criteria)){
+                    foreach($request->criteria as $value){
+                        $journalCriteria = new JournalSearchCriteria;
+                        $journalCriteria->journal_id = $journal->id;
+                        $journalCriteria->search_id = $value;
+                        $journalCriteria->status = 1;
+                        $journalCriteria->save();
+                    }
+                }
+                return successMsg('New journal created successfully.');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+}

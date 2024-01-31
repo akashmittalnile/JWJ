@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\JournalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +24,19 @@ Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('otp-verfication', [AuthController::class, 'otpVerification']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
+Route::get('mood', [JournalController::class, 'mood']);
+Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
+
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('profile', [AuthController::class, 'profile']);
     Route::get('logout', [AuthController::class, "logout"]);
+
+    Route::get('profile', [AuthController::class, 'profile']);
+    Route::post('update-profile', [AuthController::class, 'updateProfile']);
+    Route::post('change-password', [AuthController::class, 'changePassword']);
+
+    Route::get('journals', [JournalController::class, 'journal']);
+    Route::delete('delete-journal', [JournalController::class, 'deleteJournal']);
+    Route::post('create-journal', [JournalController::class, 'createJournal']);
 });
+
+Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');
