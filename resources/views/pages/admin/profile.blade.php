@@ -256,7 +256,7 @@
                 },
                 error: function(data, textStatus, errorThrown) {
                     jsonValue = jQuery.parseJSON( data.responseText );
-                    toastr.error(jsonValue.message);
+                    console.error(jsonValue.message);
                 },
             })
         },
@@ -332,7 +332,7 @@
                 },
                 error: function(data, textStatus, errorThrown) {
                     jsonValue = jQuery.parseJSON( data.responseText );
-                    toastr.error(jsonValue.message);
+                    console.error(jsonValue.message);
                 },
             })
         },

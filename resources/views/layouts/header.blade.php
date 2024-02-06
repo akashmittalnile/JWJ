@@ -36,7 +36,7 @@
                         <a href="{{ route('admin.profile') }}" class="dropdown-item">
                             <i class="las la-user"></i> Profile
                         </a>
-                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="dropdown-item">
+                        <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#openLogoutModal" class="dropdown-item">
                             <i class="las la-sign-out-alt"></i> Logout
                         </a>
                     </div>
@@ -52,7 +52,7 @@
 </div>
 
 <!-- ADD NEW COMMUNITY -->
-<div class="modal lm-modal fade" id="addnewcommunity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal lm-modal fade" id="openLogoutModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Plan;
 use Illuminate\Http\Request;
 
 class RevenueController extends Controller
@@ -18,7 +19,8 @@ class RevenueController extends Controller
     public function subscriptionPlan()
     {
         try {
-            return view('pages.admin.revenue.plan');
+            $plan = Plan::get();
+            return view('pages.admin.revenue.plan')->with(compact('plan'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

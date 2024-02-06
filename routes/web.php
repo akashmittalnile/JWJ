@@ -51,6 +51,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         // community management
         Route::get('/community-management', [CommunityController::class, 'communityManagement'])->name('community-management.list');
+        Route::post('/add-new-community', [CommunityController::class, 'communityStoreData'])->name('community-management.store.data');
+        Route::post('/change-community-status', [CommunityController::class, 'changeCommunityStatus'])->name('community-management.change.status');
         Route::get('/community-management-details/{id}', [CommunityController::class, 'communityManagementDetails'])->name('community-management.details');
         Route::get('/community-approval', [CommunityController::class, 'communityApproval'])->name('community-management.approval');
         Route::get('/community-approval-details/{id}', [CommunityController::class, 'communityApprovalDetails'])->name('community-management.approval-details');

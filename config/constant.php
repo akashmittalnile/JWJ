@@ -3,6 +3,7 @@
 return [
 	'siteTitle' => 'Journey with Journals',
 	'paginatePerPage' => 10,
+	'communityPerPage' => 6,
 	'role' => array(
 		'User' => 1,
 		'Admin' => 2,
