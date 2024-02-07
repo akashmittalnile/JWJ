@@ -48,6 +48,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         // revenue management
         Route::get('/revenue-management', [RevenueController::class, 'revenueManagement'])->name('revenue-management.list');
         Route::get('/subscription-plan', [RevenueController::class, 'subscriptionPlan'])->name('revenue-management.plans');
+        Route::get('/plan-detail', [RevenueController::class, 'planDetails'])->name('revenue-management.plan.details');
+        Route::post('/update-plan', [RevenueController::class, 'updatePlan'])->name('revenue-management.update.plan');
 
         // community management
         Route::get('/community-management', [CommunityController::class, 'communityManagement'])->name('community-management.list');

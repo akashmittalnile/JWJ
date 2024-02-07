@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Stripe\Stripe;
 use App\Models\Plan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RevenueController extends Controller
 {
@@ -17,6 +18,8 @@ class RevenueController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to show & sync the listing of all plans. which is created in stripe product
     public function subscriptionPlan()
     {
         try {
@@ -29,17 +32,16 @@ class RevenueController extends Controller
                 $plan = Plan::where("product_id", $product_id)->first();
                 // dd($plan, $item);
                 if ($plan) {
-                    foreach($price->data as $val){
-                        if($val->recurring->interval == 'month') {
+                    foreach ($price->data as $val) {
+                        if ($val->recurring->interval == 'month') {
                             $plan->monthly_price = $val->unit_amount / 100;
                         } else {
                             $plan->anually_price = $val->unit_amount / 100;
                         }
                         $plan->currency = $val->currency;
-                        $plan->type = $val->recurring->interval;
                     }
                     $plan->name = $item->name;
-                    $plan->price_id = $item["default_price"];
+                    $plan->status = 1;
                     $plan->save();
                 } else {
                     $plan = new Plan();
@@ -47,13 +49,65 @@ class RevenueController extends Controller
                     $plan->name = $item->name;
                     $plan->currency = $price->currency;
                     $plan->product_id = $product_id;
-                    $plan->price_id = $item["default_price"];
-                    $plan->type = $price->recurring->interval;
+                    $plan->status = 1;
                     $plan->save();
                 }
             }
-            $plan = Plan::orderByDesc('monthly_price')->get();
+            $plan = Plan::orderBy('monthly_price')->get();
             return view('pages.admin.revenue.plan')->with(compact('plan'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting all the data of plan by their id
+    public function planDetails(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->id);
+                $plan = Plan::where('id', $id)->first();
+                if(isset($plan->id)) return successMsg('Plan found', $plan);
+                else return errorMsg('Plan not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting all the data of plan by their id
+    public function updatePlan(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'entries' => 'required',
+                'words' => 'required',
+                'picture' => 'required',
+                'routine' => 'required',
+                'community' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->id);
+                $plan = Plan::where('id', $id)->first();
+                if(isset($plan->id)) {
+                    $plan->entries_per_day = $request->entries;
+                    $plan->words = $request->words;
+                    $plan->picture_per_day = $request->picture;
+                    $plan->community = $request->community;
+                    $plan->routines = $request->routine;
+                    $plan->save();
+                    return successMsg('Plan update successfully.');
+                } else return errorMsg('Plan not found');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
