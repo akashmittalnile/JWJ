@@ -12,7 +12,7 @@
         <div class="row g-1">
             <div class="col-md-12">
                 <div class="form-group">
-
+                    <a href="{{ route('admin.revenue-management.plans') }}" class="btn-bl">Sync Plan</a>
                 </div>
             </div>
         </div>
@@ -32,21 +32,21 @@
                     <div class="membership-list-item">
                         <div class="membership-header">
                             <div class="membership-plan-image">
-                                @if($val->type == 'a')
+                                @if($count == 1)
                                 <img src="{{ assets('assets/images/freeplan.svg') }}">
-                                @elseif($val->type == 'b')
+                                @elseif($count == 2)
                                 <img src="{{ assets('assets/images/goldplan.svg') }}">
-                                @elseif($val->type == 'c')
+                                @elseif($count == 3)
                                 <img src="{{ assets('assets/images/platinumplan.svg') }}">
                                 @endif
                             </div>
                             <div class="membership-text">
                                 <div class="membership-title">{{ $val->name ?? 'NA' }}</div>
-                                <div class="membership-day-price">@if($val->monthly_price == 0) <span></span> @else ${{number_format((float)$val->monthly_price, 2, '.', '')}}/month @endif</div>
+                                <div class="membership-day-price">@if($val->monthly_price == 0) <span></span> @else @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}}/month @endif</div>
                             </div>
                         </div>
                         <div class="membership-month-price">
-                            <p>@if($val->anually_price == 0) Free <span></span> @else ${{number_format((float)$val->anually_price, 2, '.', '')}} <span>Per Year</span> @endif</p>
+                            <p>@if($val->anually_price == 0) Free <span></span> @else @if($val->currency == 'usd')$@endif{{number_format((float)$val->anually_price, 2, '.', '')}} <span>Per Year</span> @endif</p>
                         </div>
                         <div class="membership-body">
                             <div class="membership-list">
