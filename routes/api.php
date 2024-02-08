@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommunityController;
 use App\Http\Controllers\Api\JournalController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +32,9 @@ Route::get('plans', [CommunityController::class, 'plans']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
+
+    Route::get('home', [UserController::class, 'home']);
+    Route::post('submit-rating', [UserController::class, 'submitRating']);
 
     Route::get('profile', [AuthController::class, 'profile']);
     Route::post('update-profile', [AuthController::class, 'updateProfile']);

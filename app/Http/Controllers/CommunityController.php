@@ -31,7 +31,7 @@ class CommunityController extends Controller
                 {
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
-                    $plan_type = (($val->plan_type=='a') ? 'freeplan.svg' : ($val->plan_type=='b' ? 'goldplan.svg' : 'platinumplan.svg'));
+                    $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
                     $html .= "<div class='col-md-6'>
                     <div class='jwj-community-card'>
                         <div class='jwjcard-head'>
