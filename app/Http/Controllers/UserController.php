@@ -21,11 +21,45 @@ class UserController extends Controller
                 $data = $data->orderByDesc('id')->paginate(config('constant.paginatePerPage'));
                 
                 if($data->total() < 1) return errorMsg("No users found");
+
+                $html = '';
+                foreach($data as $key => $val)
+                {
+                    $pageNum = $data->currentPage();
+                    $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
+                    $html .= "<tr>
+                    <td>
+                        <div class='sno'>$index</div>
+                    </td>
+                    <td>
+                        $val->name
+                    </td>
+
+                    <td>
+                        $val->email
+                    </td>
+                    <td>
+                        $val->country_code $val->mobile
+                    </td>
+                    <td>
+                        <div class='action-btn-info'>
+                            <a class='action-btn dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false'>
+                                <i class='las la-ellipsis-v'></i>
+                            </a>
+                            <div class='dropdown-menu'>
+                                <a class='dropdown-item view-btn' href='javascript:void(0)'><i class='las la-eye'></i> Restrict</a>
+                                <a class='dropdown-item view-btn' href='".route('admin.users.details', encrypt_decrypt('encrypt', $val->id))."'><i class='las la-eye'></i> View</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>";
+                }
+
                 $response = array(
                     'currentPage' => $data->currentPage(),
                     'lastPage' => $data->lastPage(),
                     'total' => $data->total(),
-                    'html' => $data,
+                    'html' => $html,
                 );
                 return successMsg('Users list', $response);
             }
@@ -40,6 +74,7 @@ class UserController extends Controller
     public function userDetails($id)
     {
         try {
+            $id = encrypt_decrypt('decrypt', $id);
             $user = User::where('id', $id)->first();
             return view('pages.admin.user.details')->with(compact('user'));
         } catch (\Exception $e) {
@@ -64,6 +99,49 @@ class UserController extends Controller
                     'status'=> $request->status
                 ]);
                 return successMsg('Status changed successfully');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show user details page
+    public function usersDownloadReport(Request $request)
+    {
+        try {
+            $data = User::where('role', 1)->whereIn('status', [1,2]);
+            if($request->filled('search')){
+                $data->where('name', 'like', '%' . $request->search . '%')->orWhere('email', 'like', '%'. $request->search .'%')->orWhere('mobile', 'like', '%'. $request->search .'%');
+            }
+            $data = $data->orderByDesc('id')->get();
+            $this->downloadUserReportFunction($data);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function downloadUserReportFunction($data)
+    {
+        try {
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="Users List "' . time() . '.csv');
+            $output = fopen("php://output", "w");
+
+            fputcsv($output, array('S.No.', 'Name', 'Email ID', 'Contact Number'));
+
+            if (count($data) > 0) {
+                foreach ($data as $key => $row) {
+
+                    $final = [
+                        $key + 1,
+                        $row->name,
+                        $row->email,
+                        $row->country_code . ' ' . $row->mobile,
+                    ];
+
+                    fputcsv($output, $final);
+                }
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

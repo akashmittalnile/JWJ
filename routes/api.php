@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\CommunityController;
 use App\Http\Controllers\Api\JournalController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,7 @@ Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 Route::get('mood', [JournalController::class, 'mood']);
 Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
+Route::get('plans', [CommunityController::class, 'plans']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
@@ -37,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('journals', [JournalController::class, 'journal']);
     Route::delete('delete-journal', [JournalController::class, 'deleteJournal']);
     Route::post('create-journal', [JournalController::class, 'createJournal']);
+
+    Route::get('community-list', [CommunityController::class, 'communityList']);
+    Route::post('create-community', [CommunityController::class, 'createCommunity']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');

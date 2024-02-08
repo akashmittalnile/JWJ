@@ -42,6 +42,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         // users
         Route::get('/users', [UserController::class, 'users'])->name('users.list');
+        Route::get('/users-reports', [UserController::class, 'usersDownloadReport'])->name('users.download.report');
         Route::get('/user-details/{id}', [UserController::class, 'userDetails'])->name('users.details');
         Route::post('/user-change-status', [UserController::class, 'userChangeStatus'])->name('users.change.status');
 

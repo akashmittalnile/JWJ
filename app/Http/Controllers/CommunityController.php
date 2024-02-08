@@ -17,13 +17,14 @@ class CommunityController extends Controller
         try {
             $plan = Plan::where('status', 1)->get();
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.type as plan_type', 'p.name as plan_name')->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%');
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role);
                 }
+
                 $data = $data->paginate(config('constant.communityPerPage'));
                 $html = '';
                 foreach($data as $val)

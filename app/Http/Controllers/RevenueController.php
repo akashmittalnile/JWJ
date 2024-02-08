@@ -104,6 +104,7 @@ class RevenueController extends Controller
                     $plan->picture_per_day = $request->picture;
                     $plan->community = $request->community;
                     $plan->routines = $request->routine;
+                    $plan->updated_at = date('Y-m-d H:i:s');
                     $plan->save();
                     return successMsg('Plan update successfully.');
                 } else return errorMsg('Plan not found');

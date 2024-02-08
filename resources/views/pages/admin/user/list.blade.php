@@ -12,7 +12,7 @@
         <div class="row g-1">
             <div class="col-md-4">
                 <div class="form-group">
-                    <a href="javascript:void(0)" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
+                    <a href="{{ route('admin.users.download.report') }}" id="download-report" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
                 </div>
             </div>
             <div class="col-md-8">
@@ -38,16 +38,14 @@
                             <table class="table xp-table" id="customer-table">
                                 <thead>
                                     <tr class="table-hd">
-                                        <th>Sr No.</th>
+                                        <th>S.No.</th>
                                         <th>Name</th>
                                         <th>Email ID</th>
-                                        <th>Contact number</th>
+                                        <th>Contact Number</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="appendData">
-
-
 
 
                                 </tbody>
@@ -70,6 +68,7 @@
 
 @push('js')
 <script type="text/javascript">
+    
     $(document).ready(function() {
         const getList = (page, search = null) => {
             $.ajax({
@@ -81,40 +80,9 @@
                 dataType: 'json',
                 success: function(result) {
                     if (result.status) {
-                        let userData = result.data.html.data;
                         let html = ``;
-                        $("#appendData").html("");
-                        for (let index = 0; index < userData.length; index++) {
-                            let urll = '{{ route('admin.users.details', ':id' ) }}';
-                            urll = urll.replace(':id', userData[index].id);
-                            html = `<tr>
-                                        <td>
-                                            <div class="sno">${index+1}</div>
-                                        </td>
-                                        <td>
-                                            ${userData[index].name ?? 'NA'}
-                                        </td>
-
-                                        <td>
-                                            ${userData[index].email ?? 'NA'}
-                                        </td>
-                                        <td>
-                                            ${userData[index].country_code ?? ''} ${userData[index].mobile ?? 'NA'}
-                                        </td>
-                                        <td>
-                                            <div class="action-btn-info">
-                                                <a class="action-btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                                    <i class="las la-ellipsis-v"></i>
-                                                </a>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item view-btn" href="javascript:void(0)"><i class="las la-eye"></i> Restrict</a>
-                                                    <a class="dropdown-item view-btn" href="${urll}"><i class="las la-eye"></i> View</a>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>`;
-                            $("#appendData").append(html);
-                        }
+                        $("#appendData").html(result.data.html);
+                        
                         $("#appendPagination").html('');
                         if(result.data.lastPage!=1){
                            let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">
