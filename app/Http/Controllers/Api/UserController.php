@@ -58,6 +58,8 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                $isExist = Rating::where('userid', auth()->user()->id)->first();
+                if(isset($isExist->id)) return errorMsg('You already submitted the rating.');
                 $rating = new Rating;
                 $rating->userid = auth()->user()->id;
                 $rating->rating = $request->rating;
