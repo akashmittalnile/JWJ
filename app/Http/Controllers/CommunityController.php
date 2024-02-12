@@ -19,7 +19,7 @@ class CommunityController extends Controller
             if($request->ajax()){
                 $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
                 if($request->filled('search')){
-                    $data->where('communities.name', 'like', '%' . $request->search . '%');
+                    $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role);
@@ -196,7 +196,8 @@ class CommunityController extends Controller
             } else {
                 $id = encrypt_decrypt('decrypt', $request->id);
                 $user = Community::where('id', $id)->update([
-                    'status'=> $request->status
+                    'status'=> $request->status,
+                    'reject_reason'=> $request->reason ?? null
                 ]);
                 return successMsg('Status changed successfully');
             }
@@ -205,30 +206,164 @@ class CommunityController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to getting the data of particular community
     public function communityManagementDetails($id)
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            return view('pages.admin.community.details');
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            return view('pages.admin.community.details')->with(compact('data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
 
-    public function communityApproval()
+    // Dev name : Dishant Gupta
+    // This function is used to show the listing of all pending communities. which is created by user
+    public function communityApproval(Request $request)
     {
         try {
+            if($request->ajax()){
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0)->orderByDesc('communities.id');
+                if($request->filled('search')){
+                    $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
+                }
+                if($request->filled('role')){
+                    $data->where('u.role', $request->role);
+                }
+
+                $data = $data->paginate(config('constant.communityPerPage'));
+                $html = '';
+                foreach($data as $val)
+                {
+                    $role = ($val->role==2) ? 'Admin' : 'User';
+                    $checked = ($val->status==1) ? 'checked' : '';
+                    $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
+                    $html .= "<div class='col-md-4'>
+                    <div class='jwj-community-approval-card'>
+                        <div class='jwjcard-head'>
+                            <div class='jwjcard-member-item'>
+                                <div class='jwjcard-member-info'>
+                                    <span class='jwjcard-member-image image1'>
+                                        <img src='".assets("uploads/profile/$val->user_image")."'>
+                                    </span>
+                                </div>
+                                <p>$val->user_name</p>
+                            </div>
+                            <div class='jwjcard-group-action'>
+                                <a class='managecommunity-btn' href='".route('admin.community-management.approval-details', encrypt_decrypt('encrypt', $val->id))."'>View Community</a>
+                            </div>
+                        </div>
+                        <div id='communitycarous' class='communitycarous1 owl-carouse owl-them'>
+                            <div class='item'>
+                                <div class='community-approval-media'>
+                                    <img src='".assets("uploads/community/$val->image_name")."'>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='jwjcard-body'>
+                            <div class='admincommunity-text'>User Community</div>
+                            <div class='community-description'>
+                                <h3>$val->name</h3>
+                                <p>$val->description</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>";
+                }
+                if($data->total() < 1) return errorMsg("No communities found");
+                $response = array(
+                    'currentPage' => $data->currentPage(),
+                    'lastPage' => $data->lastPage(),
+                    'total' => $data->total(),
+                    'html' => $html,
+                );
+                return successMsg('Community list', $response);
+            }
             return view('pages.admin.community.approval');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
 
-    public function communityApprovalDetails($id)
+    // Dev name : Dishant Gupta
+    // This function is used to getting the data of particular community
+    public function communityDetails($id)
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            return view('pages.admin.community.approval-details');
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            return view('pages.admin.community.approval-details')->with(compact('data'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show the listing of all pending communities. which is created by user
+    public function communityRejected(Request $request)
+    {
+        try {
+            if($request->ajax()){
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
+                if($request->filled('search')){
+                    $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
+                }
+                if($request->filled('role')){
+                    $data->where('u.role', $request->role);
+                }
+
+                $data = $data->paginate(config('constant.communityPerPage'));
+                $html = '';
+                foreach($data as $val)
+                {
+                    $role = ($val->role==2) ? 'Admin' : 'User';
+                    $checked = ($val->status==1) ? 'checked' : '';
+                    $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
+                    $html .= "<div class='col-md-4'>
+                    <div class='jwj-community-approval-card Rejected-community-card'>
+                        <div class='jwjcard-head'>
+                            <div class='jwjcard-member-item'>
+                                <div class='jwjcard-member-info'>
+                                    <span class='jwjcard-member-image image1'>
+                                        <img src='".assets("uploads/profile/$val->user_image")."'>
+                                    </span>
+                                </div>
+                                <p>$val->user_name</p>
+                            </div>
+                            <div class='jwjcard-group-action'>
+                                <a class='managecommunity-btn' href='".route('admin.community-management.approval-details', encrypt_decrypt('encrypt', $val->id))."'>View Community</a>
+                            </div>
+                        </div>
+                        <div id='communitycarous' class='communitycarous1 owl-carouse owl-them'>
+                            <div class='item'>
+                                <div class='community-approval-media'>
+                                    <img src='".assets("uploads/community/$val->image_name")."'>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='jwjcard-body'>
+                            <div class='admincommunity-text'>User Community</div>
+                            <div class='community-description'>
+                                <h3>$val->name</h3>
+                                <p>$val->description</p>
+                            </div>
+                            <div class='Rejected-status'>Rejected</div>
+                        </div>
+                    </div>
+                </div>";
+                }
+                if($data->total() < 1) return errorMsg("No communities found");
+                $response = array(
+                    'currentPage' => $data->currentPage(),
+                    'lastPage' => $data->lastPage(),
+                    'total' => $data->total(),
+                    'html' => $html,
+                );
+                return successMsg('Community list', $response);
+            }
+            return view('pages.admin.community.rejected');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

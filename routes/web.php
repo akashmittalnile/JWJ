@@ -58,7 +58,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/change-community-status', [CommunityController::class, 'changeCommunityStatus'])->name('community-management.change.status');
         Route::get('/community-management-details/{id}', [CommunityController::class, 'communityManagementDetails'])->name('community-management.details');
         Route::get('/community-approval', [CommunityController::class, 'communityApproval'])->name('community-management.approval');
-        Route::get('/community-approval-details/{id}', [CommunityController::class, 'communityApprovalDetails'])->name('community-management.approval-details');
+        Route::get('/rejected-community', [CommunityController::class, 'communityRejected'])->name('community-management.rejected');
+        Route::get('/community-details/{id}', [CommunityController::class, 'communityDetails'])->name('community-management.approval-details');
         Route::get('/community-post-details/{id}', [CommunityController::class, 'communityPostDetails'])->name('community-management.post-details');
 
         // support & communication

@@ -10,15 +10,15 @@
     <h4>Community Management</h4>
     <div class="search-filter wd8">
         <div class="row g-1">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <div class="form-group">
-                    <a data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="btn-bl"> Add New Community</a>
+                    <a style="padding: 6px 17px;" data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="btn-bl">Add New Community</a>
                 </div>
             </div>
 
             <div class="col-md-3">
                 <div class="form-group">
-                    <a href="{{ route('admin.community-management.approval') }}" class="btn-bl"> New Community Approval</a>
+                    <a href="{{ route('admin.community-management.approval') }}" class="btn-bl">New Community Approval</a>
                 </div>
             </div>
 
@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <div class="form-group">
                     <div class="search-form-group">
                         <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by community name, user name, email or phone no.">

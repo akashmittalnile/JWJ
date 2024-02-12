@@ -29,10 +29,10 @@
                         <div class="jwj-posts-head">
                             <div class="post-member-item">
                                 <div class="post-member-image">
-                                    <img src="{{ assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ assets('uploads/profile/'.$data->user_image) }}">
                                 </div>
                                 <div class="post-member-text">
-                                    <h3>Christian groups</h3>
+                                    <h3>{{ $data->user_name ?? 'NA' }}</h3>
                                     <div class="post-member-plan"><img src="{{ assets('assets/images/freeplan.svg') }}"> Plan A member</div>
                                 </div>
                             </div>
@@ -49,29 +49,17 @@
                                             <img src="{{ assets('assets/images/no-image.jpg') }}">
                                         </span>
                                     </div>
-                                    <p>13.7K Member Follows</p>
+                                    <p>0 Member Follows</p>
                                 </div>
                             </div>
                         </div>
                         <div class="jwj-posts-body">
                             <div class="row g-1">
                                 <div class="col-md-4">
-                                    <div id="communitycarousel1" class=" communitycarousel1 owl-carousel owl-theme">
+                                    <div id="communitycarous1" class=" communitycarouse owl-carouse owl-them">
                                         <div class="item">
                                             <div class="community-posts-media">
-                                                <img src="{{ assets('assets/images/1.png') }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="item">
-                                            <div class="community-posts-media">
-                                                <img src="{{ assets('assets/images/2.png') }}">
-                                            </div>
-                                        </div>
-
-                                        <div class="item">
-                                            <div class="community-posts-media">
-                                                <img src="{{ assets('assets/images/3.png') }}">
+                                                <img src="{{ assets('uploads/community/'.$data->image_name) }}">
                                             </div>
                                         </div>
                                     </div>
@@ -79,18 +67,20 @@
                                 <div class="col-md-8">
                                     <div class="jwjcard-body">
                                         <div class="community-post-description mb-1">
-                                            <p>Today wins a good din I washed this morning and everyone showed for their shift. The boss bought lunch for us all. It was Gus, but it was gocd,after wocktenet warry snd kitin et.TO’elants for dinks. The muse was sold nil we tound some cecere to play darts with. 1 ave lonn @ride home. We gre aDking forwart to meetinz to ts wedkend to go to six Floes, Italred with from this ottomoon, she is planning on hosting Thankhirg this year, Shals going to ma up a menu for all of us to pick from.think will batre greco bean cosserole this your, Was wall</p>
+                                            <h3>{{ $data->name ?? 'NA' }}</h3>
+                                            <div class="admincommunity-text">@if($data->role==2) Admin @else User @endif Community</div>
+                                            <p>{{ $data->description ?? 'NA' }}</p>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="User-contact-info">
                                                     <div class="User-contact-info-content">
-                                                        <h2>Mark AS</h2>
+                                                        <h2>Status</h2>
                                                         <div class="switch-toggle">
                                                             <p>Inactive</p>
                                                             <div class="">
-                                                                <label class="toggle" for="myToggle1">
-                                                                    <input class="toggle__input" name="" type="checkbox" id="myToggle1" checked="">
+                                                                <label class="toggle" for="myToggle">
+                                                                    <input data-id="{{encrypt_decrypt('encrypt', $data->id)}}" class="toggle__input" name="status" @if($data->status==1) checked @endif type="checkbox" id="myToggle">
                                                                     <div class="toggle__fill"></div>
                                                                 </label>
                                                             </div>
@@ -99,7 +89,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="post-date-info">
-                                                    <img src="{{ assets('assets/images/calendar.svg') }}"> Active since: 03 Sep, 2023, 09:33:12 am
+                                                    <img src="{{ assets('assets/images/calendar.svg') }}"> Active since: {{ date('d M, Y h:i a', strtotime($data->created_at)) }}
                                                 </div>
                                             </div>
                                         </div>
@@ -300,3 +290,32 @@
     </div>
 </div>
 @endsection
+
+@push('js')
+<script>
+    $(document).on('change', '.toggle__input', function (e) {
+        let status = ($(this).is(":checked")) ? 1 : 2;
+        let id = $(this).data('id');
+        e.preventDefault();
+        $.ajax({
+            type: 'post',
+            url: "{{ route('admin.community-management.change.status') }}",
+            data: {id, status, '_token': "{{ csrf_token() }}"},
+            dataType: 'json',
+            success: function (result) {
+                if(result.status) {
+                    toastr.success(result.message);
+                    window.location.reload();
+                } else {
+                    toastr.error(result.message);
+                    return false;
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON( data.responseText );
+                console.error(jsonValue.message);
+            },
+        });
+    });
+</script>
+@endpush

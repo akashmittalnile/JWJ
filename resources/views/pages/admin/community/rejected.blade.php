@@ -4,15 +4,15 @@
 <link rel="stylesheet" type="text/css" href="{{ assets('assets/css/community-approval.css') }}">
 @endpush
 
-@section('title','Journey with Journals - Community Approval')
+@section('title','Journey with Journals - Rejcted Community')
 @section('content')
 <div class="page-breadcrumb-title-section">
-    <h4>New Community Approval</h4>
-    <div class="search-filter wd7">
+    <h4>Rejected Community</h4>
+    <div class="search-filter wd5">
         <div class="row g-1">
             <div class="col-md-4">
                 <div class="form-group">
-                    <a href="{{ route('admin.community-management.rejected') }}" class="btn-bl">View All Rejected Community</a>
+                    <a href="{{ route('admin.community-management.approval') }}" class="btn-bl">Back</a>
                 </div>
             </div>
 
@@ -34,7 +34,7 @@
         <div class="community-content">
             <div class="row" id="appendData">
 
-
+               
 
             </div>
         </div>
@@ -55,7 +55,7 @@
         const getList = (page, search = null) => {
             $.ajax({
                 type: 'get',
-                url: "{{ route('admin.community-management.approval') }}",
+                url: "{{ route('admin.community-management.rejected') }}",
                 data: {
                     page,
                     search
