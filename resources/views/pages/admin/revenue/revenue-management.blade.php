@@ -26,7 +26,7 @@
                 <div class="row g-1">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <div class="TotalRequestoverview"><img src="{{ assets('assets/images/dollar-circle.svg') }}"> Total Request Received: <span>5689</span> </div>
+                            <div class="TotalRequestoverview"><img src="{{ assets('assets/images/dollar-circle.svg') }}"> Total Request Received: <span>$0</span> </div>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -94,7 +94,7 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
+                                        <!-- <tr>
                                             <td>
                                                 <div class="sno">1</div>
                                             </td>
@@ -148,29 +148,15 @@
                                             <td>
                                                 76375873874
                                             </td>
+                                        </tr> -->
+                                        <tr class="text-center">
+                                            <td colspan="8">No record found</td>
                                         </tr>
-
                                     </tbody>
                                 </table>
                             </div>
                             <div class="jwj-table-pagination">
-                                <ul class="jwj-pagination">
-                                    <li class="disabled" id="example_previous">
-                                        <a href="javascript:void(0)" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-                                    </li>
-                                    <li class="active">
-                                        <a href="javascript:void(0)" class="page-link">1</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="javascript:void(0)" aria-controls="example" data-dt-idx="2" tabindex="0" class="page-link">2</a>
-                                    </li>
-                                    <li class="">
-                                        <a href="javascript:void(0)" aria-controls="example" data-dt-idx="3" tabindex="0" class="page-link">3</a>
-                                    </li>
-                                    <li class="next" id="example_next">
-                                        <a href="javascript:void(0)" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
-                                    </li>
-                                </ul>
+                                
                             </div>
                         </div>
                     </div>

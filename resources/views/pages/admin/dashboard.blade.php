@@ -69,7 +69,7 @@
                 <div class="subscription-card1">
                     <div class="subscription-content">
                         <h2 class="subscription-title">Total Subscription Payment received</h2>
-                        <p class="subscription-price">${{ $paymentReceived ?? 0 }}</p>
+                        <p class="subscription-price">${{ number_format((float)$paymentReceived, 2, '.', '') }}</p>
                         <div class="subscription-button">
                             <a href="javascript:void(0)" class="Plan-btn">Monthly</a>
                             <a href="javascript:void(0)" class="Plan-btn-1">Annually</a>
@@ -84,8 +84,8 @@
                 <div class="subscription-card">
                     <div class="subscription-content">
                         <h2 class="subscription-title">Total Subscription Payment received</h2>
-                        <p class="subscription-price">$278.00</p>
-                        <p class="subscription-text">3.5K Users Subscribed</p>
+                        <p class="subscription-price">${{ number_format((float)$paymentReceived, 2, '.', '') }}</p>
+                        <p class="subscription-text">{{ $subscribeUserCount ?? 0 }} Users Subscribed</p>
                         <div class="subscription-button">
                             <a href="javascript:void(0)" class="Plan-btn">Plan B</a>
                             <a href="javascript:void(0)" class="Plan-btn-1">Plan C</a>

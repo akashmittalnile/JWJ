@@ -6,6 +6,7 @@ use App\Models\Community;
 use App\Models\CommunityFollower;
 use App\Models\PaymentDetail;
 use App\Models\User;
+use App\Models\UserPlan;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -19,7 +20,8 @@ class DashboardController extends Controller
             $communityCount = Community::count();
             $communityFollowCount = CommunityFollower::count();
             $paymentReceived = PaymentDetail::sum('amount');
-            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'paymentReceived'));
+            $subscribeUserCount = UserPlan::distinct('user_id')->count();
+            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'paymentReceived', 'subscribeUserCount'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

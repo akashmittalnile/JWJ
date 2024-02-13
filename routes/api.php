@@ -45,6 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-journal', [JournalController::class, 'createJournal']);
 
     Route::get('community-list', [CommunityController::class, 'communityList']);
+    Route::post('follow-unfollow', [CommunityController::class, 'followUnfollow']);
     Route::post('create-community', [CommunityController::class, 'createCommunity']);
 });
 

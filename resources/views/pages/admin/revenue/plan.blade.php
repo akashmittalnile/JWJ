@@ -85,31 +85,36 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <input type="number" min="1" class="form-control" name="entries" placeholder="Entries per day">
+                                    <label for="entries">Entries per day</label>
+                                    <input type="number" min="1" id="entries" class="form-control" name="entries" placeholder="Entries per day">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <input type="number" min="1" class="form-control" name="words" placeholder="Words per entries">
+                                    <label for="words">Words per entries</label>
+                                    <input type="number" min="1" class="form-control" id="words" name="words" placeholder="Words per entries">
                                     <input type="hidden" name="id" value="">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <input type="number" min="1" class="form-control" name="picture" placeholder="Picture per day">
+                                    <label for="picture">Picture per day</label>
+                                    <input type="number" min="1" class="form-control" id="picture" name="picture" placeholder="Picture per day">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <input type="number" min="1" class="form-control" name="routine" placeholder="Routines with ability to share">
+                                    <label for="routine">Routines with ability to share</label>
+                                    <input type="number" min="1" class="form-control" id="routine" name="routine" placeholder="Routines with ability to share">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
+                                    <label for="">Community</label>
                                     <ul class="plan-list form-group">
                                         <li>
                                             <div class="plancheckbox">

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Plan;
+use App\Models\UserFollowedCommunity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -97,6 +98,38 @@ class CommunityController extends Controller
                 }
 
                 return successMsg('New community created successfully.');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to follow or unfollow a community
+    public function followUnfollow(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'community_id' => 'required',
+                'status' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                if($request->status == 1){
+                    $follow = new UserFollowedCommunity;
+                    $follow->userid = auth()->user()->id;
+                    $follow->community_id = $request->community_id;
+                    $follow->save();
+                    return successMsg('Followed');
+                } else {
+                    $isFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->first();
+                    if(isset($isFollow->id)){
+                        UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->delete();
+                        return successMsg('Unfollow');
+                    }else{
+                        return errorMsg("Community not found.");
+                    }
+                }
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

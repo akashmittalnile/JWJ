@@ -241,9 +241,9 @@
                             $("#appendPagination").append(paginate); 
                         }
                     } else {
-                        let html = `<tr class="text-center">
-                                        <td colspan="5"> No record found</td>
-                                    </tr>`;
+                        let html = `<div style="height: 50vh;" class="d-flex justify-content-center align-items-center w-100">
+                            No record found
+                        </div>`;
                         $("#appendData").html(html);
                         $("#appendPagination").html('');
                     }

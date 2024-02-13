@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -76,7 +78,9 @@ class UserController extends Controller
         try {
             $id = encrypt_decrypt('decrypt', $id);
             $user = User::where('id', $id)->first();
-            return view('pages.admin.user.details')->with(compact('user'));
+            $plan = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name')->first();
+            $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
+            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

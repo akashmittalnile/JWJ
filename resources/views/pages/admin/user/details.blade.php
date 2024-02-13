@@ -59,7 +59,7 @@
                         <div class="col-md-4">
                             <div class="User-contact-info">
                                 <div class="User-contact-info-content">
-                                    <h2>Mark AS</h2>
+                                    <h2>Mark as</h2>
                                     <div class="switch-toggle">
                                         <p>Inactive</p>
                                         <div class="">
@@ -86,10 +86,19 @@
                         <div class="plan-content">
                             <div class="plan-content-text">
                                 <p>Total Subscription Payment:</p>
-                                <h2>$99.00 / Monthly <span>$ 03.02 / day</span></h2>
+                                <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }} / Monthly</h2>
+                                <!-- <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }} / Monthly <span>$0 / day</span></h2> -->
                             </div>
                             <div class="plan-content-icon">
+                                @if($plan->name == 'Plan B')
                                 <img src="{{ assets('assets/images/goldplan.svg') }}">
+                                @elseif($plan->name == 'Plan A')
+                                <img src="{{ assets('assets/images/freeplan.svg') }}">
+                                @elseif($plan->name == 'Plan C')
+                                <img src="{{ assets('assets/images/platinumplan.svg') }}">
+                                @else
+                                <img src="{{ assets('assets/images/goldplan.svg') }}">
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -101,28 +110,28 @@
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/Happy.png') }}"></div>
                                     <p>Happy</p>
-                                    <h2>70%</h2>
+                                    <h2>0%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/sad.png') }}"></div>
                                     <p>Sad</p>
-                                    <h2>95%</h2>
+                                    <h2>0%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/Anger.png') }}"></div>
                                     <p>Anger</p>
-                                    <h2>43%</h2>
+                                    <h2>0%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/Anxiety.png') }}"></div>
                                     <p>Anxiety</p>
-                                    <h2>95%</h2>
+                                    <h2>0%</h2>
                                 </div>
                             </div>
                         </div>
@@ -134,7 +143,7 @@
                             <div class="overview-content">
                                 <div class="overview-content-text">
                                     <p>Total Subscription Payment:</p>
-                                    <h2>$ 2589.99</h2>
+                                    <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }}</h2>
                                 </div>
                                 <div class="overview-content-icon">
                                     <img src="{{ assets('assets/images/dollar-circle.svg') }}" height="50">
@@ -150,7 +159,7 @@
             <div class="col-md-12">
                 <div class="page-filter-title-section">
                     <h4>Subscription Transaction History</h4>
-                    <div class="search-filter wd6">
+                    <!-- <div class="search-filter wd6">
                         <div class="row g-1">
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -168,7 +177,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="jwjcard">
                     <div class="card-body">
@@ -186,63 +195,28 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @forelse($list as $key => $val)
                                     <tr>
                                         <td>
                                             <div class="sno">1</div>
                                         </td>
-                                        <td>Plan B</td>
-                                        <td>$299.00</td>
+                                        <td>{{ $val->name }}</td>
+                                        <td>{{ number_format((float)$val->amount, 2, '.', '') }}</td>
                                         <td>Montly</td>
-                                        <td>1st of every Month</td>
-                                        <td> 03 Sep, 2023, 09:33:12 am </td>
-                                        <td> 76375873874 </td>
+                                        <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
+                                        <td>{{ date('d M, Y', strtotime($val->renewal_date)) }}</td>
+                                        <td>{{ $val->transaction_id ?? 'NA' }}</td>
                                     </tr>
-
-                                    <tr>
-                                        <td>
-                                            <div class="sno">2</div>
-                                        </td>
-                                        <td>Plan B</td>
-                                        <td>$299.00</td>
-                                        <td>Montly</td>
-                                        <td>1st of every Month</td>
-                                        <td> 03 Sep, 2023, 09:33:12 am </td>
-                                        <td> 76375873874 </td>
+                                    @empty
+                                    <tr class="text-center">
+                                        <td colspan="7">No record found</td>
                                     </tr>
-
-                                    <tr>
-                                        <td>
-                                            <div class="sno">3</div>
-                                        </td>
-                                        <td>Plan B</td>
-                                        <td>$299.00</td>
-                                        <td>Montly</td>
-                                        <td>1st of every Month</td>
-                                        <td> 03 Sep, 2023, 09:33:12 am </td>
-                                        <td> 76375873874 </td>
-                                    </tr>
-
+                                    @endforelse
                                 </tbody>
                             </table>
                         </div>
                         <div class="jwj-table-pagination">
-                            <ul class="jwj-pagination">
-                                <li class="disabled" id="example_previous">
-                                    <a href="javascript:void(0)" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
-                                </li>
-                                <li class="active">
-                                    <a href="javascript:void(0)" class="page-link">1</a>
-                                </li>
-                                <li class="">
-                                    <a href="javascript:void(0)" aria-controls="example" data-dt-idx="2" tabindex="0" class="page-link">2</a>
-                                </li>
-                                <li class="">
-                                    <a href="javascript:void(0)" aria-controls="example" data-dt-idx="3" tabindex="0" class="page-link">3</a>
-                                </li>
-                                <li class="next" id="example_next">
-                                    <a href="javascript:void(0)" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
-                                </li>
-                            </ul>
+                            
                         </div>
                     </div>
                 </div>
