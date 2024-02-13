@@ -26,49 +26,49 @@
                 <div class="row g-1">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <div class="TotalRequestoverview"><img src="{{ assets('assets/images/dollar-circle.svg') }}"> Total Request Received: <span>$0</span> </div>
+                            <div class="TotalRequestoverview"><img src="{{ assets('assets/images/dollar-circle.svg') }}"> Total Request Received: <span>${{ number_format((float)$paymentReceived, 2, '.', '') }}</span> </div>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <a href="javascript:void(0)" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
-                        </div>
+                        </div> -->
                     </div>
 
                     <div class="col-md-1">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <input type="date" name="" class="form-control">
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-md-1">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <input type="month" name="" class="form-control">
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-md-1">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <select class="form-control">
                                 <option>Show All</option>
                             </select>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-md-1">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <select class="form-control">
                                 <option>Choose Plan</option>
                                 <option>Plan A</option>
                                 <option>Plan B</option>
                                 <option>Plan C</option>
                             </select>
-                        </div>
+                        </div> -->
                     </div>
                     <div class="col-md-3">
-                        <div class="form-group">
+                        <!-- <div class="form-group">
                             <div class="search-form-group">
                                 <input type="text" name="" class="form-control" placeholder="Search by name, amount & transaction ID">
                                 <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
 
                 </div>
@@ -94,64 +94,48 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- <tr>
+                                        @forelse($list as $key => $val)
+                                        <tr>
                                             <td>
-                                                <div class="sno">1</div>
+                                                <div class="sno">{{ $key+1 }}</div>
                                             </td>
                                             <td>
-                                                Jane Doe
+                                                {{ $val->user_name }}
                                             </td>
 
                                             <td>
-                                                <img src="{{ assets('assets/images/goldplan.svg') }}" height="24"> Plan B
+                                                @if($val->name == 'Plan B')
+                                                <img src="{{ assets('assets/images/goldplan.svg') }}" height="24">
+                                                @elseif($val->name == 'Plan A')
+                                                <img src="{{ assets('assets/images/freeplan.svg') }}" height="24">
+                                                @elseif($val->name == 'Plan C')
+                                                <img src="{{ assets('assets/images/platinumplan.svg') }}" height="24">
+                                                @else
+                                                <img src="{{ assets('assets/images/goldplan.svg') }}" height="24">
+                                                @endif
+                                                {{ $val->name }}
                                             </td>
                                             <td>
-                                                $299.00
+                                                ${{ number_format((float)$val->amount, 2, '.', '') }}
                                             </td>
                                             <td>
                                                 Montly
                                             </td>
                                             <td>
-                                                1st of every Month
+                                                {{ date('d M, Y', strtotime($val->activated_date)) }}
                                             </td>
                                             <td>
-                                                03 Sep, 2023, 09:33:12 am
+                                                {{ date('d M, Y', strtotime($val->renewal_date)) }}
                                             </td>
                                             <td>
-                                                76375873874
+                                                {{ $val->transaction_id ?? 'NA' }}
                                             </td>
                                         </tr>
-
-                                        <tr>
-                                            <td>
-                                                <div class="sno">2</div>
-                                            </td>
-                                            <td>
-                                                Jane Doe
-                                            </td>
-
-                                            <td>
-                                                <img src="{{ assets('assets/images/platinumplan.svg') }}" height="24"> Plan C
-                                            </td>
-                                            <td>
-                                                $299.00
-                                            </td>
-                                            <td>
-                                                Annually
-                                            </td>
-                                            <td>
-                                                1st of every Month
-                                            </td>
-                                            <td>
-                                                03 Sep, 2023, 09:33:12 am
-                                            </td>
-                                            <td>
-                                                76375873874
-                                            </td>
-                                        </tr> -->
+                                        @empty
                                         <tr class="text-center">
                                             <td colspan="8">No record found</td>
                                         </tr>
+                                        @endforelse
                                     </tbody>
                                 </table>
                             </div>

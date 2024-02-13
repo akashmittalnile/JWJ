@@ -78,7 +78,9 @@
                                             </div>
                                             <div class="managecommunity-group-action">
                                                 <a class="approvecommunity-btn" href="{{ route('admin.community-management.approval') }}">Approve Community Request</a>
+                                                @if($data->status!=3)
                                                 <a class="rejectcommunity-btn" data-bs-toggle="modal" data-bs-target="#rejectcommunityrequest">Reject Community Request</a>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\PaymentDetail;
 use Stripe\Stripe;
 use App\Models\Plan;
+use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -12,7 +14,9 @@ class RevenueController extends Controller
     public function revenueManagement()
     {
         try {
-            return view('pages.admin.revenue.revenue-management');
+            $paymentReceived = PaymentDetail::sum('amount');
+            $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id')->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name')->get();
+            return view('pages.admin.revenue.revenue-management')->with(compact('list', 'paymentReceived'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

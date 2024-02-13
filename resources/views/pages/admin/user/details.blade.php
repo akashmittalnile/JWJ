@@ -108,7 +108,7 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/Happy.png') }}"></div>
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/happy.png') }}"></div>
                                     <p>Happy</p>
                                     <h2>0%</h2>
                                 </div>
@@ -122,14 +122,14 @@
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/Anger.png') }}"></div>
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anger.png') }}"></div>
                                     <p>Anger</p>
                                     <h2>0%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/Anxiety.png') }}"></div>
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anxiety.png') }}"></div>
                                     <p>Anxiety</p>
                                     <h2>0%</h2>
                                 </div>
@@ -198,10 +198,10 @@
                                     @forelse($list as $key => $val)
                                     <tr>
                                         <td>
-                                            <div class="sno">1</div>
+                                            <div class="sno">{{ $key+1 }}</div>
                                         </td>
                                         <td>{{ $val->name }}</td>
-                                        <td>{{ number_format((float)$val->amount, 2, '.', '') }}</td>
+                                        <td>${{ number_format((float)$val->amount, 2, '.', '') }}</td>
                                         <td>Montly</td>
                                         <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->renewal_date)) }}</td>
