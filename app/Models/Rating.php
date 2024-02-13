@@ -10,4 +10,8 @@ class Rating extends Model
     use HasFactory;
     protected $table = 'rating';
     protected $id = 'id';
+
+    public function user (){
+        return $this->hasOne(User::class, "id", "userid");
+    }
 }

@@ -74,6 +74,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         // rating & reviews
         Route::get('/rating-reviews', [DashboardController::class, 'ratingReviews'])->name('rating-review.list');
+        Route::post('/delete-review', [DashboardController::class, 'deleteRating'])->name('rating-review.delete');
+        Route::get('/rating-reports', [DashboardController::class, 'ratingDownloadReport'])->name('rating-review.download.report');
 
         // logout
         Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
