@@ -37,12 +37,10 @@ class AuthController extends Controller
                         $user->role = 1;
                         $user->status = -1;
                     }
-                    $data['site_title'] = 'Email Verification OTP';
                     $data['subject'] = 'Email Verification OTP';
-                    $data['view'] = 'pages.user.email.send-otp';
-                    $data['to_email'] = $request->email;
-                    $data['otp'] = $code;
-                    sendEmail($data);
+                    $data['to_mail'] = $request->email;
+                    $data['body'] = $code;
+                    sendMail($data);
                     $user->save();
                     return successMsg('OTP sended to your email address.', ['otp' => $code]);
                 } else return errorMsg('This email is already exist!');
@@ -86,11 +84,9 @@ class AuthController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
+                'user_name' => 'required',
                 'name' => 'required',
-                'mobile' => 'required',
-                'country_code' => 'required',
                 'password' => 'required',
-                'file' => 'required|mimes:jpeg,png,jpg|image',
                 'email' => 'required|email',
             ]);
             if ($validator->fails()) {
@@ -99,15 +95,16 @@ class AuthController extends Controller
                 if(!emailExist($request->email)){
                     $user = User::where('id', $request->id)->where('email', $request->email)->where('email_verified_at', 1)->first();
                     if(isset($user->id)) {
-                        if ($request->hasFile("file")) {
-                            $file = $request->file('file');
-                            $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
-                            $user->profile = $name;
-                            $file->move("public/uploads/profile", $name);
-                        }
+                        // if ($request->hasFile("file")) {
+                        //     $file = $request->file('file');
+                        //     $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
+                        //     $user->profile = $name;
+                        //     $file->move("public/uploads/profile", $name);
+                        // }
                         $user->name = ucwords($request->name);
-                        $user->country_code = $request->country_code;
-                        $user->mobile = $request->mobile;
+                        $user->user_name = strtolower($request->user_name);
+                        $user->country_code = $request->country_code ?? null;
+                        $user->mobile = $request->mobile ?? null;
                         $user->password = Hash::make($request->password);
                         $user->role = 1;
                         $user->status = 1;
@@ -141,6 +138,7 @@ class AuthController extends Controller
                             $response = array('user' => [
                                 'id' => $user->id,
                                 'name' => $user->name,
+                                'user_name' => $user->user_name,
                                 'email' => $user->email,
                                 'country_code' => $user->country_code,
                                 'mobile' => $user->mobile,
@@ -244,9 +242,10 @@ class AuthController extends Controller
             $response = [
                 'id' => $user->id,
                 'name' => $user->name,
+                'user_name' => $user->user_name,
                 'email' => $user->email,
-                'country_code' => $user->country_code,
-                'mobile' => $user->mobile,
+                'country_code' => $user->country_code ?? null,
+                'mobile' => $user->mobile ?? null,
                 'role' => $user->role,
                 'status' => $user->status,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
@@ -264,6 +263,7 @@ class AuthController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
+                'user_name' => 'required',
                 'mobile' => 'required',
                 'country_code' => 'required',
                 'file' => 'required|mimes:jpeg,png,jpg|image',
@@ -286,6 +286,7 @@ class AuthController extends Controller
                         $file->move("public/uploads/profile", $name);
                     }
                     $user->name = ucwords($request->name);
+                    $user->user_name = strtolower($request->user_name);
                     $user->country_code = $request->country_code;
                     $user->mobile = $request->mobile;
                     $user->updated_at = date('Y-m-d H:i:s');

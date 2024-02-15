@@ -28,6 +28,8 @@ class DashboardController extends Controller
         }
     }
 
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function ratingReviews(Request $request)
     {
         try {
@@ -69,6 +71,9 @@ class DashboardController extends Controller
             ]);
         }
     }
+
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function deleteRating(Request $request)
     {
         try {
@@ -110,6 +115,9 @@ class DashboardController extends Controller
             ]);
         }
     }
+
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function ratingDownloadReport(Request $request)
     {
         try {
@@ -122,6 +130,9 @@ class DashboardController extends Controller
             ]);
         }
     }
+
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function downloadRatingReportFunction($ratings)
     {
         try {
