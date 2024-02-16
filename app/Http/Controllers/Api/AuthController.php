@@ -32,7 +32,7 @@ class AuthController extends Controller
                         $user->updated_at = date('Y-m-d H:i:s');
                     } else {
                         $user = new User;
-                        $user->email = $request->email;
+                        $user->email = strtolower($request->email);
                         $user->otp = $code;
                         $user->role = 1;
                         $user->status = -1;
