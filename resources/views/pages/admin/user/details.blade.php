@@ -86,16 +86,24 @@
                         <div class="plan-content">
                             <div class="plan-content-text">
                                 <p>Total Subscription Payment:</p>
+                                @if(isset($plan->amount))
                                 <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }} / Monthly</h2>
                                 <!-- <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }} / Monthly <span>$0 / day</span></h2> -->
+                                @else
+                                <h2>$0 / Monthly</h2>
+                                @endif
                             </div>
                             <div class="plan-content-icon">
-                                @if($plan->name == 'Plan B')
-                                <img src="{{ assets('assets/images/goldplan.svg') }}">
-                                @elseif($plan->name == 'Plan A')
-                                <img src="{{ assets('assets/images/freeplan.svg') }}">
-                                @elseif($plan->name == 'Plan C')
-                                <img src="{{ assets('assets/images/platinumplan.svg') }}">
+                                @if(isset($plan->name))
+                                    @if($plan->name == 'Plan B')
+                                    <img src="{{ assets('assets/images/goldplan.svg') }}">
+                                    @elseif($plan->name == 'Plan A')
+                                    <img src="{{ assets('assets/images/freeplan.svg') }}">
+                                    @elseif($plan->name == 'Plan C')
+                                    <img src="{{ assets('assets/images/platinumplan.svg') }}">
+                                    @else
+                                    <img src="{{ assets('assets/images/goldplan.svg') }}">
+                                    @endif
                                 @else
                                 <img src="{{ assets('assets/images/goldplan.svg') }}">
                                 @endif
@@ -143,7 +151,11 @@
                             <div class="overview-content">
                                 <div class="overview-content-text">
                                     <p>Total Subscription Payment:</p>
+                                    @if(isset($plan->amount))
                                     <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }}</h2>
+                                    @else
+                                    <h2>$0</h2>
+                                    @endif
                                 </div>
                                 <div class="overview-content-icon">
                                     <img src="{{ assets('assets/images/dollar-circle.svg') }}" height="50">

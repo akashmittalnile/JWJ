@@ -29,9 +29,13 @@ class UserController extends Controller
                 {
                     $pageNum = $data->currentPage();
                     $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
+                    $phone = isset($val->mobile) ? $val->country_code .' '. $val->mobile : 'NA';
                     $html .= "<tr>
                     <td>
                         <div class='sno'>$index</div>
+                    </td>
+                    <td>
+                        $val->user_name
                     </td>
                     <td>
                         $val->name
@@ -41,7 +45,7 @@ class UserController extends Controller
                         $val->email
                     </td>
                     <td>
-                        $val->country_code $val->mobile
+                        $phone
                     </td>
                     <td>
                         <div class='action-btn-info'>

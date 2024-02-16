@@ -172,12 +172,10 @@ class AuthController extends Controller
                     $code = rand(1000,9999);
                     $user->otp = $code;
                     $user->updated_at = date('Y-m-d H:i:s');
-                    $data['site_title'] = 'Forgot Password OTP';
                     $data['subject'] = 'Forgot Password OTP';
-                    $data['view'] = 'pages.user.email.send-otp';
-                    $data['to_email'] = $request->email;
-                    $data['otp'] = $code;
-                    sendEmail($data);
+                    $data['to_mail'] = $request->email;
+                    $data['body'] = $code;
+                    sendMail($data);
                     $user->save();
                     return successMsg('OTP sended to your email address.', ['otp' => $code]);
                 } else return errorMsg('Invalid Email or Password!');
