@@ -12,7 +12,7 @@
 </style>
 @endpush
 
-@section('title','Journey with Journals - Admin Login')
+@section('title','Journey with Journals - Admin Forgot Password')
 @section('content')
 <div class="auth-section auth-height">
     <div class="auth-bg-video">
@@ -27,20 +27,13 @@
                             <div class="brand-logo">
                                 <img src="{{ assets('assets/images/logo.svg') }}" alt="logo">
                             </div>
-                            <h2>Admin Login</h2>
-                            <form class="pt-4" method="post" action="{{ route('admin.check.user') }}" id="login-form">@csrf
+                            <h2>Admin Forgot Password</h2>
+                            <form class="pt-4" method="post" action="{{ route('admin.send.otp') }}" id="login-form">@csrf
                                 <div class="form-group">
                                     <input type="email" class="form-control" name="email" placeholder="Email Address">
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control" name="password" placeholder="Password">
-                                </div>
-                                <div class="form-group">
-                                    <button type="submit" class="auth-form-btn">Login</button>
-                                </div>
-
-                                <div class="mt-1 forgotpsw-text">
-                                    <a target="_blank" href="{{ route('admin.forgot.password') }}">Forgot password?</a>
+                                    <button type="submit" class="auth-form-btn">Send OTP</button>
                                 </div>
                             </form>
                         </div>
@@ -65,49 +58,16 @@
                     required: true,
                     emailValidate: true,
                 },
-                password: {
-                    required: true,
-                },
             },
             messages: {
                 email: {
                     required: 'Please enter email address',
                 },
-                password: {
-                    required: 'Please enter your password',
-                },
             },
             submitHandler: function(form, e) {
                 e.preventDefault();
-                let formData = new FormData(form);
-                $.ajax({
-                    type: 'post',
-                    url: form.action,
-                    data: formData,
-                    dataType: 'json',
-                    contentType: false,
-                    processData: false,
-                    beforeSend: function() {
-                        $("#preloader").show()
-                    },
-                    success: function(response) {
-                        if (response.status) {
-                            toastr.success(response.message);
-                            window.location = response.route;
-                            return false;
-                        } else {
-                            toastr.error(response.message);
-                            return false;
-                        }
-                    },
-                    error: function(data, textStatus, errorThrown) {
-                        jsonValue = jQuery.parseJSON( data.responseText );
-                        console.error(jsonValue.message);
-                    },
-                    complete: function() {
-                        $("#preloader").hide()
-                    },
-                })
+                $("#preloader").show();
+                form.submit();
             },
             errorElement: "span",
             errorPlacement: function(error, element) {

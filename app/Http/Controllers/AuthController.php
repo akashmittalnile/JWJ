@@ -23,6 +23,137 @@ class AuthController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to show admin forgot password page
+    public function forgotPassword()
+    {
+        try {
+            return view('auth.forgot-password');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to send the otp to entered email address if its register
+    public function sendOtp(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required|email',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            } else {
+                $user = User::where('email', $request->email)->where('status', 1)->where('role', 2)->first();
+                if (isset($user->id)) {
+                    $code = rand(1000, 9999);
+                    $data['subject'] = 'Admin Forgot Password OTP';
+                    $data['to_mail'] = $request->email;
+                    $data['body'] = $code;
+                    sendMail($data);
+                    User::where('email', $request->email)->where('status', 1)->where('role', 2)->update([
+                        'otp' => $code
+                    ]);
+                    $user_email = encrypt_decrypt('encrypt',$request->email);
+                    return redirect()->route('admin.otp.verification', $user_email);
+                } else {
+                    return redirect()->back()->with('error', 'Invalid email address');
+                }
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show admin otp verification page
+    public function otpVerification($email)
+    {
+        try {
+            return view('auth.otp-verification')->with(compact('email'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to send the otp to entered email address if its register
+    public function sendVerify(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required',
+                'otp1' => 'required',
+                'otp2' => 'required',
+                'otp3' => 'required',
+                'otp4' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            } else {
+                $email = encrypt_decrypt('decrypt', $request->email);
+                $otp = $request['otp1'].''.$request['otp2'].$request['otp3'].$request['otp4'];
+                $user = User::where('email', $email)->where('status', 1)->where('role', 2)->first();
+                if (isset($user->id)) {
+                    $verify = User::where('id', $user->id)->where('otp', $otp)->first();
+                    if(isset($verify->id)){
+                        User::where('id', $user->id)->update([
+                            'otp' => null
+                        ]);
+                        return redirect()->route('admin.reset.password', $request->email);
+                    } else {
+                        return redirect()->back()->with('error', 'Invalid OTP');
+                    }
+                } else {
+                    return redirect()->back()->with('error', 'Invalid email address');
+                }
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show admin otp verification page
+    public function resetPassword($email)
+    {
+        try {
+            return view('auth.change-password')->with(compact('email'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+        // Dev name : Dishant Gupta
+    // This function is used to send the otp to entered email address if its register
+    public function changePassword(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'email' => 'required',
+                'password' => 'required',
+                'cnf_password' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            } else {
+                $email = encrypt_decrypt('decrypt', $request->email);
+                $user = User::where('email', $email)->where('status', 1)->where('role', 2)->first();
+                if (isset($user->id)) {
+                    User::where('email', $email)->where('status', 1)->where('role', 2)->update([
+                        'password' => Hash::make($request->password)
+                    ]);
+                    return redirect()->route('admin.login')->with('success', 'Password reset successfully');
+                } else {
+                    return redirect()->back()->with('error', 'Invalid email address');
+                }
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to check authentication credentials
     public function checkUser(Request $request)
     {

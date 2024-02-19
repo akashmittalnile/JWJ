@@ -99,19 +99,18 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <h4>zip code</h4>
-                                        <input type="text" class="form-control" value="{{ auth()->user()->zipcode ?? '' }}" name="zipcode" placeholder="Enter zip code">
+                                        <h4>Zip Code</h4>
+                                        <input type="text" class="form-control" value="{{ auth()->user()->zipcode ?? '' }}" name="zipcode" placeholder="Enter Zip Code">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <h4>Upload profile</h4>
+                                        <h4>Upload Profile</h4>
                                         <input type="file" class="file-form-control" accept="image/png, image/jpg, image/jpeg" name="file">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <button type="button" class="cancelbtn">cancel</button>
                                         <button type="submit" class="Savebtn">Save</button>
                                     </div>
                                 </div>
@@ -121,7 +120,7 @@
                 </div>
                 <div class="myprofile-form-section">
                     <div class="myprofile-form-heading">
-                        <h3>Change password</h3>
+                        <h3>Change Password</h3>
                     </div>
                     <div class="myprofile-form">
                         <form action="{{ route('admin.update.password') }}" method="post" id="password_form">@csrf
@@ -141,13 +140,12 @@
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <h4>Confirm New password</h4>
+                                        <h4>Confirm New Password</h4>
                                         <input type="password" class="form-control" name="new_password" placeholder="Enter Confirm New Password">
                                     </div>
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <button type="button" class="cancelbtn">cancel</button>
                                         <button type="submit" class="Savebtn">Save</button>
                                     </div>
                                 </div>

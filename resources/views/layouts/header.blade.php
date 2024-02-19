@@ -10,7 +10,7 @@
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item noti-dropdown dropdown">
-                    <a class="nav-link  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
                         <div class="noti-icon">
                             <img src="{{ assets('assets/images/notification.svg') }}" alt="user">
                             <span class="noti-badge">0</span>
@@ -21,7 +21,7 @@
                     </div>
                 </li>
                 <li class="nav-item profile-dropdown dropdown">
-                    <a class="nav-link dropdown-toggle" id="profile" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle" id="profile" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
                         <div class="profile-pic">
                             <div class="profile-pic-image">
                                 <img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}" alt="user">
@@ -64,7 +64,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button class="cancel-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Discard</button>
+                                    <button class="cancel-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Cancel</button>
                                     <button type="submit" class="save-btn">Yes! Logout</button>
                                 </div>
                             </div>

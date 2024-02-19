@@ -35,6 +35,12 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     // admin login panel
     Route::get('/', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'checkUser'])->name('check.user');
+    Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot.password');
+    Route::post('/send-otp', [AuthController::class, 'sendOtp'])->name('send.otp');
+    Route::get('/otp-verification/{email}', [AuthController::class, 'otpVerification'])->name('otp.verification');
+    Route::post('/send-verify', [AuthController::class, 'sendVerify'])->name('send.verify');
+    Route::get('/reset-password/{email}', [AuthController::class, 'resetPassword'])->name('reset.password');
+    Route::post('/reset-password', [AuthController::class, 'changePassword'])->name('change.password');
 
     Route::middleware(["isAdmin"])->group(function () {
         // dashboard
