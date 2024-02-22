@@ -52,12 +52,14 @@ class CommunityController extends Controller
             $response = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
+                $follow = UserFollowedCommunity::where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
                 $temp['image'] = isset($val->image_name) ? assets("uploads/community/".$val->image_name) : null;
                 $temp['follow'] = isset($ufc->id) ? true : false;
+                $temp['member_follow_count'] = $follow ?? 0;
                 $temp['plan_name'] = $val->plan_name;
                 $temp['plan_monthly_price'] = $val->monthly_price;
                 $temp['plan_anually_price'] = $val->anually_price;
@@ -79,7 +81,7 @@ class CommunityController extends Controller
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id)){
                     $post = Post::where('community_id', $data->id)->get();
-                    
+                    $follow = UserFollowedCommunity::where('community_id', $data->id)->count();
                     $response = [
                         'id' => $data->id,
                         'name' => $data->name,
@@ -87,6 +89,7 @@ class CommunityController extends Controller
                         'status' => $data->status,
                         'image' => isset($data->image_name) ? assets("uploads/community/".$data->image_name) : null,
                         'follow' => isset($ufc->id) ? true : false,
+                        'member_follow_count' => $follow ?? 0,
                         'plan_name' => $data->plan_name,
                         'plan_monthly_price' => $data->monthly_price,
                         'plan_anually_price' => $data->anually_price,
@@ -108,6 +111,7 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required',
+                'images' => 'required',
                 'description' => 'required',
             ]);
             if ($validator->fails()) {
@@ -120,16 +124,17 @@ class CommunityController extends Controller
                 $community->status = 0;
                 $community->created_by = auth()->user()->id ?? null;
                 $community->save();
-                
+
                 if ($request->hasFile("file")) {
-                    $file = $request->file('file');
-                    $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
-                    $communityImage = new CommunityImage;
-                    $communityImage->community_id = $community->id;
-                    $communityImage->name = $name;
-                    $communityImage->type = 'image';
-                    $communityImage->save();
-                    $file->move("public/uploads/community", $name);
+                    foreach ($request->file('file') as $value) {
+                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
+                        $value->move("public/uploads/community", $name);
+                        $communityImage = new CommunityImage;
+                        $communityImage->community_id = $community->id;
+                        $communityImage->name = $name;
+                        $communityImage->type = 'image';
+                        $communityImage->save();
+                    }
                 }
 
                 return successMsg('New community created successfully.');

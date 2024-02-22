@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Plan;
+use App\Models\Post;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use Illuminate\Http\Request;
@@ -58,6 +59,8 @@ class CommunityController extends Controller
                         $mem_html = "";
                     }
 
+                    $post = Post::where('community_id', $val->id)->count();
+
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
                     
@@ -78,7 +81,7 @@ class CommunityController extends Controller
                         </div>
                         <div class='jwjcard-body'>
                             <div class='admincommunity-text'>$role Community</div>
-                            <div id='communitycarousel' class=' communitycarousel owl-carousel owl-theme'>
+                            <div id='communitycarousel' class='communitycarousel owl-carousel owl-theme'>
                                 <div class='item'>
                                     <div class='community-media'>
                                         <img src='".assets('assets/images/no-image.jpg')."'>
@@ -126,7 +129,7 @@ class CommunityController extends Controller
                                         </div>
                                         <div class='service-shift-card-text'>
                                             <h2>Total Posts</h2>
-                                            <p>0</p>
+                                            <p>$post</p>
                                         </div>
                                     </div>
                                 </div>
@@ -184,14 +187,15 @@ class CommunityController extends Controller
                 $community->save();
                 
                 if ($request->hasFile("file")) {
-                    $file = $request->file('file');
-                    $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
-                    $communityImage = new CommunityImage;
-                    $communityImage->community_id = $community->id;
-                    $communityImage->name = $name;
-                    $communityImage->type = 'image';
-                    $communityImage->save();
-                    $file->move("public/uploads/community", $name);
+                    foreach ($request->file('file') as $value) {
+                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
+                        $value->move("public/uploads/community", $name);
+                        $communityImage = new CommunityImage;
+                        $communityImage->community_id = $community->id;
+                        $communityImage->name = $name;
+                        $communityImage->type = 'image';
+                        $communityImage->save();
+                    }
                 }
 
                 return successMsg('New community created successfully.');

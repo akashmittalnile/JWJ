@@ -90,7 +90,7 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <input type="file" class="form-control" accept="image/png, image/jpg, image/jpeg" name="file">
+                                    <input type="file" class="form-control" accept="image/png, image/jpg, image/jpeg" name="file[]" multiple>
                                 </div>
                             </div>
                             <div class="col-md-12">
