@@ -61,18 +61,14 @@ class JournalController extends Controller
     // This function is used to show the list of journals
     public function journal(Request $request) {
         try{
-            $mood = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id');
-            if($request->filled('journal_id')) {
-                $mood->where('journals.id', $request->journal_id);
-            } else {
-                if($request->filled('title')) $mood->where('journals.title', 'LIKE', '%'.$request->title.'%');
-                if($request->filled('status')) $mood->where('journals.status', $request->status);
-                if($request->filled('mood_id')) $mood->where('journals.mood_id', $request->mood_id);
-                if($request->filled('search_criteria_id')) $mood->whereIn('jsc.search_id', $request->search_criteria_id);
-            }
-            $mood = $mood->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
+            $journal = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id');
+            if($request->filled('title')) $journal->where('journals.title', 'LIKE', '%'.$request->title.'%');
+            if($request->filled('status')) $journal->where('journals.status', $request->status);
+            if($request->filled('mood_id')) $journal->where('journals.mood_id', $request->mood_id);
+            if($request->filled('search_criteria_id')) $journal->whereIn('jsc.search_id', $request->search_criteria_id);
+            $journal = $journal->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
             $response = array();
-            foreach($mood as $val){
+            foreach($journal as $val){
                 $imgs = JournalImage::where('journal_id', $val->id)->get();
                 $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $val->id)->select('sc.id', 'sc.name')->get();
                 $mood = MoodMaster::where('id', $val->mood_id)->first();
@@ -102,6 +98,49 @@ class JournalController extends Controller
                 $response[] = $temp;
             }
             return successMsg('Journals', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to get the details of particular journal
+    public function journalDetails($id) {
+        try{
+            $journal = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id')->where('journals.id', $id)->first();
+            if(isset($journal->id)){
+                $imgs = JournalImage::where('journal_id', $journal->id)->get();
+                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $journal->id)->select('sc.id', 'sc.name')->get();
+                $mood = MoodMaster::where('id', $journal->mood_id)->first();
+                $path = array();
+                foreach($imgs as $item){
+                    $temp1['id'] = $item->id;
+                    $temp1['img_path'] = isset($item->name) ? assets('uploads/journal/'.$item->name) : null;
+                    $path[] = $temp1;
+                }
+                $search = array();
+                foreach($criteria as $item){
+                    $temp2['id'] = $item->id;
+                    $temp2['name'] = $item->name;
+                    $search[] = $temp2;
+                }
+                $response = [
+                    'id' => $journal->id,
+                    'title' => $journal->title,
+                    'content' => $journal->content,
+                    'status' => $journal->status,
+                    'mood_id' => $journal->mood_id,
+                    'mood_name' => $mood->name,
+                    'mood_logo' => isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null,
+                    'images' => $path,
+                    'search_criteria' => $search,
+                    'created_at' => date('d M, Y h:i A', strtotime($journal->created_at)),
+                    'updated_at' => date('d M, Y h:i A', strtotime($journal->updated_at)),
+                ];
+                return successMsg('Journal details', $response);
+            } else {
+                return errorMsg('Journal not found.');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

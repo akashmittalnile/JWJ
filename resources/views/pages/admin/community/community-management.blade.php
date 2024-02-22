@@ -241,9 +241,11 @@
                             $("#appendPagination").append(paginate); 
                         }
                     } else {
-                        let html = `<div style="height: 50vh;" class="d-flex justify-content-center align-items-center w-100">
-                            No record found
-                        </div>`;
+                        let html = `<div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div>
+                                        <img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                                    </div>
+                                </div>`;
                         $("#appendData").html(html);
                         $("#appendPagination").html('');
                     }

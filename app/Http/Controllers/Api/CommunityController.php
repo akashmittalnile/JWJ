@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Plan;
+use App\Models\Post;
+use App\Models\PostImage;
+use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -48,11 +51,13 @@ class CommunityController extends Controller
             $data = $data->orderByDesc('communities.id')->get();
             $response = [];
             foreach($data as $val){
+                $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
                 $temp['image'] = isset($val->image_name) ? assets("uploads/community/".$val->image_name) : null;
+                $temp['follow'] = isset($ufc->id) ? true : false;
                 $temp['plan_name'] = $val->plan_name;
                 $temp['plan_monthly_price'] = $val->monthly_price;
                 $temp['plan_anually_price'] = $val->anually_price;
@@ -60,6 +65,37 @@ class CommunityController extends Controller
                 $response[] = $temp;
             }
             return successMsg('Community list', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to get the details of community and their posts if user follow
+    public function communityDetails($id) {
+        try{
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('communities.id', $id)->first();
+            if(isset($data->id)){
+                $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
+                if(isset($ufc->id)){
+                    $post = Post::where('community_id', $data->id)->get();
+                    
+                    $response = [
+                        'id' => $data->id,
+                        'name' => $data->name,
+                        'description' => $data->description,
+                        'status' => $data->status,
+                        'image' => isset($data->image_name) ? assets("uploads/community/".$data->image_name) : null,
+                        'follow' => isset($ufc->id) ? true : false,
+                        'plan_name' => $data->plan_name,
+                        'plan_monthly_price' => $data->monthly_price,
+                        'plan_anually_price' => $data->anually_price,
+                        'plan_price_currency' => $data->currency,
+                        'posts' => $post
+                    ];
+                    return successMsg('Community found', $response);
+                } else return errorMsg('Please follow community first.');
+            } else return errorMsg('Community not found.');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -129,6 +165,45 @@ class CommunityController extends Controller
                         return errorMsg("Community not found.");
                     }
                 }
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a post by user
+    public function createPost(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'community_id' => 'required',
+                'title' => 'required',
+                'description' => 'required',
+                'file' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = new Post;
+                $post->community_id = $request->community_id;
+                $post->title = $request->title;
+                $post->post_description = $request->description;
+                $post->created_by = auth()->user()->id;
+                $post->save();
+
+                if ($request->hasFile("file")) {
+                    foreach ($request->file('file') as $value) {
+                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
+                        $value->move("public/uploads/community/post", $name);
+                        $postImage = new PostImage;
+                        $postImage->post_id = $post->id;
+                        $postImage->name = $name;
+                        $postImage->type = 'image';
+                        $postImage->save();
+                    }
+                }
+
+                return successMsg('New post created successfully.');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

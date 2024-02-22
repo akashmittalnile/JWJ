@@ -17,7 +17,7 @@ class CommunityController extends Controller
         try {
             $plan = Plan::where('status', 1)->get();
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }
@@ -29,9 +29,19 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
+                    if(isset($val->plan_id)){
+                        $plan = Plan::where('id', $val->plan_id)->first();
+                        if(isset($plan->id)){
+                            $plan_type = (($plan->name=='Plan A') ? 'freeplan.svg' : ($plan->name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
+                            $plan_html = "<div class='community-plan-info'>
+                                <img src='".assets("assets/images/$plan_type")."'>$plan->name
+                            </div>";
+                        } else $plan_html = '';
+                    } else  $plan_html = '';
+
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
-                    $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
+                    
                     $html .= "<div class='col-md-6'>
                     <div class='jwj-community-card'>
                         <div class='jwjcard-head'>
@@ -119,9 +129,7 @@ class CommunityController extends Controller
                                 </div>
                                 <p>0 Member Follows</p>
                             </div>
-                            <div class='community-plan-info'>
-                                <img src='".assets("assets/images/$plan_type")."'>$val->plan_name
-                            </div>
+                            $plan_html
                         </div>
                     </div>
                 </div>";
@@ -212,7 +220,7 @@ class CommunityController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
             return view('pages.admin.community.details')->with(compact('data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -225,7 +233,7 @@ class CommunityController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0)->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0)->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }
@@ -237,9 +245,6 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
-                    $role = ($val->role==2) ? 'Admin' : 'User';
-                    $checked = ($val->status==1) ? 'checked' : '';
-                    $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
                     $html .= "<div class='col-md-4'>
                     <div class='jwj-community-approval-card'>
                         <div class='jwjcard-head'>
@@ -293,7 +298,7 @@ class CommunityController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
             return view('pages.admin.community.approval-details')->with(compact('data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -306,7 +311,7 @@ class CommunityController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }

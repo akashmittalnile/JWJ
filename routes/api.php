@@ -41,12 +41,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('change-password', [AuthController::class, 'changePassword']);
 
     Route::get('journals', [JournalController::class, 'journal']);
+    Route::get('journal/{id}', [JournalController::class, 'journalDetails']);
     Route::delete('delete-journal', [JournalController::class, 'deleteJournal']);
     Route::post('create-journal', [JournalController::class, 'createJournal']);
 
     Route::get('community-list', [CommunityController::class, 'communityList']);
+    Route::get('community/{id}', [CommunityController::class, 'communityDetails']);
     Route::post('follow-unfollow', [CommunityController::class, 'followUnfollow']);
     Route::post('create-community', [CommunityController::class, 'createCommunity']);
+    Route::post('create-post', [CommunityController::class, 'createPost']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');
