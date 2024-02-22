@@ -71,7 +71,6 @@ class CommunityController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
-                'plan_id' => 'required',
                 'file' => 'required',
                 'description' => 'required',
             ]);
@@ -80,7 +79,7 @@ class CommunityController extends Controller
             } else {
                 $community = new Community;
                 $community->name = $request->title;
-                $community->plan_id = $request->plan_id;
+                $community->plan_id = $request->plan_id ?? null;
                 $community->description = $request->description;
                 $community->status = 0;
                 $community->created_by = auth()->user()->id ?? null;

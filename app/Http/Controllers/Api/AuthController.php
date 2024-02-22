@@ -275,9 +275,11 @@ class AuthController extends Controller
                         $file = $request->file('file');
                         $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
 
-                        $link = public_path() . "/uploads/profile/" . $user->profile;
-                        if (file_exists($link)) {
-                            unlink($link);
+                        if(isset($user->profile)){
+                            $link = public_path() . "/uploads/profile/" . $user->profile;
+                            if (file_exists($link)) {
+                                unlink($link);
+                            } 
                         }
 
                         $user->profile = $name;

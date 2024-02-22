@@ -203,7 +203,6 @@ class AuthController extends Controller
                 'mobile' => 'required',
                 'address' => 'required',
                 'zipcode' => 'required',
-                'file' => 'mimes:jpeg,png,jpg|image'
             ]);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
