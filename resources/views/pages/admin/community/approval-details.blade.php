@@ -63,7 +63,7 @@
                                             <div class="admincommunity-text">User Community</div>
                                             <p>{{ $data->description ?? 'NA' }}</p>
                                             <div class="jwjcard-member-item">
-                                                <div class="jwjcard-member-info">
+                                                <!-- <div class="jwjcard-member-info">
                                                     <span class="jwjcard-member-image image1">
                                                         <img src="{{ assets('assets/images/no-image.jpg') }}">
                                                     </span>
@@ -74,7 +74,7 @@
                                                         <img src="{{ assets('assets/images/no-image.jpg') }}">
                                                     </span>
                                                 </div>
-                                                <p>0 Member Follows</p>
+                                                <p>0 Member Follows</p> -->
                                             </div>
                                             <div class="managecommunity-group-action">
                                                 <a class="approvecommunity-btn" href="{{ route('admin.community-management.approval') }}">Approve Community Request</a>

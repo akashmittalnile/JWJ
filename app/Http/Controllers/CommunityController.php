@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Plan;
+use App\Models\User;
+use App\Models\UserFollowedCommunity;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -38,6 +40,23 @@ class CommunityController extends Controller
                             </div>";
                         } else $plan_html = '';
                     } else  $plan_html = '';
+
+                    $followcount = UserFollowedCommunity::where('community_id', $val->id)->count();
+                    $follow = UserFollowedCommunity::where('community_id', $val->id)->orderByDesc('id')->limit(3)->get();
+                    if(count($follow) > 0){
+                        $mem_html = "";
+                        $count = 1;
+                        foreach($follow as $items){
+                            $followedUser = User::where('id', $items->userid)->first();
+                            $asset = isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg');
+                            $mem_html .= "<span class='jwjcard-member-image image$count'>
+                                <img src='".$asset."'>
+                            </span>";
+                            $count++;
+                        }
+                    } else {
+                        $mem_html = "";
+                    }
 
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
@@ -117,17 +136,9 @@ class CommunityController extends Controller
                         <div class='jwjcard-foot'>
                             <div class='jwjcard-member-item'>
                                 <div class='jwjcard-member-info'>
-                                    <span class='jwjcard-member-image image1'>
-                                        <img src='".assets('assets/images/no-image.jpg')."'>
-                                    </span>
-                                    <span class='jwjcard-member-image image2'>
-                                        <img src='".assets('assets/images/no-image.jpg')."'>
-                                    </span>
-                                    <span class='jwjcard-member-image image3'>
-                                        <img src='".assets('assets/images/no-image.jpg')."'>
-                                    </span>
+                                    $mem_html
                                 </div>
-                                <p>0 Member Follows</p>
+                                <p>$followcount Member Follows</p>
                             </div>
                             $plan_html
                         </div>
@@ -221,7 +232,8 @@ class CommunityController extends Controller
         try {
             $id = encrypt_decrypt('decrypt', $id);
             $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
-            return view('pages.admin.community.details')->with(compact('data'));
+            $follow = UserFollowedCommunity::where('community_id', $id)->orderByDesc('id')->get();
+            return view('pages.admin.community.details')->with(compact('data', 'follow'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

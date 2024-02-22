@@ -39,17 +39,18 @@
                             <div class="jwjcard-group-action">
                                 <div class="jwjcard-member-item">
                                     <div class="jwjcard-member-info">
-                                        <span class="jwjcard-member-image image1">
-                                            <img src="{{ assets('assets/images/no-image.jpg') }}">
+                                        @php $count=1;  @endphp
+                                        @forelse($follow as $item)
+                                        @if($count > 3) @break @endif
+                                        @php $user = $item->user; @endphp
+                                        <span class="jwjcard-member-image image{{$count}}">
+                                            <img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}">
                                         </span>
-                                        <span class="jwjcard-member-image image2">
-                                            <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                        </span>
-                                        <span class="jwjcard-member-image image3">
-                                            <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                        </span>
+                                        @php $count++;  @endphp
+                                        @empty
+                                        @endforelse
                                     </div>
-                                    <p>0 Member Follows</p>
+                                    <p>{{ count($follow) }} Member Follows</p>
                                 </div>
                             </div>
                         </div>
@@ -112,43 +113,25 @@
                         <h2>Member List</h2>
                     </div>
                     <div class="sidebar-member-body">
-                        <div class="sidebar-member-list-card">
+                        <div class="sidebar-member-list-card" style="min-height: 37px; max-height: 520px; overflow-y: auto; overflow-x: hidden;">
+            
+                            @forelse($follow as $item)
+                            @php $user = $item->user; @endphp
                             <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ assets('assets/images/no-image.jpg') }}"></div>
+                                <div class="sidebar-member-item-image"><img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
                                 <div class="sidebar-member-item-text">
-                                    <h2>John Smith</h2>
+                                    <h2>{{ $user->name ?? "NA" }}</h2>
                                     <div class="sidebar-member-plan"><img src="{{ assets('assets/images/freeplan.svg') }}"> Plan A member</div>
                                 </div>
                             </div>
-                            <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ assets('assets/images/no-image.jpg') }}"></div>
-                                <div class="sidebar-member-item-text">
-                                    <h2>John Smith</h2>
-                                    <div class="sidebar-member-plan"><img src="{{ assets('assets/images/platinumplan.svg') }}"> Plan C member</div>
+                            @empty
+                            <div class="sidebar-member-item" style="border: none;">
+                                <div class="mx-auto">
+                                    No member follows
                                 </div>
                             </div>
-                            <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ assets('assets/images/no-image.jpg') }}"></div>
-                                <div class="sidebar-member-item-text">
-                                    <h2>John Smith</h2>
-                                    <div class="sidebar-member-plan"><img src="{{ assets('assets/images/goldplan.svg') }}"> Plan B member</div>
-                                </div>
-                            </div>
-                            <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ assets('assets/images/no-image.jpg') }}"></div>
-                                <div class="sidebar-member-item-text">
-                                    <h2>John Smith</h2>
-                                    <div class="sidebar-member-plan"><img src="{{ assets('assets/images/platinumplan.svg') }}"> Plan C member</div>
-                                </div>
-                            </div>
+                            @endforelse
 
-                            <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ assets('assets/images/no-image.jpg') }}"></div>
-                                <div class="sidebar-member-item-text">
-                                    <h2>John Smith</h2>
-                                    <div class="sidebar-member-plan"><img src="{{ assets('assets/images/goldplan.svg') }}"> Plan B member</div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

@@ -12,7 +12,7 @@ a.managecommunity-btn{background: var(--blue);border: 1px solid var(--blue);padd
 
 
 
-.jwjcard-foot {padding: 10px; border-top: 1px solid var(--border); display:flex;justify-content:space-between; }
+.jwjcard-foot {padding: 10px; border-top: 1px solid var(--border); display:flex;justify-content:space-between; height: 72px;}
 .jwjcard-member-item {display: flex; align-items: center; gap: 10px; }
 .jwjcard-member-item p{color: var(--gray); margin-bottom: 0; font-size: 13px; font-style: normal; font-weight: 500; line-height: 20px; letter-spacing: 0.1px;}
 .jwjcard-member-info {display: flex; align-items: center; }
