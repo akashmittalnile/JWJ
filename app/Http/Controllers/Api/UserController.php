@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MoodMaster;
 use App\Models\Plan;
 use App\Models\Rating;
+use App\Models\UserMood;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -57,7 +58,11 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                
+                $mood = new UserMood;
+                $mood->mood_id = $request->mood_id;
+                $mood->user_id = auth()->user()->id;
+                $mood->save();
+                return successMsg('Mood captured');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
