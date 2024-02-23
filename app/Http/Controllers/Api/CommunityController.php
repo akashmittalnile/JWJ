@@ -239,4 +239,35 @@ class CommunityController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a post by user
+    public function postDetails($id) {
+        try{
+            $post = Post::where('id', $id)->first();
+            if(isset($post->id)){
+                $img = PostImage::where('post_id', $id)->get();
+                $community = Community::where('id', $post->community_id)->first();
+                $user = User::where('id', $post->created_by)->first();
+                $image = array();
+                foreach($img as $val){
+                    array_push($image, assets("uploads/community/post/".$val->name));
+                }
+                $response = array(
+                    'id' => $post->id,
+                    'title' => $post->title,
+                    'description' => $post->post_description,
+                    'image' => $image,
+                    'community_id' => $post->community_id,
+                    'community_title' => $community->name,
+                    'community_description' => $community->description,
+                    'posted_by' => $user->name,
+                    'created_at' => date('d M, Y h:i A', strtotime($post->created_at)),
+                );
+                return successMsg('Post details', $response);
+            } else return errorMsg('Post not found');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
 }
