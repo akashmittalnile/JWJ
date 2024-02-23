@@ -48,12 +48,20 @@
                         <div class="jwj-posts-body">
                             <div class="row g-1">
                                 <div class="col-md-4">
-                                    <div id="communitycarouse" class="communitycarouse owl-carouse owl-them">
+                                    <div id="communitycarousel1" class="communitycarousel1 owl-carousel owl-theme">
+                                        @forelse($imgs as $item)
                                         <div class="item">
                                             <div class="community-posts-media">
-                                                <img src="{{ assets('uploads/community/'.$data->image_name) }}">
+                                                <img src="{{ assets('uploads/community/'.$item->name) }}">
                                             </div>
                                         </div>
+                                        @empty
+                                        <div class='item'>
+                                            <div class='community-media'>
+                                                <img src="{{ assets('assets/images/no-image.jpg') }}">
+                                            </div>
+                                        </div>
+                                        @endforelse
                                     </div>
                                 </div>
                                 <div class="col-md-8">
@@ -135,6 +143,17 @@
 
 @push('js')
 <script>
+    $('.communitycarousel1').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: false,
+        dots: false,
+        responsive:{
+            1000:{
+                items:1
+            }
+        }
+    });
     $(document).on('click', '.approvecommunity-btn', function(e) {
         let status = 1;
         let id = "{{ encrypt_decrypt('encrypt', $data->id) }}";

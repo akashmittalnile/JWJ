@@ -224,7 +224,26 @@
                         let userData = result.data.html.data;
                         let html = result.data.html;
                         $("#appendData").html(result.data.html);
-                        
+                        $('.communitycarousels').owlCarousel({
+                            loop: false,
+                            margin: 10,
+                            nav: true,
+                            dots: false,
+                            responsive:{
+                                0:{
+                                    items:1
+                                },
+                                300:{
+                                    items:1
+                                },
+                                600:{
+                                    items:3
+                                },
+                                1000:{
+                                    items:4
+                                }
+                            }
+                        });
                         $("#appendPagination").html('');
                         if(result.data.lastPage!=1){
                            let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">

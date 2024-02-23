@@ -20,7 +20,7 @@ class CommunityController extends Controller
         try {
             $plan = Plan::where('status', 1)->get();
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }
@@ -32,6 +32,26 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
+                    $image = CommunityImage::where('community_id', $val->id)->orderByDesc('id')->first();
+                    $imgs = CommunityImage::where('community_id', $val->id)->get();
+                    $image_html = "";
+                    foreach($imgs as $name){
+                        if($name->name != $image->name){
+                            $image_html .= "<div class='item'>
+                            <div class='community-media'>
+                                    <img src='".assets("uploads/community/$name->name")."'>
+                                </div>
+                            </div>";
+                        }
+                    }
+                    if($image_html == "") {
+                        $image_html = "<div class='item'>
+                        <div class='community-media'>
+                                <img src='".assets('assets/images/no-image.jpg')."'>
+                            </div>
+                        </div>";
+                    }
+                    
                     if(isset($val->plan_id)){
                         $plan = Plan::where('id', $val->plan_id)->first();
                         if(isset($plan->id)){
@@ -69,7 +89,7 @@ class CommunityController extends Controller
                         <div class='jwjcard-head'>
                             <div class='jwjcard-group-card'>
                                 <div class='jwjcard-group-avtar'>
-                                    <img src='".assets("uploads/community/$val->image_name")."'>
+                                    <img src='".assets("uploads/community/$image->name")."'>
                                 </div>
                                 <div class='jwjcard-group-text'>
                                     <h4 class='text-capitalize'>$val->name</h4>
@@ -81,27 +101,8 @@ class CommunityController extends Controller
                         </div>
                         <div class='jwjcard-body'>
                             <div class='admincommunity-text'>$role Community</div>
-                            <div id='communitycarousel' class='communitycarousel owl-carousel owl-theme'>
-                                <div class='item'>
-                                    <div class='community-media'>
-                                        <img src='".assets('assets/images/no-image.jpg')."'>
-                                    </div>
-                                </div>
-                                <div class='item'>
-                                    <div class='community-media'>
-                                        <img src='".assets('assets/images/1.png')."'>
-                                    </div>
-                                </div>
-                                <div class='item'>
-                                    <div class='community-media'>
-                                        <img src='".assets('assets/images/2.png')."'>
-                                    </div>
-                                </div>
-                                <div class='item'>
-                                    <div class='community-media'>
-                                        <img src='".assets('assets/images/3.png')."'>
-                                    </div>
-                                </div>
+                            <div id='communitycarousel' class='communitycarousels owl-carousel owl-theme'>
+                                $image_html
                             </div>
 
                             <div class='row'>
@@ -235,9 +236,10 @@ class CommunityController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            $imgs = CommunityImage::where('community_id', $id)->get();
             $follow = UserFollowedCommunity::where('community_id', $id)->orderByDesc('id')->get();
-            return view('pages.admin.community.details')->with(compact('data', 'follow'));
+            return view('pages.admin.community.details')->with(compact('data', 'follow', 'imgs'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -249,7 +251,7 @@ class CommunityController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0)->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0)->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }
@@ -261,6 +263,23 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
+                    $imgs = CommunityImage::where('community_id', $val->id)->get();
+                    $image_html = "";
+                    foreach($imgs as $name){
+                        $image_html .= "<div class='item'>
+                        <div class='community-approval-media'>
+                                <img src='".assets("uploads/community/$name->name")."'>
+                            </div>
+                        </div>";
+                    }
+                    if($image_html == "") {
+                        $image_html = "<div class='item'>
+                        <div class='community-approval-media'>
+                                <img src='".assets('assets/images/no-image.jpg')."'>
+                            </div>
+                        </div>";
+                    }
+
                     $html .= "<div class='col-md-4'>
                     <div class='jwj-community-approval-card'>
                         <div class='jwjcard-head'>
@@ -276,12 +295,8 @@ class CommunityController extends Controller
                                 <a class='managecommunity-btn' href='".route('admin.community-management.approval-details', encrypt_decrypt('encrypt', $val->id))."'>View Community</a>
                             </div>
                         </div>
-                        <div id='communitycarous' class='communitycarous1 owl-carouse owl-them'>
-                            <div class='item'>
-                                <div class='community-approval-media'>
-                                    <img src='".assets("uploads/community/$val->image_name")."'>
-                                </div>
-                            </div>
+                        <div id='communitycarousel1' class='communitycarousel1 owl-carousel owl-theme'>
+                            $image_html
                         </div>
                         <div class='jwjcard-body'>
                             <div class='admincommunity-text'>User Community</div>
@@ -315,7 +330,8 @@ class CommunityController extends Controller
         try {
             $id = encrypt_decrypt('decrypt', $id);
             $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
-            return view('pages.admin.community.approval-details')->with(compact('data'));
+            $imgs = CommunityImage::where('community_id', $id)->get();
+            return view('pages.admin.community.approval-details')->with(compact('data', 'imgs'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -327,7 +343,7 @@ class CommunityController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
                 if($request->filled('search')){
                     $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
                 }
@@ -339,6 +355,23 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
+                    $imgs = CommunityImage::where('community_id', $val->id)->get();
+                    $image_html = "";
+                    foreach($imgs as $name){
+                        $image_html .= "<div class='item'>
+                        <div class='community-approval-media'>
+                                <img src='".assets("uploads/community/$name->name")."'>
+                            </div>
+                        </div>";
+                    }
+                    if($image_html == "") {
+                        $image_html = "<div class='item'>
+                        <div class='community-approval-media'>
+                                <img src='".assets('assets/images/no-image.jpg')."'>
+                            </div>
+                        </div>";
+                    }
+
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
                     $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
@@ -357,12 +390,8 @@ class CommunityController extends Controller
                                 <a class='managecommunity-btn' href='".route('admin.community-management.approval-details', encrypt_decrypt('encrypt', $val->id))."'>View Community</a>
                             </div>
                         </div>
-                        <div id='communitycarous' class='communitycarous1 owl-carouse owl-them'>
-                            <div class='item'>
-                                <div class='community-approval-media'>
-                                    <img src='".assets("uploads/community/$val->image_name")."'>
-                                </div>
-                            </div>
+                        <div id='communitycarousel1' class='communitycarousel1 owl-carousel owl-theme'>
+                            $image_html
                         </div>
                         <div class='jwjcard-body'>
                             <div class='admincommunity-text'>User Community</div>
