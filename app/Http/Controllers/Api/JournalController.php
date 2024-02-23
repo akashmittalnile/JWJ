@@ -181,7 +181,7 @@ class JournalController extends Controller
                 'title' => 'required',
                 'content' => 'required',
                 'mood_id' => 'required',
-                'file' => 'required',
+                'file' => 'required|array',
                 'criteria' => 'required|array',
             ]);
             if ($validator->fails()) {

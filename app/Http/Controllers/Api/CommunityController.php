@@ -52,14 +52,26 @@ class CommunityController extends Controller
             $response = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
-                $follow = UserFollowedCommunity::where('community_id', $val->id)->count();
+                $followCount = UserFollowedCommunity::where('community_id', $val->id)->count();
+                $follow = UserFollowedCommunity::where('community_id', $val->id)->orderByDesc('id')->limit(3)->get();
+                $memberImage = array();
+                foreach($follow as $items){
+                    $followedUser = User::where('id', $items->userid)->first();
+                    array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
+                }
+                $imgs = CommunityImage::where('community_id', $val->id)->get();
+                $images = array();
+                foreach($imgs as $item){
+                    array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                }
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
-                $temp['image'] = isset($val->image_name) ? assets("uploads/community/".$val->image_name) : null;
+                $temp['image'] = $images;
                 $temp['follow'] = isset($ufc->id) ? true : false;
-                $temp['member_follow_count'] = $follow ?? 0;
+                $temp['member_follow_count'] = $followCount ?? 0;
+                $temp['member_image'] = $memberImage;
                 $temp['plan_name'] = $val->plan_name;
                 $temp['plan_monthly_price'] = $val->monthly_price;
                 $temp['plan_anually_price'] = $val->anually_price;
@@ -81,15 +93,27 @@ class CommunityController extends Controller
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id)){
                     $post = Post::where('community_id', $data->id)->get();
-                    $follow = UserFollowedCommunity::where('community_id', $data->id)->count();
+                    $followCount = UserFollowedCommunity::where('community_id', $data->id)->count();
+                    $follow = UserFollowedCommunity::where('community_id', $data->id)->orderByDesc('id')->limit(3)->get();
+                    $memberImage = array();
+                    foreach($follow as $items){
+                        $followedUser = User::where('id', $items->userid)->first();
+                        array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
+                    }
+                    $imgs = CommunityImage::where('community_id', $data->id)->get();
+                    $images = array();
+                    foreach($imgs as $item){
+                        array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                    }
                     $response = [
                         'id' => $data->id,
                         'name' => $data->name,
                         'description' => $data->description,
                         'status' => $data->status,
-                        'image' => isset($data->image_name) ? assets("uploads/community/".$data->image_name) : null,
+                        'image' => $images,
                         'follow' => isset($ufc->id) ? true : false,
-                        'member_follow_count' => $follow ?? 0,
+                        'member_follow_count' => $followCount ?? 0,
+                        'member_image' => $memberImage,
                         'plan_name' => $data->plan_name,
                         'plan_monthly_price' => $data->monthly_price,
                         'plan_anually_price' => $data->anually_price,
@@ -110,8 +134,7 @@ class CommunityController extends Controller
         try{
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
-                'file' => 'required',
-                'images' => 'required',
+                'file' => 'required|array',
                 'description' => 'required',
             ]);
             if ($validator->fails()) {
@@ -184,31 +207,33 @@ class CommunityController extends Controller
                 'community_id' => 'required',
                 'title' => 'required',
                 'description' => 'required',
-                'file' => 'required',
+                'file' => 'required|array',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $post = new Post;
-                $post->community_id = $request->community_id;
-                $post->title = $request->title;
-                $post->post_description = $request->description;
-                $post->created_by = auth()->user()->id;
-                $post->save();
+                $ufc = UserFollowedCommunity::where('community_id', $request->community_id)->where('userid', auth()->user()->id)->first();
+                if(isset($ufc->id)){
+                    $post = new Post;
+                    $post->community_id = $request->community_id;
+                    $post->title = $request->title;
+                    $post->post_description = $request->description;
+                    $post->created_by = auth()->user()->id;
+                    $post->save();
 
-                if ($request->hasFile("file")) {
-                    foreach ($request->file('file') as $value) {
-                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
-                        $value->move("public/uploads/community/post", $name);
-                        $postImage = new PostImage;
-                        $postImage->post_id = $post->id;
-                        $postImage->name = $name;
-                        $postImage->type = 'image';
-                        $postImage->save();
+                    if ($request->hasFile("file")) {
+                        foreach ($request->file('file') as $value) {
+                            $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
+                            $value->move("public/uploads/community/post", $name);
+                            $postImage = new PostImage;
+                            $postImage->post_id = $post->id;
+                            $postImage->name = $name;
+                            $postImage->type = 'image';
+                            $postImage->save();
+                        }
                     }
-                }
-
-                return successMsg('New post created successfully.');
+                    return successMsg('New post created successfully.');
+                } else return errorMsg('Please follow community first.');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
