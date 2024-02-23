@@ -48,6 +48,23 @@ class UserController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to capture the mood of user in daily basis like :- happy, sad etc
+    public function moodCapture(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'mood_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to submit the rating
     public function submitRating(Request $request) {
         try{

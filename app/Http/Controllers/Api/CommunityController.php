@@ -241,7 +241,7 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to create a post by user
+    // This function is used to get the details of posts in community
     public function postDetails($id) {
         try{
             $post = Post::where('id', $id)->first();
