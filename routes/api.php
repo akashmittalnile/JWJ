@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('home', [UserController::class, 'home']);
     Route::post('mood-capture', [UserController::class, 'moodCapture']);
+    Route::get('mood-calender', [UserController::class, 'moodCalender']);
     Route::post('submit-rating', [UserController::class, 'submitRating']);
 
     Route::get('profile', [AuthController::class, 'profile']);

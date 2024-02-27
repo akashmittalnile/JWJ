@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\MoodMaster;
+use Carbon\Carbon;
 use App\Models\Plan;
 use App\Models\Rating;
 use App\Models\UserMood;
@@ -58,11 +59,47 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                $now = Carbon::now();
+                $isExist = UserMood::where('user_id', auth()->user()->id)->whereDate('created_at', $now)->first();
+                if(isset($isExist->id)){
+                    $isExist->mood_id = $request->mood_id;
+                    $isExist->save();
+                    return successMsg('Mood captured');
+                }
                 $mood = new UserMood;
                 $mood->mood_id = $request->mood_id;
                 $mood->user_id = auth()->user()->id;
                 $mood->save();
                 return successMsg('Mood captured');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to capture the mood of user in daily basis like :- happy, sad etc
+    public function moodCalender(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'month' => 'required',
+                'year' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $data = UserMood::whereMonth('created_at', $request->month)->whereYear('created_at', $request->year)->where('user_id', auth()->user()->id)->get();
+                $response = array();
+                foreach($data as $val){
+                    $mood = MoodMaster::where('id', $val->mood_id)->first();
+                    $temp['id'] = $val->id;
+                    $temp['mood_id'] = $val->mood_id;
+                    $temp['mood_image'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
+                    $temp['date'] = date('d', strtotime($val->created_at));
+                    $temp['month'] = date('m', strtotime($val->created_at));
+                    $response[] = $temp;
+                }
+                return successMsg('Mood calender', $response);
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
