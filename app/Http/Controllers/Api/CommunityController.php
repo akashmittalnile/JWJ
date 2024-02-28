@@ -92,7 +92,7 @@ class CommunityController extends Controller
             if(isset($data->id)){
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id)){
-                    $post = Post::where('community_id', $data->id)->get();
+                    $posts = Post::where('community_id', $data->id)->get();
                     $followCount = UserFollowedCommunity::where('community_id', $data->id)->count();
                     $follow = UserFollowedCommunity::where('community_id', $data->id)->orderByDesc('id')->limit(3)->get();
                     $memberImage = array();
@@ -104,6 +104,23 @@ class CommunityController extends Controller
                     $images = array();
                     foreach($imgs as $item){
                         array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                    }
+                    $post = array();
+                    foreach($posts as $item){
+                        $img = PostImage::where('post_id', $item->id)->get();
+                        $user = User::where('id', $item->created_by)->first();
+                        $image = array();
+                        foreach($img as $val){
+                            array_push($image, assets("uploads/community/post/".$val->name));
+                        }
+                        $temp['id'] = $item->id;
+                        $temp['title'] = $item->title;
+                        $temp['description'] = $item->post_description;
+                        $temp['image'] = $image;
+                        $temp['posted_by_name'] = $user->name;
+                        $temp['posted_by_user_name'] = $user->user_name;
+                        $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
+                        $post[] = $temp;
                     }
                     $response = [
                         'id' => $data->id,
@@ -261,7 +278,8 @@ class CommunityController extends Controller
                     'community_id' => $post->community_id,
                     'community_title' => $community->name,
                     'community_description' => $community->description,
-                    'posted_by' => $user->name,
+                    'posted_by_name' => $user->name,
+                    'posted_by_user_name' => $user->user_name,
                     'created_at' => date('d M, Y h:i A', strtotime($post->created_at)),
                 );
                 return successMsg('Post details', $response);
