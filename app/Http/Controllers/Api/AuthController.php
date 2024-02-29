@@ -135,6 +135,11 @@ class AuthController extends Controller
                     if($user->status == 1){
                         if (Hash::check($request->password, $user->password)) {
                             $token = $user->createToken("journey_with_journals")->plainTextToken;
+                            if(isset($request->fcm_token)){
+                                User::where('email', $request->email)->where('id', $user->id)->update([
+                                    'fcm_token' => $request->fcm_token
+                                ]);
+                            }
                             $response = array('user' => [
                                 'id' => $user->id,
                                 'name' => $user->name,
@@ -145,6 +150,7 @@ class AuthController extends Controller
                                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                                 'role' => $user->role,
                                 'status' => $user->status,
+                                'fcm_token' => $user->fcm_token,
                                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
                             ], 'access_token' => $token);
                             return successMsg('Logged In Successfully.', $response);
@@ -246,6 +252,7 @@ class AuthController extends Controller
                 'mobile' => $user->mobile ?? null,
                 'role' => $user->role,
                 'status' => $user->status,
+                'fcm_token' => $user->fcm_token,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at))
             ];

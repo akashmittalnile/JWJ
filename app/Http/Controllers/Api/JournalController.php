@@ -61,10 +61,11 @@ class JournalController extends Controller
     // This function is used to show the list of journals
     public function journal(Request $request) {
         try{
-            $journal = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id');
+            $journal = Journal::where('journals.created_by', auth()->user()->id);
             if($request->filled('title')) $journal->where('journals.title', 'LIKE', '%'.$request->title.'%');
             if($request->filled('status')) $journal->where('journals.status', $request->status);
             if($request->filled('mood_id')) $journal->where('journals.mood_id', $request->mood_id);
+            if($request->filled('date')) $journal->whereDate('journals.created_at', $request->date);
             if($request->filled('search_criteria_id')) $journal->whereIn('jsc.search_id', $request->search_criteria_id);
             $journal = $journal->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
             $response = array();
@@ -107,7 +108,7 @@ class JournalController extends Controller
     // This function is used to get the details of particular journal
     public function journalDetails($id) {
         try{
-            $journal = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id')->where('journals.id', $id)->first();
+            $journal = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id')->where('journals.id', $id)->select('journals.*')->first();
             if(isset($journal->id)){
                 $imgs = JournalImage::where('journal_id', $journal->id)->get();
                 $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $journal->id)->select('sc.id', 'sc.name')->get();
@@ -192,6 +193,7 @@ class JournalController extends Controller
                 $journal->content = $request->content;
                 $journal->mood_id = $request->mood_id;
                 $journal->status = 1;
+                $journal->created_by = auth()->user()->id;
                 $journal->save();
 
                 if ($request->hasFile("file")) {
@@ -215,7 +217,7 @@ class JournalController extends Controller
                         $journalCriteria->save();
                     }
                 }
-                return successMsg('New journal created successfully.');
+                return successMsg('New journal created successfully.', $journal);
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

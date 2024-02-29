@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Community;
+use App\Models\CommunityImage;
+use App\Models\Journal;
+use App\Models\JournalImage;
+use App\Models\JournalSearchCriteria;
 use App\Models\MoodMaster;
 use Carbon\Carbon;
 use App\Models\Plan;
 use App\Models\Rating;
+use App\Models\User;
+use App\Models\UserFollowedCommunity;
 use App\Models\UserMood;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,13 +28,13 @@ class UserController extends Controller
             $mood = MoodMaster::where('status', 1)->get();
             $moods = array();
             foreach($mood as $val){
-                $temp['id'] = $val->id;
-                $temp['name'] = $val->name;
-                $temp['logo'] = isset($val->logo) ? assets('assets/images/'.$val->logo) : null;
-                $temp['status'] = $val->status;
-                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
-                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
-                $moods[] = $temp;
+                $moodtemp['id'] = $val->id;
+                $moodtemp['name'] = $val->name;
+                $moodtemp['logo'] = isset($val->logo) ? assets('assets/images/'.$val->logo) : null;
+                $moodtemp['status'] = $val->status;
+                $moodtemp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $moodtemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
+                $moods[] = $moodtemp;
             }
             $user = Auth::user();
             $mydata = [
@@ -41,8 +48,89 @@ class UserController extends Controller
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at))
             ];
+            $journal = Journal::where('journals.created_by', auth()->user()->id)->select('journals.*')->orderByDesc('journals.id')->limit(5)->distinct('journals.id')->get();
+            $journals = array();
+            foreach($journal as $val){
+                $imgs = JournalImage::where('journal_id', $val->id)->get();
+                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $val->id)->select('sc.id', 'sc.name')->get();
+                $mood = MoodMaster::where('id', $val->mood_id)->first();
+                $path = array();
+                foreach($imgs as $item){
+                    $journaltemp1['id'] = $item->id;
+                    $journaltemp1['img_path'] = isset($item->name) ? assets('uploads/journal/'.$item->name) : null;
+                    $path[] = $journaltemp1;
+                }
+                $search = array();
+                foreach($criteria as $item){
+                    $journaltemp2['id'] = $item->id;
+                    $journaltemp2['name'] = $item->name;
+                    $search[] = $journaltemp2;
+                }
+                $journaltemp['id'] = $val->id;
+                $journaltemp['title'] = $val->title;
+                $journaltemp['content'] = $val->content;
+                $journaltemp['status'] = $val->status;
+                $journaltemp['mood_id'] = $val->mood_id;
+                $journaltemp['mood_name'] = $mood->name;
+                $journaltemp['mood_logo'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
+                $journaltemp['images'] = $path;
+                $journaltemp['search_criteria'] = $search;
+                $journaltemp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $journaltemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
+                $journals[] = $journaltemp;
+            }
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('communities.status', 1)->limit(5)->orderByDesc('communities.id')->get();
+            $community = [];
+            foreach($data as $val){
+                $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
+                $followCount = UserFollowedCommunity::where('community_id', $val->id)->count();
+                $follow = UserFollowedCommunity::where('community_id', $val->id)->orderByDesc('id')->limit(3)->get();
+                $memberImage = array();
+                foreach($follow as $items){
+                    $followedUser = User::where('id', $items->userid)->first();
+                    array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
+                }
+                $imgs = CommunityImage::where('community_id', $val->id)->get();
+                $images = array();
+                foreach($imgs as $item){
+                    array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                }
+                $communitytemp['id'] = $val->id;
+                $communitytemp['name'] = $val->name;
+                $communitytemp['description'] = $val->description;
+                $communitytemp['status'] = $val->status;
+                $communitytemp['image'] = $images;
+                $communitytemp['follow'] = isset($ufc->id) ? true : false;
+                $communitytemp['member_follow_count'] = $followCount ?? 0;
+                $communitytemp['member_image'] = $memberImage;
+                $communitytemp['plan_name'] = $val->plan_name;
+                $communitytemp['plan_monthly_price'] = $val->monthly_price;
+                $communitytemp['plan_anually_price'] = $val->anually_price;
+                $communitytemp['plan_price_currency'] = $val->currency;
+                $community[] = $communitytemp;
+            }
             $plan = Plan::where('monthly_price', '0')->first();
-            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name]);
+            $moodCalen = UserMood::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('user_id', auth()->user()->id)->get();
+            $calender = array();
+            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
+            foreach($moodCalen as $val){
+                $mood = MoodMaster::where('id', $val->mood_id)->first();
+                if($mood->code=='happy') $happyCount ++;
+                elseif($mood->code=='sad') $sadCount ++;
+                elseif($mood->code=='anger') $angerCount ++;
+                else $anxietyCount ++;
+                $calendertemp['id'] = $val->id;
+                $calendertemp['mood_id'] = $val->mood_id;
+                $calendertemp['mood_name'] = $mood->name;
+                $calendertemp['mood_image'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
+                $calendertemp['date'] = date('d', strtotime($val->created_at));
+                $calendertemp['month'] = date('m', strtotime($val->created_at));
+                $calender[] = $calendertemp;
+            }
+            if(count($moodCalen) > 0)
+                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($moodCalen), 2, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($moodCalen), 2, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($moodCalen), 2, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($moodCalen), 2, '.', '')];
+            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
+            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood]);
             return successMsg('Home', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -94,6 +182,7 @@ class UserController extends Controller
                     $mood = MoodMaster::where('id', $val->mood_id)->first();
                     $temp['id'] = $val->id;
                     $temp['mood_id'] = $val->mood_id;
+                    $temp['mood_name'] = $mood->name;
                     $temp['mood_image'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
                     $temp['date'] = date('d', strtotime($val->created_at));
                     $temp['month'] = date('m', strtotime($val->created_at));
