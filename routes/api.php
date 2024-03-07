@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommunityController;
 use App\Http\Controllers\Api\JournalController;
+use App\Http\Controllers\Api\RoutineController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -53,6 +54,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-community', [CommunityController::class, 'createCommunity']);
     Route::post('create-post', [CommunityController::class, 'createPost']);
     Route::get('post/{id}', [CommunityController::class, 'postDetails']);
+
+
+    Route::get('routine-category', [RoutineController::class, 'routineCategory']);
+    Route::get('routine', [RoutineController::class, 'routine']);
+    Route::post('create-routine', [RoutineController::class, 'createRoutine']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');
