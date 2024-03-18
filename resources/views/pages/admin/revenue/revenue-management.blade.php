@@ -26,23 +26,17 @@
                 <div class="row g-1">
                     <div class="col-md-3">
                         <div class="form-group">
-                            <div class="TotalRequestoverview"><img src="{{ assets('assets/images/dollar-circle.svg') }}"> Total Request Received: <span>${{ number_format((float)$paymentReceived, 2, '.', '') }}</span> </div>
+                            <div class="TotalRequestoverview"><img src="{{ assets('assets/images/dollar-circle.svg') }}"> Total Amount Received: <span>${{ number_format((float)$paymentReceived, 2, '.', '') }}</span> </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input type="date" name="" class="form-control">
                         </div>
                     </div>
                     <div class="col-md-2">
                         <!-- <div class="form-group">
                             <a href="javascript:void(0)" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
-                        </div> -->
-                    </div>
-
-                    <div class="col-md-1">
-                        <!-- <div class="form-group">
-                            <input type="date" name="" class="form-control">
-                        </div> -->
-                    </div>
-                    <div class="col-md-1">
-                        <!-- <div class="form-group">
-                            <input type="month" name="" class="form-control">
                         </div> -->
                     </div>
                     <div class="col-md-1">

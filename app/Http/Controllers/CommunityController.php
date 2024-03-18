@@ -111,14 +111,14 @@ class CommunityController extends Controller
                                         <div class='User-contact-info-content'>
                                             <h2>Status</h2>
                                             <div class='switch-toggle'>
-                                                <p>Inactive</p>
+                                                <p style='color: #8C9AA1;'>Inactive</p>
                                                 <div class=''>
                                                     <label class='toggle' for='myToggle".$val->id."'>
                                                         <input data-id='".encrypt_decrypt('encrypt', $val->id)."' class='toggle__input' name='status".$val->id."' $checked type='checkbox' id='myToggle".$val->id."'>
                                                         <div class='toggle__fill'></div>
                                                     </label>
                                                 </div>
-                                                <p>Active</p>
+                                                <p style='color: #8C9AA1;'>Active</p>
                                             </div>
                                         </div>
                                     </div>
@@ -142,7 +142,7 @@ class CommunityController extends Controller
                                 <div class='jwjcard-member-info'>
                                     $mem_html
                                 </div>
-                                <p>$followcount Member Follows</p>
+                                <p>$followcount Followers</p>
                             </div>
                             $plan_html
                         </div>

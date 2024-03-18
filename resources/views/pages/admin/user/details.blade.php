@@ -10,7 +10,12 @@
     <h4>User Details</h4>
     <div class="search-filter wd3">
         <div class="row g-1">
-            <div class="col-md-12">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <a href="{{ route('admin.users.list') }}" class="btn-bl">Back</a>
+                </div>
+            </div>
+            <div class="col-md-8">
                 <div class="form-group">
                     <a href="{{ route('admin.community-management.list') }}" class="btn-bl">VIEW ALL CREATED COMMUNITY</a>
                 </div>
@@ -73,14 +78,14 @@
                                 <div class="User-contact-info-content">
                                     <h2>Mark as</h2>
                                     <div class="switch-toggle">
-                                        <p>Inactive</p>
+                                        <p style="color: #8C9AA1;">Inactive</p>
                                         <div class="">
                                             <label class="toggle" for="myToggle">
                                                 <input class="toggle__input" value="1" name="status" @if($user->status==1) checked @endif type="checkbox" id="myToggle">
                                                 <div class="toggle__fill"></div>
                                             </label>
                                         </div>
-                                        <p>Active</p>
+                                        <p style="color: #8C9AA1;">Active</p>
                                     </div>
                                 </div>
                             </div>

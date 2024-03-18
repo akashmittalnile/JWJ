@@ -10,7 +10,12 @@
     <h4>Manage Subscription Plan</h4>
     <div class="search-filter wd2">
         <div class="row g-1">
-            <div class="col-md-12">
+            <div class="col-md-5">
+                <div class="form-group">
+                    <a href="{{ route('admin.revenue-management.list') }}" class="btn-bl">Back</a>
+                </div>
+            </div>
+            <div class="col-md-7">
                 <div class="form-group">
                     <a href="{{ route('admin.revenue-management.plans') }}" class="btn-bl">Sync Plan</a>
                 </div>
@@ -62,7 +67,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <a class="Buy-btn" id="editPlan" data-id="{{encrypt_decrypt('encrypt', $val->id)}}">Edit Plan</a>
+                            <a style="cursor: pointer;" class="Buy-btn" id="editPlan" data-id="{{encrypt_decrypt('encrypt', $val->id)}}">Edit Plan</a>
                         </div>
                     </div>
                 </div>
@@ -266,7 +271,7 @@
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Discard</button>
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
                                     <button type="submit" class="save-btn">Save Change</button>
                                 </div>
                             </div>
@@ -282,6 +287,11 @@
 
 @push('js')
 <script>
+    $('#EditPlan').on('hidden.bs.modal', function(e) {
+        $("input[name='community']").removeAttr('checked');
+        $(this).find('form').trigger('reset');
+    })
+
     $('#updatePlan').validate({
         rules: {
             entries: {
@@ -373,9 +383,6 @@
                 _token: "{{ csrf_token() }}"
             },
             dataType: 'json',
-            beforeSend: function() {
-                $("#preloader").show()
-            },
             success: function(result) {
                 console.log(result);
                 if (result.status) {
@@ -385,15 +392,12 @@
                     $("input[name='words']").val(result.data.words);
                     $("input[name='routine']").val(result.data.routines);
                     $("input[name='picture']").val(result.data.picture_per_day);
-                    $(`input[id='community${result.data.community}']`).attr('checked', true);
+                    $("#community"+ result.data.community).attr('checked', true);
                     $("#EditPlan").modal('show');
                 } else {
                     toastr.error(result.message);
                     return false;
                 }
-            },
-            complete: function() {
-                $("#preloader").hide()
             },
             error: function(data, textStatus, errorThrown) {
                 jsonValue = jQuery.parseJSON(data.responseText);

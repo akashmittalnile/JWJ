@@ -12,7 +12,7 @@
         <div class="row g-1">
             <div class="col-md-2">
                 <div class="form-group">
-                    <a style="padding: 6px 17px;" data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="btn-bl">Add New Community</a>
+                    <a style="padding: 6px 17px; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="btn-bl">Add New Community</a>
                 </div>
             </div>
 
@@ -101,8 +101,8 @@
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Discard</button>
-                                    <button type="submit" class="save-btn">Save</button>
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="save-btn">Add</button>
                                 </div>
                             </div>
                         </div>
@@ -116,6 +116,10 @@
 
 @push('js')
 <script>
+    $('#addnewcommunity').on('hidden.bs.modal', function(e) {
+        $(this).find('form').trigger('reset');
+    })
+
     $('#newCommunity').validate({
         rules: {
             title: {

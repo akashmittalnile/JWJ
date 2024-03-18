@@ -242,6 +242,9 @@
                 dataType: 'json',
                 contentType: false,
                 processData: false,
+                beforeSend: function() {
+                    $("#preloader").show()
+                },
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);
@@ -251,6 +254,9 @@
                         toastr.error(response.message);
                         return false;
                     }
+                },
+                complete: function() {
+                    $("#preloader").hide()
                 },
                 error: function(data, textStatus, errorThrown) {
                     jsonValue = jQuery.parseJSON( data.responseText );
@@ -318,6 +324,9 @@
                 dataType: 'json',
                 contentType: false,
                 processData: false,
+                beforeSend: function() {
+                    $("#preloader").show()
+                },
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);
@@ -327,6 +336,9 @@
                         toastr.error(response.message);
                         return false;
                     }
+                },
+                complete: function() {
+                    $("#preloader").hide()
                 },
                 error: function(data, textStatus, errorThrown) {
                     jsonValue = jQuery.parseJSON( data.responseText );

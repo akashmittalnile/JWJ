@@ -33,7 +33,9 @@
                                 </div>
                                 <div class="post-member-text">
                                     <h3>{{ $data->user_name ?? 'NA' }}</h3>
+                                    @if($data->role!=2)
                                     <div class="post-member-plan"><img src="{{ assets('assets/images/freeplan.svg') }}"> Plan A member</div>
+                                    @endif
                                 </div>
                             </div>
                             <div class="jwjcard-group-action">
@@ -50,7 +52,7 @@
                                         @empty
                                         @endforelse
                                     </div>
-                                    <p>{{ count($follow) }} Member Follows</p>
+                                    <p>{{ count($follow) }} Followers</p>
                                 </div>
                             </div>
                         </div>
@@ -135,7 +137,7 @@
                             @empty
                             <div class="sidebar-member-item" style="border: none;">
                                 <div class="mx-auto">
-                                    No member follows
+                                    No followers
                                 </div>
                             </div>
                             @endforelse
