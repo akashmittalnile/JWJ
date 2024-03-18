@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
 
     Route::get('home', [UserController::class, 'home']);
+    Route::get('search', [UserController::class, 'search']);
     Route::post('mood-capture', [UserController::class, 'moodCapture']);
     Route::get('mood-calender', [UserController::class, 'moodCalender']);
     Route::post('submit-rating', [UserController::class, 'submitRating']);
@@ -49,6 +50,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-journal', [JournalController::class, 'createJournal']);
 
     Route::get('community-list', [CommunityController::class, 'communityList']);
+    Route::get('my-community-list', [CommunityController::class, 'myCommunityList']);
     Route::get('community/{id}', [CommunityController::class, 'communityDetails']);
     Route::post('follow-unfollow', [CommunityController::class, 'followUnfollow']);
     Route::post('create-community', [CommunityController::class, 'createCommunity']);

@@ -29,7 +29,7 @@
                         <div class="jwj-posts-head">
                             <div class="post-member-item">
                                 <div class="post-member-image">
-                                    <img src="{{ assets('uploads/profile/'.$data->user_image) }}">
+                                    <img src="{{ isset($data->user_image) ? assets('uploads/profile/'.$data->user_image) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="post-member-text">
                                     <h3>{{ $data->user_name ?? 'NA' }}</h3>

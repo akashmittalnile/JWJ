@@ -85,6 +85,52 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to show all my communities whether its active, pending, inactive & rejected
+    public function myCommunityList(Request $request) {
+        try{
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('created_by', auth()->user()->id);
+            if($request->filled('search')){
+                $data->where('communities.name', 'like', '%' . $request->search . '%');
+            }
+            $data = $data->orderByDesc('communities.id')->get();
+            $response = [];
+            foreach($data as $val){
+                $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
+                $followCount = UserFollowedCommunity::where('community_id', $val->id)->count();
+                $follow = UserFollowedCommunity::where('community_id', $val->id)->orderByDesc('id')->limit(3)->get();
+                $memberImage = array();
+                foreach($follow as $items){
+                    $followedUser = User::where('id', $items->userid)->first();
+                    array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
+                }
+                $imgs = CommunityImage::where('community_id', $val->id)->get();
+                $images = array();
+                foreach($imgs as $item){
+                    array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                }
+                $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
+                $temp['id'] = $val->id;
+                $temp['name'] = $val->name;
+                $temp['description'] = $val->description;
+                $temp['status'] = $val->status;
+                $temp['status_name'] = $status_name;
+                $temp['image'] = $images;
+                $temp['follow'] = isset($ufc->id) ? true : false;
+                $temp['member_follow_count'] = $followCount ?? 0;
+                $temp['member_image'] = $memberImage;
+                $temp['plan_name'] = $val->plan_name;
+                $temp['plan_monthly_price'] = $val->monthly_price;
+                $temp['plan_anually_price'] = $val->anually_price;
+                $temp['plan_price_currency'] = $val->currency;
+                $response[] = $temp;
+            }
+            return successMsg('Community list', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to get the details of community and their posts if user follow
     public function communityDetails($id) {
         try{
@@ -93,6 +139,7 @@ class CommunityController extends Controller
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id)){
                     $posts = Post::where('community_id', $data->id)->get();
+                    $postCount = Post::where('community_id', $data->id)->count();
                     $followCount = UserFollowedCommunity::where('community_id', $data->id)->count();
                     $follow = UserFollowedCommunity::where('community_id', $data->id)->orderByDesc('id')->limit(3)->get();
                     $memberImage = array();
@@ -135,6 +182,7 @@ class CommunityController extends Controller
                         'plan_monthly_price' => $data->monthly_price,
                         'plan_anually_price' => $data->anually_price,
                         'plan_price_currency' => $data->currency,
+                        'post_count' => $postCount ?? 0,
                         'posts' => $post
                     ];
                     return successMsg('Community found', $response);
@@ -195,21 +243,24 @@ class CommunityController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                if($request->status == 1){
-                    $follow = new UserFollowedCommunity;
-                    $follow->userid = auth()->user()->id;
-                    $follow->community_id = $request->community_id;
-                    $follow->save();
-                    return successMsg('Followed');
-                } else {
-                    $isFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->first();
-                    if(isset($isFollow->id)){
-                        UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->delete();
-                        return successMsg('Unfollow');
-                    }else{
-                        return errorMsg("Community not found.");
+                $community = Community::where('id', $request->community_id)->first();
+                if(isset($community->id)){
+                    if($request->status == 1){
+                        $follow = new UserFollowedCommunity;
+                        $follow->userid = auth()->user()->id;
+                        $follow->community_id = $request->community_id;
+                        $follow->save();
+                        return successMsg('You have followed '.$community->name);
+                    } else {
+                        $isFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->first();
+                        if(isset($isFollow->id)){
+                            UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->delete();
+                            return successMsg('You have unfollowed '.$community->name);
+                        }else{
+                            return errorMsg("Community not found.");
+                        }
                     }
-                }
+                } else return errorMsg("Community not found.");
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

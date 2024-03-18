@@ -263,6 +263,7 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
+                    $userProfileImage = isset($val->user_image) ? assets("uploads/profile/$val->user_image") : assets("assets/images/no-image.jpg");
                     $imgs = CommunityImage::where('community_id', $val->id)->get();
                     $image_html = "";
                     foreach($imgs as $name){
@@ -286,7 +287,7 @@ class CommunityController extends Controller
                             <div class='jwjcard-member-item'>
                                 <div class='jwjcard-member-info'>
                                     <span class='jwjcard-member-image image1'>
-                                        <img src='".assets("uploads/profile/$val->user_image")."'>
+                                        <img src='".$userProfileImage."'>
                                     </span>
                                 </div>
                                 <p>$val->user_name</p>
@@ -371,7 +372,7 @@ class CommunityController extends Controller
                             </div>
                         </div>";
                     }
-
+                    $userProfileImage = isset($val->user_image) ? assets("uploads/profile/$val->user_image") : assets("assets/images/no-image.jpg");
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
                     $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
@@ -381,7 +382,7 @@ class CommunityController extends Controller
                             <div class='jwjcard-member-item'>
                                 <div class='jwjcard-member-info'>
                                     <span class='jwjcard-member-image image1'>
-                                        <img src='".assets("uploads/profile/$val->user_image")."'>
+                                        <img src='".$userProfileImage."'>
                                     </span>
                                 </div>
                                 <p>$val->user_name</p>
