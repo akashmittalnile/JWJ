@@ -22,7 +22,7 @@ class CommunityController extends Controller
             if($request->ajax()){
                 $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
                 if($request->filled('search')){
-                    $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
+                    $data->whereRaw("(`communities`.`name` = '" . $request->search . "' or `u`.`name` = '" . $request->search . "' or `u`.`email` = '" . $request->search . "' or `u`.`mobile` = '" . $request->search . "')");
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role);
@@ -250,12 +250,12 @@ class CommunityController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0)->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0);
                 if($request->filled('search')){
-                    $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
+                    $data->whereRaw("(`communities`.`name` = '" . $request->search . "' or `u`.`name` = '" . $request->search . "' or `u`.`email` = '" . $request->search . "' or `u`.`mobile` = '" . $request->search . "')");
                 }
                 if($request->filled('role')){
-                    $data->where('u.role', $request->role);
+                    $data->where('u.role', $request->role)->orderByDesc('communities.id');
                 }
 
                 $data = $data->paginate(config('constant.communityPerPage'));
@@ -345,7 +345,7 @@ class CommunityController extends Controller
             if($request->ajax()){
                 $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
                 if($request->filled('search')){
-                    $data->where('communities.name', 'like', '%' . $request->search . '%')->orWhere('u.name', 'like', '%' . $request->search . '%')->orWhere('u.email', 'like', '%' . $request->search . '%')->orWhere('u.mobile', 'like', '%' . $request->search . '%');
+                    $data->whereRaw("(`communities`.`name` = '" . $request->search . "' or `u`.`name` = '" . $request->search . "' or `u`.`email` = '" . $request->search . "' or `u`.`mobile` = '" . $request->search . "')");
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role);

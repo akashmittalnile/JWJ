@@ -10,13 +10,17 @@
     <h4>New Community Approval</h4>
     <div class="search-filter wd7">
         <div class="row g-1">
+            <div class="col-md-2">
+                <div class="form-group">
+                    <a href="{{ route('admin.community-management.list') }}" class="btn-bl">Back</a>
+                </div>
+            </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <a href="{{ route('admin.community-management.rejected') }}" class="btn-bl">View All Rejected Community</a>
                 </div>
             </div>
-
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <div class="form-group">
                     <div class="search-form-group">
                         <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by community name, user name, email or phone no.">
