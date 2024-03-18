@@ -282,7 +282,7 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $days = getMonthDate(date('m', strtotime($request->month)), date('Y', strtotime($request->year)));
+                $days = getMonthDate($request->month, date('Y', strtotime($request->year)));
                 
                 $response = array();
                 for($i=1; $i<=$days; $i++){

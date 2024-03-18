@@ -3,6 +3,52 @@
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
 use App\Models\User;
+use Illuminate\Support\Facades\File;
+
+// Dev name : Dishant Gupta
+// This function is used to push notification using firebase
+if (!function_exists('sendNotification')) {
+    function sendNotification($token, $data)
+    {
+        $url = 'https://fcm.googleapis.com/fcm/send';
+        $serverKey = env('FIREBASE_SERVER_KEY'); // ADD SERVER KEY HERE PROVIDED BY FCM
+        $msg = array(
+            'body'  => $data['msg'],
+            'title' => $data['title'] ?? "ARKANSAS",
+            'icon'  => "{{ asset('assets/website-images/logo-2.png') }}", //Default Icon
+            'sound' => 'default'
+        );
+        $arr = array(
+            'to' => $token,
+            'notification' => $msg,
+            'data' => $data,
+            "priority" => "high"
+        );
+        $encodedData = json_encode($arr);
+        $headers = [
+            'Authorization:key=' . $serverKey,
+            'Content-Type: application/json',
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+        // Disabling SSL Certificate support temporarly
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
+        // Execute post
+        $result = curl_exec($ch);
+        if ($result === FALSE) {
+            die('Curl failed: ' . curl_error($ch));
+        }
+        // Close connection
+        curl_close($ch);
+    }
+}
 
 // Dev name : Dishant Gupta
 // This function is used to encrypt decrypt data
@@ -47,7 +93,7 @@ if (!function_exists('errorMsg')) {
 if (!function_exists('assets')) {
     function assets($path)
     {
-        return asset('public/'.$path);
+        return asset('public/' . $path);
     }
 }
 
@@ -89,8 +135,8 @@ if (!function_exists('sendMail')) {
 if (!function_exists('emailExist')) {
     function emailExist($email)
     {
-        $exist = User::where('email', $email)->whereIn('status', [0,1,2,3])->first();
-        if(isset($exist->id)) return true;
+        $exist = User::where('email', $email)->whereIn('status', [0, 1, 2, 3])->first();
+        if (isset($exist->id)) return true;
         else false;
     }
 }
@@ -100,12 +146,33 @@ if (!function_exists('emailExist')) {
 if (!function_exists('getMonthDate')) {
     function getMonthDate($month, $year)
     {
-        if ($month == "02") {
+        if ($month == "02" || $month == "2") {
             if ($year % 4 == 0) return 29;
             else return 28;
-        } else if ($month == "01" || $month == "03" || $month == "05" || $month == "07" || $month == "08" || $month == "10" || $month == "12") return 31;
+        } else if (($month=="01"||$month=="1") || ($month=="03"||$month=="3") || ($month=="05"||$month=="5") || ($month=="07"||$month=="7") || ($month=="08"||$month=="8") || $month == "10" || $month == "12") return 31;
         else return 30;
     }
 }
 
-?>
+// Dev name : Dishant Gupta
+// This function is used to save a file
+if (!function_exists('fileUpload')) {
+    function fileUpload($file, $path)
+    {
+        $name = $file->getClientOriginalName();
+        $file->move(public_path("$path"), $name);
+        return $name;
+    }
+}
+
+// Dev name : Dishant Gupta
+// This function is used to remove a file
+if (!function_exists('fileRemove')) {
+    function fileRemove($path)
+    {
+        $link = public_path("$path");
+        if (File::exists($link)) {
+            unlink($link);
+        }
+    }
+}

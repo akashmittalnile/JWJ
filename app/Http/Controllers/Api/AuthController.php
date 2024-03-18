@@ -279,18 +279,11 @@ class AuthController extends Controller
                 $user = User::where('id', auth()->user()->id)->first();
                 if(isset($user->id)) {
                     if ($request->hasFile("file")) {
-                        $file = $request->file('file');
-                        $name = "JWJ_" .  time() . rand() . "." . $file->getClientOriginalExtension();
-
                         if(isset($user->profile)){
-                            $link = public_path() . "/uploads/profile/" . $user->profile;
-                            if (file_exists($link)) {
-                                unlink($link);
-                            } 
+                            fileRemove("/uploads/profile/" . $user->profile);
                         }
-
+                        $name = fileUpload($request->file, "/uploads/profile/");
                         $user->profile = $name;
-                        $file->move("public/uploads/profile", $name);
                     }
                     $user->name = ucwords($request->name);
                     $user->user_name = strtolower($request->user_name);

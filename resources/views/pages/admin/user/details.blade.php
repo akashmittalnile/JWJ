@@ -130,28 +130,28 @@
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/happy.png') }}"></div>
                                     <p>Happy</p>
-                                    <h2>0%</h2>
+                                    <h2>{{ ($avgMood['happy'] == 0 || !isset($avgMood['happy'])) ? 0 : $avgMood['happy'] }}%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/sad.png') }}"></div>
                                     <p>Sad</p>
-                                    <h2>0%</h2>
+                                    <h2>{{ ($avgMood['sad'] == 0 || !isset($avgMood['sad'])) ? 0 : $avgMood['sad'] }}%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anger.png') }}"></div>
                                     <p>Anger</p>
-                                    <h2>0%</h2>
+                                    <h2>{{ ($avgMood['anger'] == 0 || !isset($avgMood['anger'])) ? 0 : $avgMood['anger'] }}%</h2>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="feeling-content-item">
                                     <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anxiety.png') }}"></div>
                                     <p>Anxiety</p>
-                                    <h2>0%</h2>
+                                    <h2>{{ ($avgMood['anxiety'] == 0 || !isset($avgMood['anxiety'])) ? 0 : $avgMood['anxiety'] }}%</h2>
                                 </div>
                             </div>
                         </div>

@@ -189,8 +189,7 @@ class CommunityController extends Controller
                 
                 if ($request->hasFile("file")) {
                     foreach ($request->file('file') as $value) {
-                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
-                        $value->move("public/uploads/community", $name);
+                        $name = fileUpload($value, "/uploads/community/");
                         $communityImage = new CommunityImage;
                         $communityImage->community_id = $community->id;
                         $communityImage->name = $name;

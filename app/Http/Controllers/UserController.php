@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MoodMaster;
 use App\Models\User;
 use App\Models\UserMood;
 use App\Models\UserPlan;
@@ -37,7 +38,7 @@ class UserController extends Controller
                         <div class='sno'>$index</div>
                     </td>
                     <td>
-                        <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%; border: 3px solid #1079c0;' src=".$userProfileImage.">
+                        <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%;' src=".$userProfileImage.">
                     </td>
                     <td>
                         $val->user_name
@@ -89,11 +90,19 @@ class UserController extends Controller
             $user = User::where('id', $id)->first();
             $plan = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name')->first();
             $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
-            $moodCalen = UserMood::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('user_id', auth()->user()->id)->get();
-            // if(count($moodCalen) > 0)
-            //     $avgMood = ['happy' => number_format((float)($happyCount*100)/count($moodCalen), 2, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($moodCalen), 2, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($moodCalen), 2, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($moodCalen), 2, '.', '')];
-            // else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
-            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list'));
+            $totalMood = UserMood::where('user_id', $id)->get();
+            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
+            foreach($totalMood as $val){
+                $mood = MoodMaster::where('id', $val->mood_id)->first();
+                if($mood->code=='happy') $happyCount ++;
+                elseif($mood->code=='sad') $sadCount ++;
+                elseif($mood->code=='anger') $angerCount ++;
+                else $anxietyCount ++;
+            }
+            if(count($totalMood) > 0)
+                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
+            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
+            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

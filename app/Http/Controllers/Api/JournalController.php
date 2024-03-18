@@ -161,10 +161,7 @@ class JournalController extends Controller
                 JournalSearchCriteria::where('journal_id', $request->id)->delete();
                 $img = JournalImage::where('journal_id', $request->id)->get();
                 foreach($img as $val){
-                    $link = public_path() . "/uploads/journal/" . $val->name;
-                    if (file_exists($link)) {
-                        unlink($link);
-                    }
+                    fileRemove("/uploads/journal/" . $val->name);
                 }
                 JournalImage::where('journal_id', $request->id)->delete();
                 return successMsg('Journal deleted successfully.');
@@ -198,8 +195,7 @@ class JournalController extends Controller
 
                 if ($request->hasFile("file")) {
                     foreach ($request->file('file') as $value) {
-                        $name = "JWJ_" .  time() . rand() . "." . $value->getClientOriginalExtension();
-                        $value->move("public/uploads/journal", $name);
+                        $name = fileUpload($value, "/uploads/journal/");
                         $journalImage = new JournalImage;
                         $journalImage->journal_id = $journal->id;
                         $journalImage->name = $name;
