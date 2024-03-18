@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\UserMood;
 use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -30,9 +31,13 @@ class UserController extends Controller
                     $pageNum = $data->currentPage();
                     $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
                     $phone = isset($val->mobile) ? $val->country_code .' '. $val->mobile : 'NA';
+                    $userProfileImage = isset($val->profile) ? assets("uploads/profile/$val->profile") : assets("assets/images/no-image.jpg");
                     $html .= "<tr>
                     <td>
                         <div class='sno'>$index</div>
+                    </td>
+                    <td>
+                        <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%; border: 3px solid #1079c0;' src=".$userProfileImage.">
                     </td>
                     <td>
                         $val->user_name
@@ -42,10 +47,10 @@ class UserController extends Controller
                     </td>
 
                     <td>
-                        $val->email
+                        <a href='mailto:".$val->email."'><img width='20' src=".assets('assets/images/sms1.svg')."></a> $val->email
                     </td>
                     <td>
-                        $phone
+                    <a href='tel:".$phone."'><img width='20' src=".assets('assets/images/call1.svg')."></a> $phone
                     </td>
                     <td>
                         <div class='action-btn-info'>
@@ -84,6 +89,10 @@ class UserController extends Controller
             $user = User::where('id', $id)->first();
             $plan = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name')->first();
             $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
+            $moodCalen = UserMood::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('user_id', auth()->user()->id)->get();
+            // if(count($moodCalen) > 0)
+            //     $avgMood = ['happy' => number_format((float)($happyCount*100)/count($moodCalen), 2, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($moodCalen), 2, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($moodCalen), 2, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($moodCalen), 2, '.', '')];
+            // else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
             return view('pages.admin.user.details')->with(compact('user', 'plan', 'list'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -129,6 +138,8 @@ class UserController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to download the csv file of journey with journals registered users
     public function downloadUserReportFunction($data)
     {
         try {

@@ -23,7 +23,7 @@
     <div class="User-Management-section">
         <div class="User-profile-section">
             <div class="row g-1 align-items-center">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="side-profile-item">
                         <div class="side-profile-media"><img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
                         <div class="side-profile-text">
@@ -31,12 +31,24 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-10">
                     <div class="row">
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="User-contact-info">
                                 <div class="User-contact-info-icon">
-                                    <img src="{{ assets('assets/images/sms1.svg') }}">
+                                    <img src="{{ assets('assets/images/users.svg') }}">
+                                </div>
+                                <div class="User-contact-info-content">
+                                    <h2>Username</h2>
+                                    <p>{{ $user->user_name ?? 'NA' }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="User-contact-info">
+                                <div class="User-contact-info-icon">
+                                    <a href="mailto:{{$user->email ?? 'NA'}}"><img src="{{ assets('assets/images/sms1.svg') }}"></a>
                                 </div>
                                 <div class="User-contact-info-content">
                                     <h2>Email Address</h2>
@@ -45,10 +57,10 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="User-contact-info">
                                 <div class="User-contact-info-icon">
-                                    <img src="{{ assets('assets/images/call1.svg') }}">
+                                    <a href="tel:{{$user->mobile ?? 'NA'}}"><img src="{{ assets('assets/images/call1.svg') }}"></a>
                                 </div>
                                 <div class="User-contact-info-content">
                                     <h2>Phone Number</h2>
@@ -56,7 +68,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-3">
                             <div class="User-contact-info">
                                 <div class="User-contact-info-content">
                                     <h2>Mark as</h2>

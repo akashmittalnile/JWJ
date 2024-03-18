@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Validator;
 
 class RevenueController extends Controller
 {
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of stripe plans. Which is created in stripe account... product catalog
     public function revenueManagement()
     {
         try {

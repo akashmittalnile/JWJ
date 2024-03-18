@@ -95,4 +95,17 @@ if (!function_exists('emailExist')) {
     }
 }
 
+// Dev name : Dishant Gupta
+// This function is used to getting the date of month
+if (!function_exists('getMonthDate')) {
+    function getMonthDate($month, $year)
+    {
+        if ($month == "02") {
+            if ($year % 4 == 0) return 29;
+            else return 28;
+        } else if ($month == "01" || $month == "03" || $month == "05" || $month == "07" || $month == "08" || $month == "10" || $month == "12") return 31;
+        else return 30;
+    }
+}
+
 ?>

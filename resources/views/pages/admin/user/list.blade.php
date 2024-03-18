@@ -39,6 +39,7 @@
                                 <thead>
                                     <tr class="table-hd">
                                         <th>S.No.</th>
+                                        <th>Profile Image</th>
                                         <th>User Name</th>
                                         <th>Name</th>
                                         <th>Email ID</th>

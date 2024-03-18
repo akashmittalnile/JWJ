@@ -143,9 +143,14 @@ class UserController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to getting the result acc. to search
     public function search(Request $request) {
         try{
-            $journal = Journal::where('journals.created_by', auth()->user()->id)->where('journals.title', 'like', '%' .$request->search . '%')->orWhere('journals.content', 'like', '%' .$request->search . '%')->where('journals.status', 1)->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
+            $journal = Journal::where('journals.created_by', auth()->user()->id);
+            if($request->filled('search')) $journal->where('journals.title', 'like', '%' .$request->search . '%')->orWhere('journals.content', 'like', '%' .$request->search . '%');
+            else if($request->filled('date')) $journal->whereDate('journals.created_at', date('Y-m-d', strtotime($request->date)));
+            $journal = $journal->where('journals.status', 1)->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
             $journals = array();
             foreach($journal as $val){
                 $imgs = JournalImage::where('journal_id', $val->id)->get();
@@ -176,7 +181,10 @@ class UserController extends Controller
                 $journaltemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $journals[] = $journaltemp;
             }
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('communities.name', 'like', '%' .$request->search . '%')->orWhere('communities.description', 'like', '%' .$request->search . '%')->where('communities.status', 1)->orderByDesc('communities.id')->get();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency');
+            if($request->filled('search')) $data->where('communities.name', 'like', '%' .$request->search . '%')->orWhere('communities.description', 'like', '%' .$request->search . '%');
+            else if($request->filled('date')) $data->where('communities.created_by', auth()->user()->id)->whereDate('communities.created_at', date('Y-m-d', strtotime($request->date)));
+            $data = $data->where('communities.status', 1)->orderByDesc('communities.id')->get();
             $community = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
@@ -208,7 +216,10 @@ class UserController extends Controller
                 $communitytemp['plan_price_currency'] = $val->currency;
                 $community[] = $communitytemp;
             }
-            $routines = Routine::where('created_by', auth()->user()->id)->where('name', 'like', '%' .$request->search . '%')->orWhere('description', 'like', '%' .$request->search . '%')->orWhere('subtitle', 'like', '%' .$request->search . '%')->orderby('id', 'desc')->get();
+            $routines = Routine::where('created_by', auth()->user()->id);
+            if($request->filled('search')) $routines->where('name', 'like', '%' .$request->search . '%')->orWhere('description', 'like', '%' .$request->search . '%')->orWhere('subtitle', 'like', '%' .$request->search . '%');
+            else if($request->filled('date')) $routines->where('created_by', auth()->user()->id)->whereDate('created_at', date('Y-m-d', strtotime($request->date)));
+            $routines = $routines->orderby('id', 'desc')->get();
             $routine = array();
             foreach ($routines as $key => $myroutine) {
                 $category = RoutineCategory::where('id', '=', $myroutine->category_id)->first();
@@ -271,16 +282,22 @@ class UserController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $data = UserMood::whereMonth('created_at', $request->month)->whereYear('created_at', $request->year)->where('user_id', auth()->user()->id)->get();
+                $days = getMonthDate(date('m', strtotime($request->month)), date('Y', strtotime($request->year)));
+                
                 $response = array();
-                foreach($data as $val){
-                    $mood = MoodMaster::where('id', $val->mood_id)->first();
-                    $temp['id'] = $val->id;
-                    $temp['mood_id'] = $val->mood_id;
-                    $temp['mood_name'] = $mood->name;
-                    $temp['mood_image'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
-                    $temp['date'] = date('d', strtotime($val->created_at));
-                    $temp['month'] = date('m', strtotime($val->created_at));
+                for($i=1; $i<=$days; $i++){
+                    $date = $request->year.'-'.$request->month.'-'.$i;
+                    $mood = UserMood::join('mood_master as mm', 'mm.id', '=', 'user_mood.mood_id')->whereDate('user_mood.created_at', date('Y-m-d', strtotime($date)))->whereMonth('user_mood.created_at', $request->month)->where('user_mood.user_id', auth()->user()->id)->select('mm.name as mname', 'mm.logo as mlogo')->first();
+                    $temp['date'] = $i;
+                    $temp['mood_name'] = $mood->mname ?? null;
+                    $temp['mood_image'] = isset($mood->mlogo) ? assets('assets/images/'.$mood->mlogo) : null;
+                    
+                    $journal = Journal::whereDate('created_at', date('Y-m-d', strtotime($date)))->where('created_by', auth()->user()->id)->count();
+                    $community = Community::whereDate('created_at', date('Y-m-d', strtotime($date)))->where('created_by', auth()->user()->id)->count();
+                    $routine = Routine::whereDate('created_at', date('Y-m-d', strtotime($date)))->where('created_by', auth()->user()->id)->count();
+                    if(($journal || $community || $routine)) $temp['data_available'] = true;
+                    else $temp['data_available'] = false;
+                    
                     $response[] = $temp;
                 }
                 return successMsg('Mood calender', $response);

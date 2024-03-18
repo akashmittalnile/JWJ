@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 
 class RoutineController extends Controller
 {
+    // Dev name : Dishant Gupta
+    // This function is getting the list of routine category like health, wealth, wellness etc
     public function routineCategory(Request $request)
     {
         try {
@@ -36,6 +38,8 @@ class RoutineController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of routines
     public function routine(Request $request)
     {
         try {
@@ -62,6 +66,8 @@ class RoutineController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to create a routine
     public function createRoutine(Request $request)
     {
         try {
