@@ -226,7 +226,7 @@ class UserController extends Controller
                 $routine[] = $temp;
             }
             $response = array(['journal' => $journals, 'community' => $community, 'routine' => $routine]);
-            return successMsg('Home', $response);
+            return successMsg('Search', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
