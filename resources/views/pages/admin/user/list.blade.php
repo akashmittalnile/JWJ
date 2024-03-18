@@ -8,14 +8,25 @@
 @section('content')
 <div class="page-breadcrumb-title-section">
     <h4>User Management</h4>
-    <div class="search-filter wd5">
+    <div class="search-filter wd6">
         <div class="row g-1">
             <div class="col-md-4">
                 <div class="form-group">
                     <a href="{{ route('admin.users.download.report') }}" id="download-report" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-3">
+                <div class="form-group">
+                    <div class="search-form-group">
+                        <select class="form-control" id="searchSelect" name="">
+                            <option value="">All Users</option>
+                            <option value="1">Active Users</option>
+                            <option value="2">Inactive Users</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
                 <div class="form-group">
                     <div class="search-form-group">
                         <input type="text" id="searchInput" name="" class="form-control" placeholder="Search by name, email & contact no.">
@@ -44,6 +55,7 @@
                                         <th>Name</th>
                                         <th>Email ID</th>
                                         <th>Contact Number</th>
+                                        <th>Status</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
@@ -72,12 +84,12 @@
 <script type="text/javascript">
     
     $(document).ready(function() {
-        const getList = (page, search = null) => {
+        const getList = (page, search = null, ustatus = null) => {
             $.ajax({
                 type: 'get',
                 url: "{{ route('admin.users.list') }}",
                 data: {
-                    page, search
+                    page, search, ustatus
                 },
                 dataType: 'json',
                 success: function(result) {
@@ -120,9 +132,15 @@
             getList($(this).data('page'));
         })
         $(document).on('keyup', '#searchInput', function () {
+            let status = $("#searchSelect").val();
             let search = $(this).val();
-            getList($(this).data('page'), search);
-        })
+            getList($(this).data('page'), search, status);
+        });
+        $(document).on('change', "#searchSelect", function() {
+            let status = $("#searchSelect").val();
+            let search = $("#searchInput").val();
+            getList($(this).data('page'), search, status);
+        });
     })
 </script>
 @endpush

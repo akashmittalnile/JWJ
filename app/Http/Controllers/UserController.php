@@ -18,10 +18,13 @@ class UserController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = User::where('role', 1)->whereIn('status', [1,2]);
+                $data = User::where('role', 1);
                 if($request->filled('search')){
-                    $data->where('name', 'like', '%' . $request->search . '%')->orWhere('email', 'like', '%'. $request->search .'%')->orWhere('mobile', 'like', '%'. $request->search .'%');
+                    $data->whereRaw("(`name` LIKE '%" . $request->search . "%' or `email` LIKE '%" . $request->search . "%' or `mobile` LIKE '%" . $request->search . "%')");
                 }
+                if($request->filled('ustatus')){
+                    $data->where('status', $request->ustatus);
+                } else $data->whereIn('status', [1,2]);
                 $data = $data->orderByDesc('id')->paginate(config('constant.paginatePerPage'));
                 
                 if($data->total() < 1) return errorMsg("No users found");
@@ -33,6 +36,7 @@ class UserController extends Controller
                     $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
                     $phone = isset($val->mobile) ? $val->country_code .' '. $val->mobile : 'NA';
                     $userProfileImage = isset($val->profile) ? assets("uploads/profile/$val->profile") : assets("assets/images/no-image.jpg");
+                    $status = ($val->status == 1) ? 'Active' : 'Inactive';
                     $html .= "<tr>
                     <td>
                         <div class='sno'>$index</div>
@@ -51,7 +55,10 @@ class UserController extends Controller
                         <a href='mailto:".$val->email."'><img width='20' src=".assets('assets/images/sms1.svg')."></a> $val->email
                     </td>
                     <td>
-                    <a href='tel:".$phone."'><img width='20' src=".assets('assets/images/call1.svg')."></a> $phone
+                        <a href='tel:".$phone."'><img width='20' src=".assets('assets/images/call1.svg')."></a> $phone
+                    </td>
+                    <td>
+                        $status
                     </td>
                     <td>
                         <div class='action-btn-info'>

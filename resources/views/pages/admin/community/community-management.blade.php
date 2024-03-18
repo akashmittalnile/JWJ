@@ -6,43 +6,58 @@
 
 @section('title','Journey with Journals - Community Management')
 @section('content')
-<div class="page-breadcrumb-title-section">
-    <h4>Community Management</h4>
-    <div class="search-filter wd8">
-        <div class="row g-1">
-            <div class="col-md-2">
-                <div class="form-group">
-                    <a style="padding: 6px 17px; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="btn-bl">Add New Community</a>
+<div class="page-breadcrumb-title-section row">
+    <div class="page-breadcrumb-title-section mt-0">
+        <h4>Community Management</h4>
+        <div class="search-filter wd4">
+            <div class="row g-1">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <a style="padding: 6px 17px; cursor:pointer;" data-bs-toggle="modal" data-bs-target="#addnewcommunity" class="btn-bl">Add New Community</a>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-3">
-                <div class="form-group">
-                    <a href="{{ route('admin.community-management.approval') }}" class="btn-bl">New Community Approval</a>
-                </div>
-            </div>
-
-
-            <div class="col-md-2">
-                <div class="form-group">
-                    <select class="form-control" id="searchSelect" name="">
-                        <option selected value="">Show All Community</option>
-                        <option value="1">User Created Community </option>
-                        <option value="2">Admin Created Community </option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="col-md-5">
-                <div class="form-group">
-                    <div class="search-form-group">
-                        <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by community name, user name, email or phone no.">
-                        <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
+                <div class="col-md-7">
+                    <div class="form-group">
+                        <a href="{{ route('admin.community-management.approval') }}" class="btn-bl">New Community Approval</a>
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
+    <div class="search-filter wd10 text-end">
+            <div class="row g-1">
+                <div class="col-md-4"></div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select class="form-control" id="searchSelect2" name="">
+                            <option value="">All Community</option>
+                            <option value="1">Active Community</option>
+                            <option value="2">Inactive Community</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <select class="form-control" id="searchSelect" name="">
+                            <option selected value="">Show All Community</option>
+                            <option value="1">User Created Community </option>
+                            <option value="2">Admin Created Community </option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="search-form-group">
+                            <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by community name, user name, email or phone no.">
+                            <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
     </div>
 </div>
 
@@ -50,7 +65,7 @@
     <div class="community-page-section">
         <div class="community-content">
             <div class="row" id="appendData">
-                
+
             </div>
         </div>
 
@@ -188,17 +203,21 @@
         },
     });
 
-    $(document).on('change', '.toggle__input', function (e) {
+    $(document).on('change', '.toggle__input', function(e) {
         let status = ($(this).is(":checked")) ? 1 : 2;
         let id = $(this).data('id');
         e.preventDefault();
         $.ajax({
             type: 'post',
             url: "{{ route('admin.community-management.change.status') }}",
-            data: {id, status, '_token': "{{ csrf_token() }}"},
+            data: {
+                id,
+                status,
+                '_token': "{{ csrf_token() }}"
+            },
             dataType: 'json',
-            success: function (result) {
-                if(result.status) {
+            success: function(result) {
+                if (result.status) {
                     toastr.success(result.message);
                     window.location.reload();
                 } else {
@@ -207,20 +226,19 @@
                 }
             },
             error: function(data, textStatus, errorThrown) {
-                jsonValue = jQuery.parseJSON( data.responseText );
+                jsonValue = jQuery.parseJSON(data.responseText);
                 console.error(jsonValue.message);
             },
         });
     });
 
     $(document).ready(function() {
-        const getList = (page, search = null, role = null) => {
+        const getList = (page, search = null, role = null, ustatus = null) => {
             $.ajax({
                 type: 'get',
                 url: "{{ route('admin.community-management.list') }}",
                 data: {
-                    page,
-                    search, role
+                    page, search, role, ustatus
                 },
                 dataType: 'json',
                 success: function(result) {
@@ -233,24 +251,24 @@
                             margin: 10,
                             nav: true,
                             dots: false,
-                            responsive:{
-                                0:{
-                                    items:1
+                            responsive: {
+                                0: {
+                                    items: 1
                                 },
-                                300:{
-                                    items:1
+                                300: {
+                                    items: 1
                                 },
-                                600:{
-                                    items:3
+                                600: {
+                                    items: 3
                                 },
-                                1000:{
-                                    items:4
+                                1000: {
+                                    items: 4
                                 }
                             }
                         });
                         $("#appendPagination").html('');
-                        if(result.data.lastPage!=1){
-                           let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">
+                        if (result.data.lastPage != 1) {
+                            let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">
                                     <a href="javascript:void(0)" data-page="${result.data.currentPage-1}" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
                                 </li>`;
                             for (let i = 1; i <= result.data.lastPage; i++) {
@@ -261,7 +279,7 @@
                             paginate += `<li class="${result.data.currentPage==result.data.lastPage ? 'disabled next' : 'next'}" id="example_next">
                                         <a href="javascript:void(0)" data-page="${result.data.currentPage+1}" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
                                     </li>`;
-                            $("#appendPagination").append(paginate); 
+                            $("#appendPagination").append(paginate);
                         }
                     } else {
                         let html = `<div class="d-flex justify-content-center align-items-center flex-column">
@@ -286,14 +304,22 @@
         })
         $(document).on('keyup', "#searchInput", function() {
             let role = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
             let search = $("#searchInput").val();
-            getList($(this).data('page'), search, role);
-        })
+            getList($(this).data('page'), search, role, status);
+        });
         $(document).on('change', "#searchSelect", function() {
             let role = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
             let search = $("#searchInput").val();
-            getList($(this).data('page'), search, role);
-        })
+            getList($(this).data('page'), search, role, status);
+        });
+        $(document).on('change', "#searchSelect2", function() {
+            let role = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
+            let search = $("#searchInput").val();
+            getList($(this).data('page'), search, role, status);
+        });
     })
 </script>
 @endpush

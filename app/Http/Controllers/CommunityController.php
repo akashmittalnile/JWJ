@@ -6,6 +6,7 @@ use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Plan;
 use App\Models\Post;
+use App\Models\PostImage;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use Illuminate\Http\Request;
@@ -20,13 +21,16 @@ class CommunityController extends Controller
         try {
             $plan = Plan::where('status', 1)->get();
             if($request->ajax()){
-                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role')->whereIn('communities.status', [1,2])->orderByDesc('communities.id');
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role')->orderByDesc('communities.id');
                 if($request->filled('search')){
-                    $data->whereRaw("(`communities`.`name` = '" . $request->search . "' or `u`.`name` = '" . $request->search . "' or `u`.`email` = '" . $request->search . "' or `u`.`mobile` = '" . $request->search . "')");
+                    $data->whereRaw("(`communities`.`name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role);
                 }
+                if($request->filled('ustatus')){
+                    $data->where('communities.status', $request->ustatus);
+                } else $data->whereIn('communities.status', [1,2]);
 
                 $data = $data->paginate(config('constant.communityPerPage'));
                 $html = '';
@@ -252,7 +256,7 @@ class CommunityController extends Controller
             if($request->ajax()){
                 $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 0);
                 if($request->filled('search')){
-                    $data->whereRaw("(`communities`.`name` = '" . $request->search . "' or `u`.`name` = '" . $request->search . "' or `u`.`email` = '" . $request->search . "' or `u`.`mobile` = '" . $request->search . "')");
+                    $data->whereRaw("(`communities`.`name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role)->orderByDesc('communities.id');
@@ -345,7 +349,7 @@ class CommunityController extends Controller
             if($request->ajax()){
                 $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.status', 3)->orderByDesc('communities.id');
                 if($request->filled('search')){
-                    $data->whereRaw("(`communities`.`name` = '" . $request->search . "' or `u`.`name` = '" . $request->search . "' or `u`.`email` = '" . $request->search . "' or `u`.`mobile` = '" . $request->search . "')");
+                    $data->whereRaw("(`communities`.`name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }
                 if($request->filled('role')){
                     $data->where('u.role', $request->role);
@@ -426,6 +430,159 @@ class CommunityController extends Controller
             return view('pages.admin.community.post-details');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+
+    public function createPost(Request $request)
+    {
+        try {
+            // Validate incoming request data
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|string',
+                'post_description' => 'required|string',
+                'subscription_plan' => 'required|string|in:A,B,C',
+                'images.*' => 'image|max:2048', // Validate each image uploaded
+                'community_id' => 'required|string',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->first()], 400);
+            } else {
+                // Define plan IDs using an associative array for constant lookup time
+                $planIds = [
+                    'A' => 6,
+                    'B' => 5,
+                    'C' => 4
+                ];
+                // Handle file uploads if provided
+                $imagePaths = []; // Initialize array to store image paths
+                if ($request->hasFile('images')) {
+                    foreach ($request->file('images') as $image) {
+                        $imageName = "post_" . time() . '_' . $image->getClientOriginalName();
+                        $image->move(public_path('uploads/community/post'), $imageName);
+                        $imagePaths[] = 'uploads/community/post/' . $imageName;
+                    }
+                }
+                // Create new post instance
+                $post = new Post();
+                $post->plan_id = $planIds[$request->input('subscription_plan')];
+                $post->community_id = encrypt_decrypt('decrypt', $request->community_id);
+                $post->title = $request->input('title');
+                $post->post_description = $request->input('post_description');
+                $post->created_by = auth()->user()->id ?? null;
+                $post->save();
+                // Save post images to post_images table
+                foreach ($imagePaths as $path) {
+                    $postImage = new PostImage;
+                    $postImage->post_id = $post->id;
+                    $postImage->name = $path;
+                    $postImage->type = 'image';
+                    $postImage->save();
+                }
+                return response()->json(['message' => 'Post created successfully'], 200);
+            }
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Exception => ' . $e->getMessage()], 500);
+        }
+    }
+    public function communityPosts($id)
+    {
+        try {
+            $id = encrypt_decrypt('decrypt', $id);
+            $community = Community::findOrFail($id);
+            $posts = Post::where('community_id', $id)->get();
+            return view('pages.admin.community.details', compact('community', 'posts'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+    public function getCommunityPosts(Request $request)
+    {
+        try {
+            // Decrypt the community ID
+            $communityId = encrypt_decrypt('decrypt', $request->id);
+            // Retrieve the community
+            $community = Community::findOrFail($communityId);
+            // Retrieve posts associated with the community along with the user's name and post images
+            $posts = Post::where('community_id', $communityId)
+                ->leftJoin('users', 'posts.created_by', '=', 'users.id')
+                ->leftJoin('post_images', 'posts.id', '=', 'post_images.post_id')
+                ->select('posts.id', 'posts.title', 'posts.post_description', 'posts.created_at', 'posts.updated_at', 'users.name as user_name', 'post_images.name as image_path', 'posts.plan_id') // Include plan_id in the select statement
+                ->groupBy('posts.id', 'posts.title', 'posts.post_description', 'posts.created_at', 'posts.updated_at', 'users.name', 'post_images.name', 'posts.plan_id');
+            // Apply search filters
+            if ($request->filled('search')) {
+                $searchTerm = $request->search;
+                $posts->where(function ($query) use ($searchTerm) {
+                    $query->where('posts.title', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('posts.post_description', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('users.name', 'like', '%' . $searchTerm . '%');
+                });
+            }
+            // Get the posts after applying filters
+            $posts = $posts->get();
+            // Format posts and their images
+            $formattedPosts = [];
+            foreach ($posts as $post) {
+                $postId = $post->id;
+                if (!isset($formattedPosts[$postId])) {
+                    $formattedPosts[$postId] = [
+                        'id' => $postId,
+                        'title' => $post->title,
+                        'post_description' => $post->post_description,
+                        'user_name' => $post->user_name,
+                        'created_at' => $post->created_at,
+                        'updated_at' => $post->updated_at,
+                        'images' => [], // Initialize an empty array for images
+                        'plan_id' => $post->plan_id // Add plan_id to the formatted post data
+                    ];
+                }
+                // Add the image to the post's images array
+                if (!empty($post->image_path)) {
+                    $formattedPosts[$postId]['images'][] = $post->image_path;
+                }
+            }
+            // Return the view with community and formatted posts data
+            return response()->json(['status' => true, 'data' => ['community' => $community, 'posts' => array_values($formattedPosts)]]);
+        } catch (\Exception $e) {
+            // Handle any exceptions and return an error message
+            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
+        }
+    }
+    public function deletePost(Request $request)
+    {
+        try {
+            if ($request->ajax()) {
+                // Check if post ID is present and not empty
+                if ($request->has('postId') && $request->postId !== '') {
+                    $postId = $request->postId;
+                    // Load the post by ID
+                    $post = Post::findOrFail($postId);
+                    // Delete the post
+                    $post->delete();
+                    // Return success response
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'Post deleted successfully.'
+                    ]);
+                } else {
+                    // Return error if post ID is missing
+                    return response()->json([
+                        'status' => false,
+                        'error' => 'Post ID is missing in the request.',
+                    ]);
+                }
+            } else {
+                // Return error if not an AJAX request
+                return response()->json([
+                    'status' => false,
+                    'error' => 'This endpoint only accepts AJAX requests.',
+                ]);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => false,
+                'error' => 'Error deleting post: ' . $e->getMessage(),
+            ]);
         }
     }
 }

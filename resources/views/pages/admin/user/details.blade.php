@@ -259,7 +259,7 @@
 @push('js')
     <script type="text/javascript">
         $(document).on('change', '#myToggle', function (e) {
-            let status = ($(this).is(":checked")) ? 1 : 0;
+            let status = ($(this).is(":checked")) ? 1 : 2;
             e.preventDefault();
             $.ajax({
                 type: 'post',
