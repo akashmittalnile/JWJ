@@ -183,41 +183,19 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="card-body">
-                        <div id="reviewrating" class="owl-carousel owl-theme">
-                            <div class="item">
-                                <div class="jwj-review-card">
-                                    <div class="jwj-review-card-head">
-                                        <div class="review-rating-user-avtar">
-                                            <span>J</span>
-                                        </div>
-                                        <div class="review-rating-user-text">
-                                            <h3>John</h3>
-                                            <div class="review-rating">
-                                                <div class="review-rating-icon">
-                                                    <span class="activerating"><i class="las la-star"></i></span>
-                                                    <span class="activerating"><i class="las la-star"></i></span>
-                                                    <span class="activerating"><i class="las la-star"></i></span>
-                                                    <span class="activerating"><i class="las la-star"></i></span>
-                                                    <span class=""><i class="las la-star"></i></span>
-                                                </div>
-                                                <div class="review-rating-text">5.0 Rating</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jwj-review-card-body">
-                                        <span class="review-quotes-shape"></span>
-                                        <div class="review-desc">I Recently Had The Pleasure Of Visiting This Furniture Store, And I Must Say, I Was Thoroughly Impressed With …</div>
-                                        <div class="review-date">01 Wed, 09:30</div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="owl-carousel owl-theme" id="review-carousel">
+                            <!-- Ratings cards will be populated here -->
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+
 </div>
 
 <!-- Manage Dates popup -->
@@ -264,3 +242,103 @@
     </div>
 </div>
 @endsection
+
+@push('js')
+<script type="text/javascript">
+    $(document).ready(function() {
+        const updateDashboardReviewsCarousel = (data) => {
+            const carouselContainer = $('#review-carousel');
+            carouselContainer.empty();
+            data.forEach((review) => {
+                // Calculate the number of filled stars
+                const filledStars = Math.floor(review.rating);
+                // Determine if there is a half star
+                const halfStar = review.rating - filledStars >= 0.5;
+                // Calculate the number of empty stars
+                const emptyStars = 5 - filledStars - (halfStar ? 1 : 0);
+                // Generate the HTML for the star rating
+                let starHtml = '';
+                for (let i = 0; i < filledStars; i++) {
+                    starHtml += '<span class="activerating"><i class="las la-star"></i></span>';
+                }
+                if (halfStar) {
+                    starHtml +=
+                        '<span class="activerating"><i class="las la-star-half-alt"></i></span>';
+                }
+                for (let i = 0; i < emptyStars; i++) {
+                    starHtml += '<span><i class="las la-star"></i></span>';
+                }
+                carouselContainer.append(`
+                            <div class="jwj-review-card">
+                                <div class="jwj-review-card-head">
+                                    <div class="review-rating-user-avtar">
+                                        <span>${review.name.charAt(0)}</span>
+                                    </div>
+                                    <div class="review-rating-user-text">
+                                        <h3>${review.name}</h3>
+                                        <div class="review-rating">
+                                            <div class="review-rating-icon">
+                                                ${starHtml} <!-- Insert the star rating HTML here -->
+                                            </div>
+                                            <div class="review-rating-text">${review.rating} Star</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="jwj-review-card-body">
+                                    <span class="review-quotes-shape"></span>
+                                    <div class="review-desc">${review.description}</div>
+                                    <div class="review-date">${review.created_at.split(' ')[0].split('-').map((part, index) => index === 1 ? part : part.padStart(2, '0')).reverse().join('-')}</div>
+                                </div>
+                            </div>
+                      `);
+            });
+            // Initialize Owl Carousel after adding all items
+            carouselContainer.owlCarousel({
+                items: 3,
+                margin: 10,
+                loop: true,
+                nav: true,
+                dots: false,
+                navText: ['<i class="fa fa-angle-left"></i>', '<i class="fa fa-angle-right"></i>']
+            });
+        };
+        // Function to fetch reviews data
+        const fetchReviewsData = (page, search = null, rating = null) => {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.rating-review.list') }}",
+                data: {
+                    page,
+                    search,
+                    rating,
+                },
+                dataType: 'json',
+                success: function(result) {
+                    if (result.status) {
+                        updateDashboardReviewsCarousel(result.data.html.data);
+                    } else {
+                        // Handle no result
+                    }
+                },
+                error: function(error) {
+                    console.log("Error:", error);
+                    toastr.error(error.message);
+                },
+            });
+        };
+        const initReviews = () => {
+            fetchReviewsData(1);
+        };
+        // Initial call to getReviews without search term
+        initReviews();
+        $('#dashboardRatingFilter').change(function() {
+            let selectedRating = $(this).val();
+            let search = null;
+            if (selectedRating === "") {
+                selectedRating = null;
+            }
+            fetchReviewsData(1, search, selectedRating);
+        });
+    });
+</script>
+@endpush

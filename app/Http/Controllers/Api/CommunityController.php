@@ -10,6 +10,7 @@ use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
+use App\Models\UserLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -160,10 +161,12 @@ class CommunityController extends Controller
                         foreach($img as $val){
                             array_push($image, assets("uploads/community/post/".$val->name));
                         }
+                        $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $item->id)->where('object_type', 'post')->first();
                         $temp['id'] = $item->id;
                         $temp['title'] = $item->title;
                         $temp['description'] = $item->post_description;
                         $temp['image'] = $image;
+                        $temp['is_liked'] = (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0;
                         $temp['posted_by_name'] = $user->name;
                         $temp['posted_by_user_name'] = $user->user_name;
                         $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
@@ -319,11 +322,13 @@ class CommunityController extends Controller
                 foreach($img as $val){
                     array_push($image, assets("uploads/community/post/".$val->name));
                 }
+                $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $id)->where('object_type', 'post')->first();
                 $response = array(
                     'id' => $post->id,
                     'title' => $post->title,
                     'description' => $post->post_description,
                     'image' => $image,
+                    'is_liked' => (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0,
                     'community_id' => $post->community_id,
                     'community_title' => $community->name,
                     'community_description' => $community->description,
@@ -333,6 +338,41 @@ class CommunityController extends Controller
                 );
                 return successMsg('Post details', $response);
             } else return errorMsg('Post not found');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to get the details of posts in community
+    public function postLikeUnlike(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = Post::where('id', $request->id)->first();
+                if(isset($post->id)){
+                    $like = UserLike::where('user_id', auth()->user()->id)->where('object_id', $request->id)->where('object_type', 'post')->first();
+                    if(isset($like->id)){
+                        $like->status = ($like->status == 0) ? 1 : 0;
+                        $like->updated_at = date('Y-m-d H:i:s');
+                        $like->save();
+                        $msg = ($like->status == 0) ? "You have liked $post->title" : "You have unliked $post->title";
+                        return successMsg($msg);
+                    } else {
+                        $like = new UserLike;
+                        $like->object_id = $request->id;
+                        $like->object_type = 'post';
+                        $like->user_id = auth()->user()->id;
+                        $like->status = 1;
+                        $like->save();
+                        return successMsg("You have liked $post->title");
+                    }
+                } else return errorMsg('Post not found');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
