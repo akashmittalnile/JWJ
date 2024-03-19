@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Comment;
 use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Plan;
@@ -162,11 +163,15 @@ class CommunityController extends Controller
                             array_push($image, assets("uploads/community/post/".$val->name));
                         }
                         $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $item->id)->where('object_type', 'post')->first();
+                        $likesCount = UserLike::where('object_id', $item->id)->where('object_type', 'post')->count();
+                        $commentCount = Comment::where('object_id', $item->id)->where('object_type', 'post')->count();
                         $temp['id'] = $item->id;
                         $temp['title'] = $item->title;
                         $temp['description'] = $item->post_description;
                         $temp['image'] = $image;
                         $temp['is_liked'] = (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0;
+                        $temp['likes_count'] = $likesCount ?? 0;
+                        $temp['comment_count'] = $commentCount ?? 0;
                         $temp['posted_by_name'] = $user->name;
                         $temp['posted_by_user_name'] = $user->user_name;
                         $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
@@ -323,12 +328,36 @@ class CommunityController extends Controller
                     array_push($image, assets("uploads/community/post/".$val->name));
                 }
                 $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $id)->where('object_type', 'post')->first();
+                $likesCount = UserLike::where('object_id', $id)->where('object_type', 'post')->count();
+                $commentCount = Comment::where('object_id', $id)->where('object_type', 'post')->count();
+                $comment = Comment::where('object_id', $id)->where('object_type', 'post')->where('parent_id', null)->orderByDesc('id')->get();
+                $commentArr = array();
+                foreach($comment as $key => $value){
+                    $reply = Comment::where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->get();
+                    $replyArr = array();
+                    foreach($reply as $key1 => $value1){
+                        $temp1['reply_id'] = $value1->id;
+                        $temp1['reply_comment'] = $value1->comment;
+                        $temp1['reply_posted_date'] = date('d M, Y h:i A', strtotime($value1->created_at));
+                        $temp1['reply_posted_by'] = $value1->user->name ?? 'NA';
+                        $replyArr[] = $temp1;
+                    }
+                    $temp['comment_id'] = $value->id;
+                    $temp['comment'] = $value->comment;
+                    $temp['reply'] = $replyArr;
+                    $temp['posted_date'] = date('d M, Y h:i A', strtotime($value->created_at));
+                    $temp['posted_by'] = $value->user->name ?? 'NA';
+                    $commentArr[] = $temp;
+                };
                 $response = array(
                     'id' => $post->id,
                     'title' => $post->title,
                     'description' => $post->post_description,
                     'image' => $image,
                     'is_liked' => (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0,
+                    'likes_count' => $likesCount ?? 0,
+                    'comment_count' => $commentCount ?? 0,
+                    'comments' => $commentArr,
                     'community_id' => $post->community_id,
                     'community_title' => $community->name,
                     'community_description' => $community->description,
@@ -344,7 +373,7 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to get the details of posts in community
+    // This function is used to like or dislike a post
     public function postLikeUnlike(Request $request) {
         try{
             $validator = Validator::make($request->all(), [
@@ -355,12 +384,14 @@ class CommunityController extends Controller
             } else {
                 $post = Post::where('id', $request->id)->first();
                 if(isset($post->id)){
+                    $ufc = UserFollowedCommunity::where('community_id', $post->community_id)->where('userid', auth()->user()->id)->first();
+                    if(!isset($ufc)) return errorMsg('Please follow community first.');
                     $like = UserLike::where('user_id', auth()->user()->id)->where('object_id', $request->id)->where('object_type', 'post')->first();
                     if(isset($like->id)){
                         $like->status = ($like->status == 0) ? 1 : 0;
                         $like->updated_at = date('Y-m-d H:i:s');
                         $like->save();
-                        $msg = ($like->status == 0) ? "You have liked $post->title" : "You have unliked $post->title";
+                        $msg = ($like->status == 0) ? "You have liked $post->title" : "You have disliked $post->title";
                         return successMsg($msg);
                     } else {
                         $like = new UserLike;
@@ -371,6 +402,38 @@ class CommunityController extends Controller
                         $like->save();
                         return successMsg("You have liked $post->title");
                     }
+                } else return errorMsg('Post not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to like or dislike a post
+    public function postComment(Request $request) {
+        try{
+            if(isset($request->is_reply) && $request->is_reply == 1)
+                $valid = ['id' => 'required', 'comment' => 'required', 'is_reply' => 'required', 'reply_id' => 'required'];
+            else
+                $valid = ['id' => 'required', 'comment' => 'required', 'is_reply' => 'required'];
+            $validator = Validator::make($request->all(), $valid);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = Post::where('id', $request->id)->first();
+                if(isset($post->id)){
+                    $ufc = UserFollowedCommunity::where('community_id', $post->community_id)->where('userid', auth()->user()->id)->first();
+                    if(!isset($ufc)) return errorMsg('Please follow community first.');
+                    $comment = new Comment;
+                    $comment->user_id = auth()->user()->id;
+                    $comment->object_id = $request->id;
+                    $comment->object_type = 'post';
+                    $comment->parent_id = $request->reply_id ?? null;
+                    $comment->comment = $request->comment ?? null;
+                    $comment->status = 1;
+                    $comment->save();
+                    return successMsg('Comment posted successfully.');
                 } else return errorMsg('Post not found');
             }
         } catch (\Exception $e) {

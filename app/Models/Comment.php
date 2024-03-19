@@ -10,4 +10,9 @@ class Comment extends Model
     use HasFactory;
     protected $table = 'comments';
     protected $id = 'id';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id')->withDefault(['name' => 'NA', 'email' => 'NA', 'profile' => 'NA']);
+    }
 }

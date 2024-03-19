@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-post', [CommunityController::class, 'createPost']);
     Route::get('post/{id}', [CommunityController::class, 'postDetails']);
     Route::post('like-unlike-post', [CommunityController::class, 'postLikeUnlike']);
+    Route::post('post-comment', [CommunityController::class, 'postComment']);
 
 
     Route::get('routine-category', [RoutineController::class, 'routineCategory']);
