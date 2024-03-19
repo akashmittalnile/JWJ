@@ -30,7 +30,7 @@
                             <h2>Admin Forgot Password</h2>
                             <form class="pt-4" method="post" action="{{ route('admin.send.otp') }}" id="login-form">@csrf
                                 <div class="form-group">
-                                    <input type="email" class="form-control" name="email" placeholder="Email Address">
+                                    <input type="email" class="form-control" name="email" placeholder="Email Address" value="{{ old('email') ?? '' }}">
                                 </div>
                                 <div class="form-group">
                                     <button type="submit" class="auth-form-btn">Send OTP</button>

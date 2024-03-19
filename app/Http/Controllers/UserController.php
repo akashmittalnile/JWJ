@@ -9,6 +9,7 @@ use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Mockery\Undefined;
 
 class UserController extends Controller
 {
@@ -37,6 +38,7 @@ class UserController extends Controller
                     $phone = isset($val->mobile) ? $val->country_code .' '. $val->mobile : 'NA';
                     $userProfileImage = isset($val->profile) ? assets("uploads/profile/$val->profile") : assets("assets/images/no-image.jpg");
                     $status = ($val->status == 1) ? 'Active' : 'Inactive';
+                    $userName = (isset($val->user_name) && $val->user_name != '' && $val->user_name != 'undefined') ? $val->user_name : 'NA';
                     $html .= "<tr>
                     <td>
                         <div class='sno'>$index</div>
@@ -45,7 +47,7 @@ class UserController extends Controller
                         <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%;' src=".$userProfileImage.">
                     </td>
                     <td>
-                        $val->user_name
+                        $userName
                     </td>
                     <td>
                         $val->name

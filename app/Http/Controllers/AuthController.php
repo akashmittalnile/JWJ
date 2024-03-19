@@ -57,7 +57,7 @@ class AuthController extends Controller
                     $user_email = encrypt_decrypt('encrypt',$request->email);
                     return redirect()->route('admin.otp.verification', $user_email);
                 } else {
-                    return redirect()->back()->with('error', 'Invalid email address');
+                    return redirect()->back()->with('error', 'This email is not registered with us')->withInput();
                 }
             }
         } catch (\Exception $e) {
@@ -105,7 +105,7 @@ class AuthController extends Controller
                         return redirect()->back()->with('error', 'Invalid OTP');
                     }
                 } else {
-                    return redirect()->back()->with('error', 'Invalid email address');
+                    return redirect()->back()->with('error', 'This email is not registered with us');
                 }
             }
         } catch (\Exception $e) {
@@ -145,7 +145,7 @@ class AuthController extends Controller
                     ]);
                     return redirect()->route('admin.login')->with('success', 'Password reset successfully');
                 } else {
-                    return redirect()->back()->with('error', 'Invalid email address');
+                    return redirect()->back()->with('error', 'This email is not registered with us');
                 }
             }
         } catch (\Exception $e) {

@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <button type="submit" class="Savebtn">Save</button>
+                                        <button type="submit" class="Savebtn">Update</button>
                                     </div>
                                 </div>
                             </div>
