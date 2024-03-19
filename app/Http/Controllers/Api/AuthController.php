@@ -329,6 +329,21 @@ class AuthController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to user logging out
+    public function testPushNotification(Request $request) {
+        try{
+            $data = array(
+                'msg' => 'Journey With Journals',
+                'title' => 'Testing'
+            );
+            sendNotification($request->token, $data);
+            return successMsg('Test Notification.');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to user logging out
     public function logout() {
         try{
             User::where('id', auth()->user()->id)->update([

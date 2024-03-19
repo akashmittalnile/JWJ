@@ -485,6 +485,7 @@ class CommunityController extends Controller
             return response()->json(['error' => 'Exception => ' . $e->getMessage()], 500);
         }
     }
+
     public function communityPosts($id)
     {
         try {
@@ -496,6 +497,7 @@ class CommunityController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+    
     public function getCommunityPosts(Request $request)
     {
         try {

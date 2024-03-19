@@ -26,7 +26,7 @@ Route::post('login', [AuthController::class, 'login']);
 Route::post('forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('otp-verfication', [AuthController::class, 'otpVerification']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
-
+Route::get('test-push-notification', [AuthController::class, 'testPushNotification']);
 Route::get('mood', [JournalController::class, 'mood']);
 Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
 Route::get('plans', [CommunityController::class, 'plans']);
