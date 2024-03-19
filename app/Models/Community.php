@@ -10,4 +10,9 @@ class Community extends Model
     use HasFactory;
     protected $table = 'communities';
     protected $id = 'id';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => 'NA', 'email' => 'NA', 'profile' => 'NA']);
+    }
 }

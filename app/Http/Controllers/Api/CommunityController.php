@@ -46,7 +46,7 @@ class CommunityController extends Controller
     // This function is used to show all the active communities
     public function communityList(Request $request) {
         try{
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('communities.status', 1);
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.status', 1);
             if($request->filled('search')){
                 $data->where('communities.name', 'like', '%' . $request->search . '%');
             }
@@ -66,6 +66,8 @@ class CommunityController extends Controller
                 foreach($imgs as $item){
                     array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
                 }
+                $plan = Plan::where('id', $val->plan_id)->first();
+                $post = Post::where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
@@ -73,11 +75,14 @@ class CommunityController extends Controller
                 $temp['image'] = $images;
                 $temp['follow'] = isset($ufc->id) ? true : false;
                 $temp['member_follow_count'] = $followCount ?? 0;
+                $temp['post_count'] = $post ?? 0;
+                $temp['posted_by'] = $val->user->name ?? 'NA';
+                $temp['posted_by_image'] =  isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null;
                 $temp['member_image'] = $memberImage;
-                $temp['plan_name'] = $val->plan_name;
-                $temp['plan_monthly_price'] = $val->monthly_price;
-                $temp['plan_anually_price'] = $val->anually_price;
-                $temp['plan_price_currency'] = $val->currency;
+                $temp['plan_name'] = $plan->plan_name ?? null;
+                $temp['plan_monthly_price'] = $plan->monthly_price ?? null;
+                $temp['plan_anually_price'] = $plan->anually_price ?? null;
+                $temp['plan_price_currency'] = $plan->currency ?? null;
                 $response[] = $temp;
             }
             return successMsg('Community list', $response);
@@ -90,7 +95,7 @@ class CommunityController extends Controller
     // This function is used to show all my communities whether its active, pending, inactive & rejected
     public function myCommunityList(Request $request) {
         try{
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('created_by', auth()->user()->id);
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('created_by', auth()->user()->id);
             if($request->filled('search')){
                 $data->where('communities.name', 'like', '%' . $request->search . '%');
             }
@@ -111,6 +116,8 @@ class CommunityController extends Controller
                     array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
                 }
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
+                $plan = Plan::where('id', $val->plan_id)->first();
+                $post = Post::where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
@@ -119,11 +126,14 @@ class CommunityController extends Controller
                 $temp['image'] = $images;
                 $temp['follow'] = isset($ufc->id) ? true : false;
                 $temp['member_follow_count'] = $followCount ?? 0;
+                $temp['post_count'] = $post ?? 0;
+                $temp['posted_by'] = $val->user->name ?? 'NA';
+                $temp['posted_by_image'] =  isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null;
                 $temp['member_image'] = $memberImage;
-                $temp['plan_name'] = $val->plan_name;
-                $temp['plan_monthly_price'] = $val->monthly_price;
-                $temp['plan_anually_price'] = $val->anually_price;
-                $temp['plan_price_currency'] = $val->currency;
+                $temp['plan_name'] = $plan->plan_name ?? null;
+                $temp['plan_monthly_price'] = $plan->monthly_price ?? null;
+                $temp['plan_anually_price'] = $plan->anually_price ?? null;
+                $temp['plan_price_currency'] = $plan->currency ?? null;
                 $response[] = $temp;
             }
             return successMsg('Community list', $response);
@@ -136,7 +146,7 @@ class CommunityController extends Controller
     // This function is used to get the details of community and their posts if user follow
     public function communityDetails($id) {
         try{
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('communities.id', $id)->first();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.id', $id)->first();
             if(isset($data->id)){
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id)){
@@ -154,6 +164,7 @@ class CommunityController extends Controller
                     foreach($imgs as $item){
                         array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
                     }
+                    $plan = Plan::where('id', $data->plan_id)->first();
                     $post = array();
                     foreach($posts as $item){
                         $img = PostImage::where('post_id', $item->id)->get();
@@ -186,12 +197,14 @@ class CommunityController extends Controller
                         'follow' => isset($ufc->id) ? true : false,
                         'member_follow_count' => $followCount ?? 0,
                         'member_image' => $memberImage,
-                        'plan_name' => $data->plan_name,
-                        'plan_monthly_price' => $data->monthly_price,
-                        'plan_anually_price' => $data->anually_price,
-                        'plan_price_currency' => $data->currency,
+                        'plan_name' => $plan->plan_name ?? null,
+                        'plan_monthly_price' => $plan->monthly_price ?? null,
+                        'plan_anually_price' => $plan->anually_price ?? null,
+                        'plan_price_currency' => $plan->currency ?? null,
                         'post_count' => $postCount ?? 0,
-                        'posts' => $post
+                        'posts' => $post,
+                        'posted_by' => $val->user->name ?? 'NA',
+                        'posted_by_image' => isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null,
                     ];
                     return successMsg('Community found', $response);
                 } else return errorMsg('Please follow community first.');
@@ -410,7 +423,7 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to like or dislike a post
+    // This function is used to comment on a post
     public function postComment(Request $request) {
         try{
             if(isset($request->is_reply) && $request->is_reply == 1)

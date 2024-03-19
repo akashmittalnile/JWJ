@@ -46,21 +46,57 @@ class RoutineController extends Controller
             $routines = Routine::where('created_by', auth()->user()->id)->orderby('id', 'desc')->get();
             $response = array();
             foreach ($routines as $key => $myroutine) {
-                $category = RoutineCategory::where('id', '=', $myroutine->category_id)->first();
                 $temp['routineid'] = $myroutine->id;
                 $temp['routinename'] = $myroutine->name;
                 $temp['routinesubtitle'] = $myroutine->subtitle;
                 $temp['description'] = $myroutine->description;
                 $temp['created_by'] = $myroutine->created_by;
                 $temp['routinetype'] = ($myroutine->privacy == 'P') ? 'Public Routine' : 'Private Routine';
-                $temp['date'] = $myroutine->created_date;
-                $temp['category_name'] = $category->name;
-                $temp['category_logo'] = assets('assets/images/' . $category->logo);
+                $temp['date'] = $myroutine->created_at;
+                $temp['category_name'] = $myroutine->category->name;
+                $temp['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
                 $temp['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;
             }
             return successMsg('My routines', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of routines
+    public function routineDetail(Request $request, $id)
+    {
+        try {
+            $routine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->first();
+            if(isset($routine->id)){
+                $interval = array();
+                foreach($routine->schedule->interval as $key => $val){
+                    $temp['id'] = $val->id;
+                    $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
+                    $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
+                    $temp['interval_time'] = $val->interval_time;
+                    $interval[] = $temp;
+                }
+                $response = array(
+                    'id' => $routine->id,
+                    'name' => $routine->name,
+                    'subtitle' => $routine->subtitle,
+                    'description' => $routine->description,
+                    'routinetype' => ($routine->privacy == 'P') ? 'Public Routine' : 'Private Routine',
+                    'date' => date('d M, Y h:i A', strtotime($routine->created_at)),
+                    'category_name' => $routine->category->name ?? 'NA',
+                    'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
+                    'created_by' => ($routine->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
+                    'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? 'NA',
+                    'schedule_frequency' => $routine->schedule->frequency ?? 'NA',
+                    'schedule_time' => $routine->schedule->schedule_time ?? null,
+                    'interval' => $interval ?? null
+                );
+                return successMsg('Routine detail', $response);
+            } else return errorMsg('Routine not found');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

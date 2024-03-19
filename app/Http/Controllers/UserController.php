@@ -44,7 +44,7 @@ class UserController extends Controller
                         <div class='sno'>$index</div>
                     </td>
                     <td>
-                        <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%;' src=".$userProfileImage.">
+                        <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%;' src='".$userProfileImage."'>
                     </td>
                     <td>
                         $userName

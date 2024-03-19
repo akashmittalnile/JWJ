@@ -10,4 +10,9 @@ class Schedule extends Model
     use HasFactory;
     protected $table = 'schedule';
     protected $id = 'id';
+
+    public function interval()
+    {
+        return $this->hasMany(ScheduleInterval::class, 'schedule_id', 'id');
+    }
 }

@@ -85,6 +85,19 @@
                     </a>
                 </li>
 
+                <li class="nav-item {{ Route::is('admin.routine*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.routine.category') }}">
+                        <span class="menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+                                <path d="M21.68 8.58003V15.42C21.68 16.54 21.08 17.58 20.11 18.15L14.17 21.58C13.2 22.14 12 22.14 11.02 21.58L5.08001 18.15C4.11001 17.59 3.51001 16.55 3.51001 15.42V8.58003C3.51001 7.46003 4.11001 6.41999 5.08001 5.84999L11.02 2.42C11.99 1.86 13.19 1.86 14.17 2.42L20.11 5.84999C21.08 6.41999 21.68 7.45003 21.68 8.58003Z" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12.6 11.0001C13.8868 11.0001 14.93 9.95687 14.93 8.67004C14.93 7.38322 13.8868 6.34009 12.6 6.34009C11.3132 6.34009 10.27 7.38322 10.27 8.67004C10.27 9.95687 11.3132 11.0001 12.6 11.0001Z" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M16.6 16.6601C16.6 14.8601 14.81 13.4001 12.6 13.4001C10.39 13.4001 8.60004 14.8601 8.60004 16.6601" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span class="menu-title">Manage Routine Category</span>
+                    </a>
+                </li>
+
                 <li class="nav-item {{ Route::is('admin.profile*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.profile') }}">
                         <span class="menu-icon">

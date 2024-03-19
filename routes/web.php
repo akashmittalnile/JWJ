@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RevenueController;
+use App\Http\Controllers\RoutineController;
 use App\Http\Controllers\SupportController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -75,6 +76,11 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         // support & communication
         Route::get('/support-communication', [SupportController::class, 'supportCommunication'])->name('support');
         Route::get('/notifications', [SupportController::class, 'notification'])->name('notification');
+
+        Route::get('/routine-category', [RoutineController::class, 'routineCategory'])->name('routine.category');
+        Route::post('/routine-category-store', [RoutineController::class, 'routineCategoryStore'])->name('routine.category.store');
+        Route::post('/routine-category-update', [RoutineController::class, 'routineCategoryUpdate'])->name('routine.category.update');
+        Route::post('/routine-category-delete', [RoutineController::class, 'routineCategoryDelete'])->name('routine.category.delete');
 
         // profile
         Route::get('/profile', [AuthController::class, 'profile'])->name('profile');

@@ -40,13 +40,11 @@ class CommunityController extends Controller
                     $imgs = CommunityImage::where('community_id', $val->id)->get();
                     $image_html = "";
                     foreach($imgs as $name){
-                        if($name->name != $image->name){
-                            $image_html .= "<div class='item'>
-                            <div class='community-media'>
-                                    <img src='".assets("uploads/community/$name->name")."'>
-                                </div>
-                            </div>";
-                        }
+                        $image_html .= "<div class='item'>
+                        <div class='community-media'>
+                                <img src='".assets("uploads/community/$name->name")."'>
+                            </div>
+                        </div>";
                     }
                     if($image_html == "") {
                         $image_html = "<div class='item'>
@@ -201,7 +199,6 @@ class CommunityController extends Controller
                         $communityImage->save();
                     }
                 }
-
                 return successMsg('New community created successfully.');
             }
         } catch (\Exception $e) {

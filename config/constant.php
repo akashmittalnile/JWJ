@@ -14,6 +14,12 @@ return [
 		'2' => 'Inactive',
 		'3' => 'Rejected',
 	),
+	'frequency' => array(
+		'O' => 'Once', 'D' => 'Daily', 'T' => 'Date', 'C' => 'Custom', 'R' => 'Repeat'
+	),
+	'days' => array(
+		'M'=> 'Monday', 'T'=>'Tuesday', 'W'=>'Wednesday', 'TH'=>'Thursday', 'F'=>'Friday', 'SA'=>'Saturday', 'S'=>'Sunday'
+	),
 ];
 
 ?>
