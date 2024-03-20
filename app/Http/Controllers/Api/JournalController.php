@@ -111,7 +111,7 @@ class JournalController extends Controller
             $journal = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id')->where('journals.id', $id)->select('journals.*')->first();
             if(isset($journal->id)){
                 $imgs = JournalImage::where('journal_id', $journal->id)->get();
-                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $journal->id)->select('sc.id', 'sc.name')->get();
+                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $journal->id)->select('journals_search_criteria_mapping.id', 'sc.name')->get();
                 $mood = MoodMaster::where('id', $journal->mood_id)->first();
                 $path = array();
                 foreach($imgs as $item){
@@ -214,6 +214,69 @@ class JournalController extends Controller
                     }
                 }
                 return successMsg('New journal created successfully.', $journal);
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to update a journal
+    public function editJournal(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'title' => 'required',
+                'content' => 'required',
+                'mood_id' => 'required',
+                'file' => 'array',
+                'deletefile' => 'array',
+                'criteria' => 'array',
+                'deletecriteria' => 'array',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $journal = Journal::where('created_by', auth()->user()->id)->where('id', $request->id)->first();
+                $journal->title = $request->title;
+                $journal->content = $request->content;
+                $journal->mood_id = $request->mood_id;
+                $journal->updated_at = date('Y-m-d H:i:s');
+                $journal->save();
+
+                if(count($request->deletefile) > 0){
+                    foreach($request->deletefile as $val){
+                        $journalImage = JournalImage::where('id', $val)->where('journal_id', $journal->id)->first();
+                        fileRemove("/uploads/journal/$journalImage->name");
+                        JournalImage::where('id', $val)->where('journal_id', $journal->id)->delete();
+                    }
+                }
+                if ($request->hasFile("file")) {
+                    foreach ($request->file('file') as $value) {
+                        $name = fileUpload($value, "/uploads/journal/");
+                        $journalImage = new JournalImage;
+                        $journalImage->journal_id = $journal->id;
+                        $journalImage->name = $name;
+                        $journalImage->type = 'image';
+                        $journalImage->save();
+                    }
+                }
+
+                if(count($request->deletecriteria) > 0){
+                    foreach($request->deletecriteria as $val){
+                        $journalImage = JournalSearchCriteria::where('id', $val)->where('journal_id', $journal->id)->delete();
+                    }
+                }
+                if(count($request->criteria)){
+                    foreach($request->criteria as $value){
+                        $journalCriteria = new JournalSearchCriteria;
+                        $journalCriteria->journal_id = $journal->id;
+                        $journalCriteria->search_id = $value;
+                        $journalCriteria->status = 1;
+                        $journalCriteria->save();
+                    }
+                }
+                return successMsg('Journal updated successfully.', $journal);
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

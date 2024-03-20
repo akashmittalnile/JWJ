@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Validator;
 class RoutineController extends Controller
 {
     // Dev name : Dishant Gupta
-    // This function is used to getting the list of stripe plans. Which is created in stripe account... product catalog
+    // This function is used to getting the list of routines category
     public function routineCategory(Request $request)
     {
         try {
@@ -53,7 +53,6 @@ class RoutineController extends Controller
                                 <i class='las la-ellipsis-v'></i>
                             </a>
                             <div class='dropdown-menu'>
-                                <a class='dropdown-item' data-id='".encrypt_decrypt('encrypt', $val->id)."' id='deleteComm' href='javascript:void(0)'><i class='las la-trash'></i> &nbsp; Delete</a>
                                 <a class='dropdown-item view-btn' data-id='".encrypt_decrypt('encrypt', $val->id)."' data-name='$val->name' data-description='$val->description' data-img='$image' data-status='$val->status' id='editComm' href='javascript:void(0)'><i class='las la-edit'></i> &nbsp; Edit</a>
                             </div>
                         </div>
@@ -76,6 +75,8 @@ class RoutineController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to create a new routine category
     public function routineCategoryStore(Request $request){
         try{
             $validator = Validator::make($request->all(), [
@@ -104,6 +105,8 @@ class RoutineController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to update the details of routine category
     public function routineCategoryUpdate(Request $request){
         try{
             $validator = Validator::make($request->all(), [
@@ -136,6 +139,8 @@ class RoutineController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to delete the routine category
     public function routineCategoryDelete(Request $request){
         try{
             $validator = Validator::make($request->all(), [

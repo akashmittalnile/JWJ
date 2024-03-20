@@ -3,11 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attachment;
 use Carbon\Carbon;
 use App\Models\Routine;
 use App\Models\RoutineCategory;
+use App\Models\RoutineSharingDetail;
 use App\Models\Schedule;
 use App\Models\ScheduleInterval;
+use App\Models\TaskAssignMember;
+use App\Models\UserHideTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -27,7 +31,7 @@ class RoutineController extends Controller
                 $temp['name'] = $val->name;
                 $temp['code'] = $val->code;
                 $temp['status'] = $val->status;
-                $temp['percentage'] = (($allRoutine < 1) || ($categoryCount < 1)) ? 0 : number_format((float)(($categoryCount/$allRoutine)*100), 2, '.', '');
+                $temp['percentage'] = (($allRoutine < 1) || ($categoryCount < 1)) ? 0 : number_format((float)(($categoryCount / $allRoutine) * 100), 2, '.', '');
                 $temp['logo'] = assets('assets/images/' . $val->logo);
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $response[] = $temp;
@@ -71,9 +75,9 @@ class RoutineController extends Controller
     {
         try {
             $routine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->first();
-            if(isset($routine->id)){
+            if (isset($routine->id)) {
                 $interval = array();
-                foreach($routine->schedule->interval as $key => $val){
+                foreach ($routine->schedule->interval as $key => $val) {
                     $temp['id'] = $val->id;
                     $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
                     $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
@@ -119,6 +123,7 @@ class RoutineController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $routine = new Routine;
+                $routine->type = 'R';
                 $routine->name = $request->name;
                 $routine->subtitle = $request->subtitle ?? null;
                 $routine->description = $request->description;
@@ -174,6 +179,127 @@ class RoutineController extends Controller
                     }
                 }
                 return successMsg('Routine Created Successfully');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a task
+    public function createTask(Request $request)
+    {
+        try {
+            if ($request->frequency == 'T') {
+                $validRequest = ['type' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required'];
+            } elseif ($request->frequency == 'C') {
+                $validRequest = ['type' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array'];
+            } else {
+                $validRequest = ['type' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array'];
+            }
+            $validator = Validator::make($request->all(), $validRequest);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $task = new Routine();
+                $task->type = 'T';
+                $task->name = $request->name;
+                $task->subtitle = $request->subtitle ?? null;
+                $task->description = $request->description;
+                $task->priority = $request->priority ?? 'L';
+                $task->category_id = $request->category_id;
+                $task->created_by = auth()->user()->id;
+                $task->status = 1;
+                $task->save();
+
+                if ($request->hasfile('images')) {
+                    foreach ($request->file('images') as $key => $file) {
+                        $attachement = new Attachment;
+                        $attachement->routine_id = $task->id;
+                        $attachement->routine_type = 'T';
+                        $name = fileUpload($file, "/uploads/task/");
+                        $attachement->file = $name;
+                        $attachement->status = 1;
+                        $attachement->save();
+                    }
+                }
+
+                // check if the task have autohide option  
+                if ($request->autoHideTask == 'true') {
+                    foreach ($request->schedule_time as $key9 => $timetimehide) {
+                        $time = Carbon::parse($timetimehide)->format('H:i:s');
+                        $hide = new UserHideTask;
+                        $hide->user_id = auth()->user()->id;
+                        $hide->task_id = $task->id;
+                        $hide->task_date = date('Y-m-d');
+                        $hide->task_time = $time;
+                        $hide->status = 1;
+                        $hide->save();
+                    }
+                }
+
+                // entry for schedule task according to repeat time
+                $schedule = new Schedule();
+                $schedule->routines_id = $task->id;
+                $schedule->frequency = $request->frequency;
+                $schedule->is_enable = 1;
+                $schedule->save();
+
+                if ($request->frequency == 'O') {
+                    foreach ($request->schedule_time as $key5 => $scheduletime) {
+                        $interval = new Scheduleinterval();
+                        $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                        $interval->schedule_id = $schedule->id;
+                        $interval->save();
+                    }
+                } elseif ($request->frequency == 'D') {
+                    foreach ($request->schedule_time as $key5 => $scheduletime) {
+                        $interval = new Scheduleinterval();
+                        $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                        $interval->schedule_id = $schedule->id;
+                        $interval->save();
+                    }
+                } elseif ($request->frequency == 'T') {
+                    $schedule = Schedule::find($schedule->id);
+                    $schedule->schedule_time = $request->date;
+                    $schedule->update();
+                    foreach ($request->schedule_time as $key5 => $scheduletime) {
+                        $interval = new Scheduleinterval();
+                        $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                        $interval->schedule_id = $schedule->id;
+                        $interval->save();
+                    }
+                } elseif ($request->frequency == 'C') {
+                    foreach ($request->custom as $key3 => $customs) {
+                        foreach ($request->schedule_time as $key5 => $scheduletime) {
+                            $interval = new Scheduleinterval();
+                            $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                            $interval->interval_weak = $customs;
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    }
+                }
+
+                // $tasksharing = new RoutineSharingDetail;
+                // $tasksharing->routines_id = $task->id;
+                // $tasksharing->user_id = $request->user_id;
+                // $tasksharing->save();
+                if ($request->taskassignmembers) {
+                    if (count($request->taskassignmembers) > 0) {
+                        foreach ($request->taskassignmembers as $key3 => $assignmembers) {
+                            $taskassignmember  = new TaskAssignMember;
+                            $taskassignmember->task_id = $task->id;
+                            $taskassignmember->user_id = $assignmembers;
+                            $taskassignmember->status = 1;
+                            $taskassignmember->save();
+                        }
+                    }
+                }
+                $tasks['taskid'] = $task->id;
+                $tasks['created_by'] = auth()->user()->id;
+                $tasks['taskname'] = $task->name;
+                return successMsg("Task created successfully");
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

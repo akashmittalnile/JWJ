@@ -77,6 +77,7 @@ class CommunityController extends Controller
                 $temp['member_follow_count'] = $followCount ?? 0;
                 $temp['post_count'] = $post ?? 0;
                 $temp['posted_by'] = $val->user->name ?? 'NA';
+                $temp['my_community'] = ($val->created_by==auth()->user()->id) ? true : false;
                 $temp['posted_by_image'] =  isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null;
                 $temp['member_image'] = $memberImage;
                 $temp['plan_name'] = $plan->plan_name ?? null;
@@ -253,6 +254,96 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to update a community by user
+    public function editCommunity(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'title' => 'required',
+                'file' => 'array',
+                'deletefile' => 'array',
+                'description' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $community = Community::where('id', $request->id)->first();
+                if(isset($community->id)){
+                    if($community->created_by == auth()->user()->id){
+                        $community->name = $request->title;
+                        $community->plan_id = $request->plan_id ?? null;
+                        $community->description = $request->description;
+                        $community->updated_at = date('Y-m-d H:i:s');
+                        $community->save();
+        
+                        if(count($request->deletefile) > 0){
+                            foreach($request->deletefile as $val){
+                                $communityImage = CommunityImage::where('id', $val)->where('community_id', $community->id)->first();
+                                fileRemove("/uploads/community/$communityImage->name");
+                                CommunityImage::where('id', $val)->where('community_id', $community->id)->delete();
+                            }
+                        }
+                        if ($request->hasFile("file")) {
+                            foreach ($request->file('file') as $value) {
+                                $name = fileUpload($value, "/uploads/community/");
+                                $communityImage = new CommunityImage;
+                                $communityImage->community_id = $community->id;
+                                $communityImage->name = $name;
+                                $communityImage->type = 'image';
+                                $communityImage->save();
+                            }
+                        }
+
+                        return successMsg('Community updated successfully.');
+                    } else return errorMsg('This community is not created by you.');
+                } else return errorMsg('Community not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete the journal
+    public function deleteCommunity(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $community = Community::where('id', $request->id)->first();
+                if(isset($community->id)){
+                    if($community->created_by == auth()->user()->id){
+                        $commImage = CommunityImage::where('community_id', $community->id)->get();
+                        foreach($commImage as $key => $val){
+                            fileRemove("/uploads/community/$val->name");
+                        }
+                        $posts = Post::where('community_id', $community->id)->get();
+                        foreach($posts as $key => $val){
+                            $postImage = PostImage::where('post_id', $val->id)->get();
+                            foreach($postImage as $key1 => $val1){
+                                fileRemove("/uploads/community/post/$val1->name");
+                            }
+                            PostImage::where('post_id', $val->id)->delete();
+                            $likes = UserLike::where('object_id', $val->id)->where('object_type', 'post')->delete();
+                            $comment = Comment::where('object_id', $val->id)->where('object_type', 'post')->delete();
+                        }
+                        CommunityImage::where('community_id', $community->id)->delete();
+                        Post::where('community_id', $community->id)->delete();
+                        UserFollowedCommunity::where('community_id', $community->id)->delete();
+                        Community::where('id', $request->id)->delete();
+                        return successMsg('Community deleted successfully.');
+                    } else return errorMsg('This community is not created by you.');
+                } else return errorMsg('Community not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to follow or unfollow a community
     public function followUnfollow(Request $request) {
         try{
@@ -288,7 +379,7 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to create a post by user
+    // This function is used to create a post by user. If they are follower
     public function createPost(Request $request) {
         try{
             $validator = Validator::make($request->all(), [

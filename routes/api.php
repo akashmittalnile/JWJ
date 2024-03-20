@@ -48,12 +48,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('journal/{id}', [JournalController::class, 'journalDetails']);
     Route::delete('delete-journal', [JournalController::class, 'deleteJournal']);
     Route::post('create-journal', [JournalController::class, 'createJournal']);
+    Route::post('edit-journal', [JournalController::class, 'editJournal']);
 
     Route::get('community-list', [CommunityController::class, 'communityList']);
     Route::get('my-community-list', [CommunityController::class, 'myCommunityList']);
     Route::get('community/{id}', [CommunityController::class, 'communityDetails']);
     Route::post('follow-unfollow', [CommunityController::class, 'followUnfollow']);
     Route::post('create-community', [CommunityController::class, 'createCommunity']);
+    Route::post('edit-community', [CommunityController::class, 'editCommunity']);
+    Route::delete('delete-community', [CommunityController::class, 'deleteCommunity']);
     Route::post('create-post', [CommunityController::class, 'createPost']);
     Route::get('post/{id}', [CommunityController::class, 'postDetails']);
     Route::post('like-unlike-post', [CommunityController::class, 'postLikeUnlike']);
@@ -64,6 +67,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('routine', [RoutineController::class, 'routine']);
     Route::get('routine-detail/{id}', [RoutineController::class, 'routineDetail']);
     Route::post('create-routine', [RoutineController::class, 'createRoutine']);
+
+    Route::post('create-task', [RoutineController::class, 'createTask']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');
