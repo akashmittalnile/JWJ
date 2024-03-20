@@ -2,6 +2,12 @@
 
 @push('css')
 <link rel="stylesheet" type="text/css" href="{{ assets('assets/css/user.css') }}">
+<style>
+    .dropdown-item:hover{
+        background-color: #1079c0 !important;
+        color: white !important;
+    }
+</style>
 @endpush
 
 @section('title','Journey with Journals - Routine Category')

@@ -68,8 +68,7 @@ class UserController extends Controller
                                 <i class='las la-ellipsis-v'></i>
                             </a>
                             <div class='dropdown-menu'>
-                                <a class='dropdown-item view-btn' href='javascript:void(0)'><i class='las la-eye'></i> Restrict</a>
-                                <a class='dropdown-item view-btn' href='".route('admin.users.details', encrypt_decrypt('encrypt', $val->id))."'><i class='las la-eye'></i> View</a>
+                                <a class='dropdown-item view-btn' href='".route('admin.users.details', encrypt_decrypt('encrypt', $val->id))."'><i class='las la-eye'></i> &nbsp; View</a>
                             </div>
                         </div>
                     </td>
