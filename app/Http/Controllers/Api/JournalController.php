@@ -350,6 +350,7 @@ class JournalController extends Controller
                 if(isset($criteria->id)){
                     if($criteria->created_by == auth()->user()->id){
                         SearchCriteria::where('id', $request->id)->delete();
+                        JournalSearchCriteria::where('search_id', $request->id)->delete();
                         return successMsg('Criteria deleted successfully');
                     } else return errorMsg('This criteria is not created by you');
                 } else return errorMsg('Criteria not found');
