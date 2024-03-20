@@ -150,7 +150,7 @@ class CommunityController extends Controller
             $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.id', $id)->first();
             if(isset($data->id)){
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
-                if(isset($ufc->id)){
+                if(isset($ufc->id) || ($data->created_by == auth()->user()->id)){
                     $posts = Post::where('community_id', $data->id)->get();
                     $postCount = Post::where('community_id', $data->id)->count();
                     $followCount = UserFollowedCommunity::where('community_id', $data->id)->count();
@@ -394,7 +394,8 @@ class CommunityController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $ufc = UserFollowedCommunity::where('community_id', $request->community_id)->where('userid', auth()->user()->id)->first();
-                if(isset($ufc->id)){
+                $data = Community::where('id', $request->community_id)->first();
+                if(isset($ufc->id) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
                     $post = new Post;
                     $post->community_id = $request->community_id;
                     $post->title = $request->title;
@@ -571,23 +572,25 @@ class CommunityController extends Controller
                 $post = Post::where('id', $request->id)->first();
                 if(isset($post->id)){
                     $ufc = UserFollowedCommunity::where('community_id', $post->community_id)->where('userid', auth()->user()->id)->first();
-                    if(!isset($ufc)) return errorMsg('Please follow community first.');
-                    $like = UserLike::where('user_id', auth()->user()->id)->where('object_id', $request->id)->where('object_type', 'post')->first();
-                    if(isset($like->id)){
-                        $like->status = ($like->status == 0) ? 1 : 0;
-                        $like->updated_at = date('Y-m-d H:i:s');
-                        $like->save();
-                        $msg = ($like->status == 0) ? "You have liked $post->title" : "You have disliked $post->title";
-                        return successMsg($msg);
-                    } else {
-                        $like = new UserLike;
-                        $like->object_id = $request->id;
-                        $like->object_type = 'post';
-                        $like->user_id = auth()->user()->id;
-                        $like->status = 1;
-                        $like->save();
-                        return successMsg("You have liked $post->title");
-                    }
+                    $data = Community::where('id', $post->community_id)->first();
+                    if(isset($ufc) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
+                        $like = UserLike::where('user_id', auth()->user()->id)->where('object_id', $request->id)->where('object_type', 'post')->first();
+                        if(isset($like->id)){
+                            $like->status = ($like->status == 0) ? 1 : 0;
+                            $like->updated_at = date('Y-m-d H:i:s');
+                            $like->save();
+                            $msg = ($like->status == 0) ? "You have liked $post->title" : "You have disliked $post->title";
+                            return successMsg($msg);
+                        } else {
+                            $like = new UserLike;
+                            $like->object_id = $request->id;
+                            $like->object_type = 'post';
+                            $like->user_id = auth()->user()->id;
+                            $like->status = 1;
+                            $like->save();
+                            return successMsg("You have liked $post->title");
+                        }
+                    } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
             }
         } catch (\Exception $e) {
@@ -610,16 +613,18 @@ class CommunityController extends Controller
                 $post = Post::where('id', $request->id)->first();
                 if(isset($post->id)){
                     $ufc = UserFollowedCommunity::where('community_id', $post->community_id)->where('userid', auth()->user()->id)->first();
-                    if(!isset($ufc)) return errorMsg('Please follow community first.');
-                    $comment = new Comment;
-                    $comment->user_id = auth()->user()->id;
-                    $comment->object_id = $request->id;
-                    $comment->object_type = 'post';
-                    $comment->parent_id = $request->reply_id ?? null;
-                    $comment->comment = $request->comment ?? null;
-                    $comment->status = 1;
-                    $comment->save();
-                    return successMsg('Comment posted successfully.');
+                    $data = Community::where('id', $post->community_id)->first();
+                    if(isset($ufc) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
+                        $comment = new Comment;
+                        $comment->user_id = auth()->user()->id;
+                        $comment->object_id = $request->id;
+                        $comment->object_type = 'post';
+                        $comment->parent_id = $request->reply_id ?? null;
+                        $comment->comment = $request->comment ?? null;
+                        $comment->status = 1;
+                        $comment->save();
+                        return successMsg('Comment posted successfully.');
+                    } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
             }
         } catch (\Exception $e) {
