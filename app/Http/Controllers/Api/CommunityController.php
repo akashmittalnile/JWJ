@@ -440,7 +440,7 @@ class CommunityController extends Controller
                         $post->community_id = $request->community_id;
                         $post->title = $request->title;
                         $post->post_description = $request->description;
-                        $post->created_by = auth()->user()->id;
+                        $post->updated_at = date('Y-m-d H:i:s');
                         $post->save();
     
                         if(count($request->deletefile) > 0){

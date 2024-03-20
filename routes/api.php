@@ -57,6 +57,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-community', [CommunityController::class, 'createCommunity']);
     Route::post('edit-community', [CommunityController::class, 'editCommunity']);
     Route::delete('delete-community', [CommunityController::class, 'deleteCommunity']);
+
     Route::post('create-post', [CommunityController::class, 'createPost']);
     Route::post('edit-post', [CommunityController::class, 'editPost']);
     Route::delete('delete-post', [CommunityController::class, 'deletePost']);
@@ -64,13 +65,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('like-unlike-post', [CommunityController::class, 'postLikeUnlike']);
     Route::post('post-comment', [CommunityController::class, 'postComment']);
 
-
     Route::get('routine-category', [RoutineController::class, 'routineCategory']);
     Route::get('routine', [RoutineController::class, 'routine']);
     Route::get('routine-detail/{id}', [RoutineController::class, 'routineDetail']);
     Route::post('create-routine', [RoutineController::class, 'createRoutine']);
+    Route::post('edit-routine', [RoutineController::class, 'editRoutine']);
+    Route::delete('delete-routine', [RoutineController::class, 'deleteRoutine']);
 
     Route::post('create-task', [RoutineController::class, 'createTask']);
+    Route::post('edit-task', [RoutineController::class, 'editTask']);
+    Route::delete('delete-task', [RoutineController::class, 'deleteTask']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');

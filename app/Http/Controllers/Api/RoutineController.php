@@ -70,6 +70,33 @@ class RoutineController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to delete a routine
+    public function deleteRoutine(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $routine = Routine::where('id', $request->id)->first();
+                if(isset($routine->id)){
+                    if($routine->created_by == auth()->user()->id){
+                        $schedule = Schedule::where('routines_id', $routine->id)->first();
+                        ScheduleInterval::where('schedule_id', $schedule->id)->delete();
+                        Schedule::where('routines_id', $routine->id)->delete();
+                        Routine::where('id', $request->id)->delete();
+                        return successMsg('Routine deleted successfully');
+                    } else return errorMsg('This routine is not created by you');
+                } else return errorMsg('Routine not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to getting the list of routines
     public function routineDetail(Request $request, $id)
     {
@@ -101,6 +128,81 @@ class RoutineController extends Controller
                 );
                 return successMsg('Routine detail', $response);
             } else return errorMsg('Routine not found');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a routine
+    public function editRoutine(Request $request)
+    {
+        try {
+            if ($request->frequency == 'T') {
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required'];
+            } elseif ($request->frequency == 'C') {
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array'];
+            } else {
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array'];
+            }
+            $validator = Validator::make($request->all(), $validRequest);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $routine = Routine::where('id', $request->id)->first();
+                if(isset($routine->id)){
+                    $routine->name = $request->name;
+                    $routine->subtitle = $request->subtitle ?? null;
+                    $routine->description = $request->description;
+                    $routine->priority = $request->priority ?? 'L';
+                    $routine->category_id = $request->category_id;
+                    $routine->updated_at = date('Y-m-d H:i:s');
+                    $routine->save();
+    
+                    $schedule = Schedule::where('routines_id', $routine->id)->first();
+                    ScheduleInterval::where('schedule_id',$schedule->id)->delete();
+                    $schedule->frequency = $request->frequency;
+    
+                    if ($request->frequency == 'O') {
+                        foreach ($request->schedule_time as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    } elseif ($request->frequency == 'D') {
+                        foreach ($request->schedule_time as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    } elseif ($request->frequency == 'T') {
+                        $schedule->schedule_time = $request->date;
+                        foreach ($request->schedule_time as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    } elseif ($request->frequency == 'C') {
+                        $schedule->schedule_startdate = $request->schedule_startdate ?? null;
+                        $schedule->schedule_enddate = $request->schedule_enddate ?? null;
+                        foreach ($request->custom as $key3 => $customs) {
+                            foreach ($request->schedule_time as $key5 => $scheduletime) {
+                                $interval = new ScheduleInterval;
+                                $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
+                                $interval->interval_weak = $customs;
+                                $interval->schedule_id = $schedule->id;
+                                $interval->save();
+                            }
+                        }
+                    }
+
+                    $schedule->save();
+                    return successMsg('Routine updated successfully');
+                } else return errorMsg('Routine not found');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -178,7 +280,7 @@ class RoutineController extends Controller
                         }
                     }
                 }
-                return successMsg('Routine Created Successfully');
+                return successMsg('Routine created successfully');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
