@@ -50,6 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-journal', [JournalController::class, 'createJournal']);
     Route::post('edit-journal', [JournalController::class, 'editJournal']);
 
+    Route::post('create-criteria', [JournalController::class, 'createCriteria']);
+    Route::post('edit-criteria', [JournalController::class, 'editCriteria']);
+    Route::delete('delete-criteria', [JournalController::class, 'deleteCriteria']);
+
     Route::get('community-list', [CommunityController::class, 'communityList']);
     Route::get('my-community-list', [CommunityController::class, 'myCommunityList']);
     Route::get('community/{id}', [CommunityController::class, 'communityDetails']);

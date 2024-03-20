@@ -47,6 +47,7 @@ class JournalController extends Controller
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
+                $temp['my_criteria'] = ($val->created_by == auth()->user()->id) ? true : false;
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $response[] = $temp;
@@ -277,6 +278,81 @@ class JournalController extends Controller
                     }
                 }
                 return successMsg('Journal updated successfully.', $journal);
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a criteria by user
+    public function createCriteria(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'description' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $criteria = new SearchCriteria;
+                $criteria->name = $request->name ?? null;
+                $criteria->description = $request->description ?? null;
+                $criteria->created_by = auth()->user()->id;
+                $criteria->status = 1;
+                $criteria->save();
+                return successMsg('New criteria created successfully');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to edit the criteria
+    public function editCriteria(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'name' => 'required',
+                'description' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $criteria = SearchCriteria::where('id', $request->id)->first();
+                if(isset($criteria->id)){
+                    if($criteria->created_by == auth()->user()->id){
+                        $criteria->name = $request->name ?? null;
+                        $criteria->description = $request->description ?? null;
+                        $criteria->updated_at = date('Y-m-d H:i:s');
+                        $criteria->save();
+                        return successMsg('Criteria updated successfully');
+                    } else return errorMsg('This criteria is not created by you');
+                } else return errorMsg('Criteria not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete the criteria
+    public function deleteCriteria(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $criteria = SearchCriteria::where('id', $request->id)->first();
+                if(isset($criteria->id)){
+                    if($criteria->created_by == auth()->user()->id){
+                        SearchCriteria::where('id', $request->id)->delete();
+                        return successMsg('Criteria deleted successfully');
+                    } else return errorMsg('This criteria is not created by you');
+                } else return errorMsg('Criteria not found');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
