@@ -58,6 +58,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('edit-community', [CommunityController::class, 'editCommunity']);
     Route::delete('delete-community', [CommunityController::class, 'deleteCommunity']);
     Route::post('create-post', [CommunityController::class, 'createPost']);
+    Route::post('edit-post', [CommunityController::class, 'editPost']);
+    Route::delete('delete-post', [CommunityController::class, 'deletePost']);
     Route::get('post/{id}', [CommunityController::class, 'postDetails']);
     Route::post('like-unlike-post', [CommunityController::class, 'postLikeUnlike']);
     Route::post('post-comment', [CommunityController::class, 'postComment']);

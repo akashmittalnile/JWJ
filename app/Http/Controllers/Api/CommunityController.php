@@ -163,7 +163,9 @@ class CommunityController extends Controller
                     $imgs = CommunityImage::where('community_id', $data->id)->get();
                     $images = array();
                     foreach($imgs as $item){
-                        array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                        $tem['id'] = $item->id;
+                        $tem['image'] = isset($item->name) ? assets("uploads/community/".$item->name) : null;
+                        $images[] = $tem;
                     }
                     $plan = Plan::where('id', $data->plan_id)->first();
                     $post = array();
@@ -419,6 +421,84 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to update a post
+    public function editPost(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'title' => 'required',
+                'description' => 'required',
+                'file' => 'array',
+                'deletefile' => 'array',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = Post::where('id', $request->id)->first();
+                if(isset($post->id)){
+                    if($post->created_by == auth()->user()->id){
+                        $post->community_id = $request->community_id;
+                        $post->title = $request->title;
+                        $post->post_description = $request->description;
+                        $post->created_by = auth()->user()->id;
+                        $post->save();
+    
+                        if(count($request->deletefile) > 0){
+                            foreach($request->deletefile as $val){
+                                $postImage = PostImage::where('id', $val)->where('post_id', $post->id)->first();
+                                fileRemove("/uploads/community/post/$postImage->name");
+                                PostImage::where('id', $val)->where('post_id', $post->id)->delete();
+                            }
+                        }
+                        if ($request->hasFile("file")) {
+                            foreach ($request->file('file') as $value) {
+                                $name = fileUpload($value, "/uploads/community/post/");
+                                $postImage = new PostImage;
+                                $postImage->post_id = $post->id;
+                                $postImage->name = $name;
+                                $postImage->type = 'image';
+                                $postImage->save();
+                            }
+                        }
+                        return successMsg('Post updated successfully.');
+                    } else return errorMsg('This post is not created by you');
+                } else return errorMsg('Post not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete a post
+    public function deletePost(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = Post::where('id', $request->id)->first();
+                if(isset($post->id)){
+                    if($post->created_by == auth()->user()->id){
+                        $postImg = PostImage::where('post_id', $request->id)->get();
+                        foreach($postImg as $key => $val){
+                            fileRemove("/uploads/community/post/$val->name");
+                        }
+                        PostImage::where('post_id', $request->id)->delete();
+                        $likes = UserLike::where('object_id', $request->id)->where('object_type', 'post')->delete();
+                        $comment = Comment::where('object_id', $request->id)->where('object_type', 'post')->delete();
+                        return successMsg('Post deleted successfully.');
+                    } else return errorMsg('This post is not created by you');
+                } else return errorMsg('Post not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to get the details of posts in community
     public function postDetails($id) {
         try{
@@ -429,7 +509,9 @@ class CommunityController extends Controller
                 $user = User::where('id', $post->created_by)->first();
                 $image = array();
                 foreach($img as $val){
-                    array_push($image, assets("uploads/community/post/".$val->name));
+                    $tem['id'] = $val->id;
+                    $tem['image'] = assets("uploads/community/post/".$val->name);
+                    $image[] = $tem;
                 }
                 $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $id)->where('object_type', 'post')->first();
                 $likesCount = UserLike::where('object_id', $id)->where('object_type', 'post')->count();
