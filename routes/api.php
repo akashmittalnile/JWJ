@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommunityController;
 use App\Http\Controllers\Api\JournalController;
 use App\Http\Controllers\Api\RoutineController;
+use App\Http\Controllers\Api\SupportController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -79,6 +80,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-task', [RoutineController::class, 'createTask']);
     Route::post('edit-task', [RoutineController::class, 'editTask']);
     Route::delete('delete-task', [RoutineController::class, 'deleteTask']);
+
+    Route::post('create-query', [SupportController::class, 'createQuery']);
+    Route::get('inquiry-list', [SupportController::class, 'inquiryList']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');

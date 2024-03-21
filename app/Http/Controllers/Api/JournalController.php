@@ -187,7 +187,7 @@ class JournalController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 if ($request->hasFile("file")) 
-                    if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+                    if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                 $journal = new Journal;
                 $journal->title = $request->title;
@@ -242,7 +242,7 @@ class JournalController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 if ($request->hasFile("file")) 
-                    if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+                    if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                 $journal = Journal::where('created_by', auth()->user()->id)->where('id', $request->id)->first();
                 $journal->title = $request->title;

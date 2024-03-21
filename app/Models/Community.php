@@ -15,4 +15,9 @@ class Community extends Model
     {
         return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => 'NA', 'email' => 'NA', 'profile' => 'NA']);
     }
+
+    public function communityImages()
+    {
+        return $this->hasMany(CommunityImage::class, 'community_id', 'id');
+    }
 }

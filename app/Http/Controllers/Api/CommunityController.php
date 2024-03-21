@@ -46,7 +46,7 @@ class CommunityController extends Controller
     // This function is used to show all the active communities
     public function communityList(Request $request) {
         try{
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.status', 1);
+            $data = Community::where('communities.status', 1);
             if($request->filled('search')){
                 $data->where('communities.name', 'like', '%' . $request->search . '%');
             }
@@ -61,10 +61,12 @@ class CommunityController extends Controller
                     $followedUser = User::where('id', $items->userid)->first();
                     array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
                 }
-                $imgs = CommunityImage::where('community_id', $val->id)->get();
+                $imgs = $val->communityImages;
                 $images = array();
                 foreach($imgs as $item){
-                    array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                    $tem['id'] = $item->id;
+                    $tem['image'] = isset($item->name) ? assets("uploads/community/".$item->name) : null;
+                    $images[] = $tem;
                 }
                 $plan = Plan::where('id', $val->plan_id)->first();
                 $post = Post::where('community_id', $val->id)->count();
@@ -96,9 +98,12 @@ class CommunityController extends Controller
     // This function is used to show all my communities whether its active, pending, inactive & rejected
     public function myCommunityList(Request $request) {
         try{
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('created_by', auth()->user()->id);
+            $data = Community::where('created_by', auth()->user()->id);
             if($request->filled('search')){
                 $data->where('communities.name', 'like', '%' . $request->search . '%');
+            }
+            if($request->filled('status')){
+                $data->where('communities.status', $request->status);
             }
             $data = $data->orderByDesc('communities.id')->get();
             $response = [];
@@ -111,10 +116,12 @@ class CommunityController extends Controller
                     $followedUser = User::where('id', $items->userid)->first();
                     array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
                 }
-                $imgs = CommunityImage::where('community_id', $val->id)->get();
+                $imgs = $val->communityImages;
                 $images = array();
                 foreach($imgs as $item){
-                    array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
+                    $tem['id'] = $item->id;
+                    $tem['image'] = isset($item->name) ? assets("uploads/community/".$item->name) : null;
+                    $images[] = $tem;
                 }
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
                 $plan = Plan::where('id', $val->plan_id)->first();
@@ -147,7 +154,7 @@ class CommunityController extends Controller
     // This function is used to get the details of community and their posts if user follow
     public function communityDetails($id) {
         try{
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.id', $id)->first();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->leftjoin('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.id', $id)->first();
             if(isset($data->id)){
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id) || ($data->created_by == auth()->user()->id)){
@@ -230,7 +237,7 @@ class CommunityController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 if ($request->hasFile("file")) 
-                    if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+                    if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                 $community = new Community;
                 $community->name = $request->title;
@@ -276,7 +283,7 @@ class CommunityController extends Controller
                 if(isset($community->id)){
                     if($community->created_by == auth()->user()->id){
                         if ($request->hasFile("file")) 
-                            if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+                            if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                         $community->name = $request->title;
                         $community->plan_id = $request->plan_id ?? null;
@@ -403,7 +410,7 @@ class CommunityController extends Controller
                 $data = Community::where('id', $request->community_id)->first();
                 if(isset($ufc->id) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
                     if ($request->hasFile("file")) 
-                        if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+                        if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                     $post = new Post;
                     $post->community_id = $request->community_id;
@@ -448,7 +455,7 @@ class CommunityController extends Controller
                 if(isset($post->id)){
                     if($post->created_by == auth()->user()->id){
                         if ($request->hasFile("file")) 
-                            if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+                            if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                         $post->community_id = $request->community_id;
                         $post->title = $request->title;

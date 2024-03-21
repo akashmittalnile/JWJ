@@ -430,7 +430,7 @@ class RoutineController extends Controller
                 if(isset($task->id)){
                     if($task->created_by == auth()->user()->id){
                         if ($request->hasFile("images")) 
-                            if(isInvalidExtension($request->images)) return errorMsg('Invalid image extension!');
+                            if(isInvalidExtension($request->images)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                         $task->type = 'T';
                         $task->name = $request->name;

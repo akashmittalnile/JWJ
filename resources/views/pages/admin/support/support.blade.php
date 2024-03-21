@@ -32,35 +32,34 @@
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <input type="month" class="form-control">
+                            <input type="month" id="selectMonth" name="" class="form-control">
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <select class="form-control">
+                            <select class="form-control" id="searchSelect2" name="">
                                 <option>Select Status</option>
-                                <option>Closed</option>
-                                <option>In-Progress</option>
-                                <option>Pending</option>
+                                <option value="1">Closed</option>
+                                <option value="2">In-Progress</option>
+                                <option value="3">Pending</option>
                             </select>
                         </div>
                     </div>
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <select class="form-control">
-                                <option>Show All Inquiry Type</option>
-                                <option>Plans Related</option>
-                                <option>Billing Related</option>
-                                <option>General Inquiry</option>
-                                <option>Community Related</option>
-                                <option>Community Guidelines</option>
-                                <option>Community Creation</option>
-                                <option>Task Management</option>
-                                <option>Journals Related</option>
-                                <option>Journaling Functionality</option>
-                                <option>General Inquiry</option>
+                            <select class="form-control" id="searchSelect" name="">
+                                <option value="" >Show All Inquiry Type</option>
+                                <option value="1" >Plans Related</option>
+                                <option value="2" >Billing Related</option>
+                                <option value="3" >General Inquiry</option>
+                                <option value="4" >Community Related</option>
+                                <option value="5" >Community Guidelines</option>
+                                <option value="6" >Community Creation</option>
+                                <option value="7" >Task Management</option>
+                                <option value="8" >Journals Related</option>
+                                <option value="9" >Journaling Functionality</option>
                             </select>
                         </div>
                     </div>
@@ -68,7 +67,7 @@
                     <div class="col-md-4">
                         <div class="form-group">
                             <div class="search-form-group">
-                                <input type="text" name="" class="form-control" placeholder="Search by user name, email & Phone no.">
+                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name, email & Phone no.">
                                 <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
                             </div>
                         </div>
@@ -77,205 +76,19 @@
                 </div>
             </div>
         </div>
+
         <div class="support-content">
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="jwj-support-card">
-                        <div class="jwjcard-support-head">
-                            <div class="jwjcard-user-card">
-                                <div class="jwjcard-user-avtar">
-                                    <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                </div>
-                                <div class="jwjcard-user-text">
-                                    <h4>Jane doe</h4>
-                                </div>
-                            </div>
-                            <div class="jwjcard-user-action">
-                                <a class="phone-btn" href=""><img src="{{ assets('assets/images/call.svg') }}"></a>
-                                <a class="email-btn" href=""><img src="{{ assets('assets/images/sms.svg') }}"></a>
-                            </div>
-                        </div>
-                        <div class="jwjcard-support-body">
-                            <div class="support-desc">
-                                <p>I Received A Subscription Renewal Confirmation, But I Wanted To Check If Everything Is In Order. Can You Confirm The Details And Ensure That My Subscription Is Active?</p>
-                            </div>
-                            <div class="support-option-info">
-                                <p>Inquiry Type</p>
-                                <h2>Plan Related </h2>
-                            </div>
-                            <div class="support-action-info">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <a class="Sendreply-btn" href="javascript:void(0)">Send reply</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-control">
-                                            <option>Select Status</option>
-                                            <option>Closed</option>
-                                            <option>In-Progress</option>
-                                            <option>Pending</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="row" id="appendData">
 
-                        <div class="jwjcard-support-foot">
-                            <div class="support-date-info">
-                                <img src="{{ assets('assets/images/calendar.svg') }}"> Submitted On 26 April,2023- 09:23PM
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="jwj-support-card">
-                        <div class="jwjcard-support-head">
-                            <div class="jwjcard-user-card">
-                                <div class="jwjcard-user-avtar">
-                                    <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                </div>
-                                <div class="jwjcard-user-text">
-                                    <h4>Jane doe</h4>
-                                </div>
-                            </div>
-                            <div class="jwjcard-user-action">
-                                <a class="phone-btn" href=""><img src="{{ assets('assets/images/call.svg') }}"></a>
-                                <a class="email-btn" href=""><img src="{{ assets('assets/images/sms.svg') }}"></a>
-                            </div>
-                        </div>
-                        <div class="jwjcard-support-body">
-                            <div class="support-desc">
-                                <p>I Received A Subscription Renewal Confirmation, But I Wanted To Check If Everything Is In Order. Can You Confirm The Details And Ensure That My Subscription Is Active?</p>
-                            </div>
-                            <div class="support-option-info">
-                                <p>Inquiry Type</p>
-                                <h2>Plan Related </h2>
-                            </div>
-                            <div class="support-action-info">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <a class="Sendreply-btn" href="javascript:void(0)">Send reply</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-control">
-                                            <option>Select Status</option>
-                                            <option>Closed</option>
-                                            <option>In-Progress</option>
-                                            <option>Pending</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="jwjcard-support-foot">
-                            <div class="support-date-info">
-                                <img src="{{ assets('assets/images/calendar.svg') }}"> Submitted On 26 April,2023- 09:23PM
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="jwj-support-card">
-                        <div class="jwjcard-support-head">
-                            <div class="jwjcard-user-card">
-                                <div class="jwjcard-user-avtar">
-                                    <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                </div>
-                                <div class="jwjcard-user-text">
-                                    <h4>Jane doe</h4>
-                                </div>
-                            </div>
-                            <div class="jwjcard-user-action">
-                                <a class="phone-btn" href=""><img src="{{ assets('assets/images/call.svg') }}"></a>
-                                <a class="email-btn" href=""><img src="{{ assets('assets/images/sms.svg') }}"></a>
-                            </div>
-                        </div>
-                        <div class="jwjcard-support-body">
-                            <div class="support-desc">
-                                <p>I Received A Subscription Renewal Confirmation, But I Wanted To Check If Everything Is In Order. Can You Confirm The Details And Ensure That My Subscription Is Active?</p>
-                            </div>
-                            <div class="support-option-info">
-                                <p>Inquiry Type</p>
-                                <h2>Plan Related </h2>
-                            </div>
-                            <div class="support-action-info">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <a class="Sendreply-btn" href="javascript:void(0)">Send reply</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-control">
-                                            <option>Select Status</option>
-                                            <option>Closed</option>
-                                            <option>In-Progress</option>
-                                            <option>Pending</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="jwjcard-support-foot">
-                            <div class="support-date-info">
-                                <img src="{{ assets('assets/images/calendar.svg') }}"> Submitted On 26 April,2023- 09:23PM
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6">
-                    <div class="jwj-support-card">
-                        <div class="jwjcard-support-head">
-                            <div class="jwjcard-user-card">
-                                <div class="jwjcard-user-avtar">
-                                    <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                </div>
-                                <div class="jwjcard-user-text">
-                                    <h4>Jane doe</h4>
-                                </div>
-                            </div>
-                            <div class="jwjcard-user-action">
-                                <a class="phone-btn" href=""><img src="{{ assets('assets/images/call.svg') }}"></a>
-                                <a class="email-btn" href=""><img src="{{ assets('assets/images/sms.svg') }}"></a>
-                            </div>
-                        </div>
-                        <div class="jwjcard-support-body">
-                            <div class="support-desc">
-                                <p>I Received A Subscription Renewal Confirmation, But I Wanted To Check If Everything Is In Order. Can You Confirm The Details And Ensure That My Subscription Is Active?</p>
-                            </div>
-                            <div class="support-option-info">
-                                <p>Inquiry Type</p>
-                                <h2>Plan Related </h2>
-                            </div>
-                            <div class="support-action-info">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <a class="Sendreply-btn" href="javascript:void(0)">Send reply</a>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <select class="form-control">
-                                            <option>Select Status</option>
-                                            <option>Closed</option>
-                                            <option>In-Progress</option>
-                                            <option>Pending</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="jwjcard-support-foot">
-                            <div class="support-date-info">
-                                <img src="{{ assets('assets/images/calendar.svg') }}"> Submitted On 26 April,2023- 09:23PM
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
+
+        <div class="jwj-table-pagination">
+            <ul class="jwj-pagination" id="appendPagination">
+
+            </ul>
+        </div>
+
     </div>
 </div>
 
@@ -347,3 +160,89 @@
     </div>
 </div>
 @endsection
+
+@push('js')
+<script type="text/javascript">
+    
+    $(document).ready(function() {
+        const getList = (page, search = null, inquiry = null, status = null, date = null) => {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.support') }}",
+                data: {
+                    page, search, inquiry, status, date
+                },
+                dataType: 'json',
+                success: function(result) {
+                    if (result.status) {
+                        let userData = result.data.html.data;
+                        let html = result.data.html;
+                        $("#appendData").html(result.data.html);
+                        $("#appendPagination").html('');
+                        if (result.data.lastPage != 1) {
+                            let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">
+                                    <a href="javascript:void(0)" data-page="${result.data.currentPage-1}" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                </li>`;
+                            for (let i = 1; i <= result.data.lastPage; i++) {
+                                paginate += `<li class="${result.data.currentPage==i ? 'active' : ''}">
+                                        <a href="javascript:void(0)" data-page="${i}" class="page-link">${i}</a>
+                                    </li>`;
+                            }
+                            paginate += `<li class="${result.data.currentPage==result.data.lastPage ? 'disabled next' : 'next'}" id="example_next">
+                                        <a href="javascript:void(0)" data-page="${result.data.currentPage+1}" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                    </li>`;
+                            $("#appendPagination").append(paginate);
+                        }
+                    } else {
+                        let html = `<div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div>
+                                        <img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                                    </div>
+                                </div>`;
+                        $("#appendData").html(html);
+                        $("#appendPagination").html('');
+                    }
+                },
+                error: function(data, textStatus, errorThrown) {
+                    jsonValue = jQuery.parseJSON(data.responseText);
+                    console.error(jsonValue.message);
+                },
+            });
+        };
+        getList(1);
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            getList($(this).data('page'));
+        })
+        $(document).on('keyup', "#searchInput", function() {
+            let inquiry = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
+            let search = $("#searchInput").val();
+            let date = $("#selectMonth").val();
+            getList($(this).data('page'), search, inquiry, status, date);
+        });
+        $(document).on('change', "#searchSelect", function() {
+            let inquiry = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
+            let search = $("#searchInput").val();
+            let date = $("#selectMonth").val();
+            getList($(this).data('page'), search, inquiry, status, date);
+        });
+        $(document).on('change', "#searchSelect2", function() {
+            let inquiry = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
+            let search = $("#searchInput").val();
+            let date = $("#selectMonth").val();
+            getList($(this).data('page'), search, inquiry, status, date);
+        });
+        $(document).on('change', "#selectMonth", function() {
+            let inquiry = $("#searchSelect").val();
+            let status = $("#searchSelect2").val();
+            let date = $("#selectMonth").val();
+            let search = $("#searchInput").val();
+            getList($(this).data('page'), search, inquiry, status, date);
+        });
+    });
+
+</script>
+@endpush
