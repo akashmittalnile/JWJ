@@ -89,6 +89,23 @@ if (!function_exists('errorMsg')) {
 }
 
 // Dev name : Dishant Gupta
+if (!function_exists('isInvalidExtension')) {
+    function isInvalidExtension($files)
+    {
+        $extensions = ['jpg', 'png', 'jpeg'];
+        $return = 0;
+        if (count($files) > 0) {
+            foreach ($files as $key => $file) {
+                $value = $file->extension();
+                if(!in_array(strtolower($value), $extensions)) $return+=1;
+            }
+        } else return false;
+        if($return == 0) return false; 
+        else return true;
+    }
+}
+
+// Dev name : Dishant Gupta
 // This function is used to change the existing function asset because of its path
 if (!function_exists('assets')) {
     function assets($path)

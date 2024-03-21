@@ -186,6 +186,9 @@ class JournalController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                if ($request->hasFile("file")) 
+                    if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+
                 $journal = new Journal;
                 $journal->title = $request->title;
                 $journal->content = $request->content;
@@ -238,6 +241,9 @@ class JournalController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                if ($request->hasFile("file")) 
+                    if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+
                 $journal = Journal::where('created_by', auth()->user()->id)->where('id', $request->id)->first();
                 $journal->title = $request->title;
                 $journal->content = $request->content;
@@ -245,7 +251,7 @@ class JournalController extends Controller
                 $journal->updated_at = date('Y-m-d H:i:s');
                 $journal->save();
 
-                if(count($request->deletefile) > 0){
+                if(isset($request->deletefile) && count($request->deletefile) > 0){
                     foreach($request->deletefile as $val){
                         $journalImage = JournalImage::where('id', $val)->where('journal_id', $journal->id)->first();
                         fileRemove("/uploads/journal/$journalImage->name");
@@ -263,7 +269,7 @@ class JournalController extends Controller
                     }
                 }
 
-                if(count($request->deletecriteria) > 0){
+                if(isset($request->deletecriteria) && count($request->deletecriteria) > 0){
                     foreach($request->deletecriteria as $val){
                         $journalImage = JournalSearchCriteria::where('id', $val)->where('journal_id', $journal->id)->delete();
                     }

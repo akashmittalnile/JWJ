@@ -229,6 +229,9 @@ class CommunityController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                if ($request->hasFile("file")) 
+                    if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+
                 $community = new Community;
                 $community->name = $request->title;
                 $community->plan_id = $request->plan_id ?? null;
@@ -272,13 +275,16 @@ class CommunityController extends Controller
                 $community = Community::where('id', $request->id)->first();
                 if(isset($community->id)){
                     if($community->created_by == auth()->user()->id){
+                        if ($request->hasFile("file")) 
+                            if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+
                         $community->name = $request->title;
                         $community->plan_id = $request->plan_id ?? null;
                         $community->description = $request->description;
                         $community->updated_at = date('Y-m-d H:i:s');
                         $community->save();
         
-                        if(count($request->deletefile) > 0){
+                        if(isset($request->deletefile) && count($request->deletefile) > 0){
                             foreach($request->deletefile as $val){
                                 $communityImage = CommunityImage::where('id', $val)->where('community_id', $community->id)->first();
                                 fileRemove("/uploads/community/$communityImage->name");
@@ -396,6 +402,9 @@ class CommunityController extends Controller
                 $ufc = UserFollowedCommunity::where('community_id', $request->community_id)->where('userid', auth()->user()->id)->first();
                 $data = Community::where('id', $request->community_id)->first();
                 if(isset($ufc->id) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
+                    if ($request->hasFile("file")) 
+                        if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+
                     $post = new Post;
                     $post->community_id = $request->community_id;
                     $post->title = $request->title;
@@ -438,13 +447,16 @@ class CommunityController extends Controller
                 $post = Post::where('id', $request->id)->first();
                 if(isset($post->id)){
                     if($post->created_by == auth()->user()->id){
+                        if ($request->hasFile("file")) 
+                            if(isInvalidExtension($request->file)) return errorMsg('Invalid image extension!');
+
                         $post->community_id = $request->community_id;
                         $post->title = $request->title;
                         $post->post_description = $request->description;
                         $post->updated_at = date('Y-m-d H:i:s');
                         $post->save();
     
-                        if(count($request->deletefile) > 0){
+                        if(isset($request->deletefile) && count($request->deletefile) > 0){
                             foreach($request->deletefile as $val){
                                 $postImage = PostImage::where('id', $val)->where('post_id', $post->id)->first();
                                 fileRemove("/uploads/community/post/$postImage->name");

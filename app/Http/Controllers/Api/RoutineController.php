@@ -429,6 +429,9 @@ class RoutineController extends Controller
                 $task = Routine::where('id', $request->id)->where('type', 'T')->first();
                 if(isset($task->id)){
                     if($task->created_by == auth()->user()->id){
+                        if ($request->hasFile("images")) 
+                            if(isInvalidExtension($request->images)) return errorMsg('Invalid image extension!');
+
                         $task->type = 'T';
                         $task->name = $request->name;
                         $task->subtitle = $request->subtitle ?? null;
