@@ -82,7 +82,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('delete-task', [RoutineController::class, 'deleteTask']);
 
     Route::post('create-query', [SupportController::class, 'createQuery']);
-    Route::get('inquiry-list', [SupportController::class, 'inquiryList']);
+    Route::get('query-list', [SupportController::class, 'queryList']);
+    Route::get('inquiry-type-list', [SupportController::class, 'inquiryList']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');

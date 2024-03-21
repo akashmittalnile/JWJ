@@ -509,6 +509,7 @@ class CommunityController extends Controller
                         PostImage::where('post_id', $request->id)->delete();
                         $likes = UserLike::where('object_id', $request->id)->where('object_type', 'post')->delete();
                         $comment = Comment::where('object_id', $request->id)->where('object_type', 'post')->delete();
+                        Post::where('id', $request->id)->delete();
                         return successMsg('Post deleted successfully.');
                     } else return errorMsg('This post is not created by you');
                 } else return errorMsg('Post not found');

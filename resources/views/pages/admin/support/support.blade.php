@@ -26,7 +26,7 @@
                 <div class="row g-1">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <a href="javascript:void(0)" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
+                            <a href="{{ route('admin.support.download.report') }}" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
                         </div>
                     </div>
 
@@ -39,7 +39,7 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <select class="form-control" id="searchSelect2" name="">
-                                <option>Select Status</option>
+                                <option value="">Select Status</option>
                                 <option value="1">Closed</option>
                                 <option value="2">In-Progress</option>
                                 <option value="3">Pending</option>
@@ -50,16 +50,16 @@
                     <div class="col-md-2">
                         <div class="form-group">
                             <select class="form-control" id="searchSelect" name="">
-                                <option value="" >Show All Inquiry Type</option>
-                                <option value="1" >Plans Related</option>
-                                <option value="2" >Billing Related</option>
-                                <option value="3" >General Inquiry</option>
-                                <option value="4" >Community Related</option>
-                                <option value="5" >Community Guidelines</option>
-                                <option value="6" >Community Creation</option>
-                                <option value="7" >Task Management</option>
-                                <option value="8" >Journals Related</option>
-                                <option value="9" >Journaling Functionality</option>
+                                <option value="">Show All Inquiry Type</option>
+                                <option value="1">Plans Related</option>
+                                <option value="2">Billing Related</option>
+                                <option value="3">General Inquiry</option>
+                                <option value="4">Community Related</option>
+                                <option value="5">Community Guidelines</option>
+                                <option value="6">Community Creation</option>
+                                <option value="7">Task Management</option>
+                                <option value="8">Journals Related</option>
+                                <option value="9">Journaling Functionality</option>
                             </select>
                         </div>
                     </div>
@@ -92,8 +92,62 @@
     </div>
 </div>
 
+<div class="modal lm-modal fade" id="seeReply" tabindex="-1" aria-labelledby="seeReplyLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="Sendreply-modal-form">
+                    <h2>Admin Reply</h2>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="jwj-review-card">
+                                    <div class="jwj-review-card-head">
+                                        <div class="review-rating-user-avtar">
+                                            <img src="{{ assets('assets/images/no-image.jpg') }}" id="modal2Img" alt="">
+                                        </div>
+                                        <div class="review-rating-user-text">
+                                            <h3 id="modal2Name"></h3>
+                                        </div>
+                                    </div>
+                                    <div class="jwj-review-card-body">
+                                        <span class="review-quotes-shape"></span>
+                                        <div class="review-desc" id="modal2Msg"></div>
+                                        <div class="review-date" id="modal2Time"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="jwj-review-card">
+                                    <div class="jwj-review-card-head">
+                                        <div class="review-rating-user-avtar">
+                                            <img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}" alt="">
+                                        </div>
+                                        <div class="review-rating-user-text">
+                                            <h3>{{ auth()->user()->name ?? 'NA' }}</h3>
+                                            <p style="font-size: 11px; color: #074f7c;" class="mb-0">Administrator</p>
+                                        </div>
+                                    </div>
+                                    <div class="jwj-review-card-body">
+                                        <span class="review-quotes-shape"></span>
+                                        <div class="review-desc" id="modalRplyMsg"></div>
+                                        <div class="review-date" id="modalRplyTime"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Reply -->
-<div class="modal lm-modal fade" id="Sendreply" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal lm-modal fade" id="adminSendReply" tabindex="-1" aria-labelledby="adminSendReplyLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
@@ -105,11 +159,11 @@
                                 <div class="jwj-review-card">
                                     <div class="jwj-review-card-head">
                                         <div class="review-rating-user-avtar">
-                                            <span>J</span>
+                                            <img src="{{ assets('assets/images/no-image.jpg') }}" id="modalImg" alt="">
                                         </div>
                                         <div class="review-rating-user-text">
-                                            <h3>John</h3>
-                                            <div class="review-rating">
+                                            <h3 id="modalName"></h3>
+                                            <!-- <div class="review-rating">
                                                 <div class="review-rating-icon">
                                                     <span class="activerating"><i class="las la-star"></i></span>
                                                     <span class="activerating"><i class="las la-star"></i></span>
@@ -118,41 +172,42 @@
                                                     <span class=""><i class="las la-star"></i></span>
                                                 </div>
                                                 <div class="review-rating-text">5.0 Rating</div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                     </div>
                                     <div class="jwj-review-card-body">
                                         <span class="review-quotes-shape"></span>
-                                        <div class="review-desc">I Recently Had The Pleasure Of Visiting This Furniture Store, And I Must Say, I Was Thoroughly Impressed With …</div>
-                                        <div class="review-date">01 Wed, 09:30</div>
+                                        <div class="review-desc" id="modalMsg"></div>
+                                        <div class="review-date" id="modalTime"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <select class="form-control">
-                                    <option>Select Status</option>
-                                    <option>Closed</option>
-                                    <option>In-Progress</option>
-                                    <option>Pending</option>
-                                </select>
+                        <form action="{{ route('admin.support.send.reply') }}" method="post" id="replyForm"> @csrf
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <select class="form-control" name="status">
+                                        <option value="">Select Status</option>
+                                        <option value="1">Closed</option>
+                                        <option value="2">In-Progress</option>
+                                        <option value="3">Pending</option>
+                                    </select>
+                                    <input type="hidden" name="id" id="modalId">
+                                </div>
                             </div>
-                        </div>
-
-
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <textarea type="text" class="form-control" placeholder="Type Your Reply Message Here.."></textarea>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <textarea type="text" name="message" class="form-control" placeholder="Type Your Reply Message Here.."></textarea>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <button class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                <button class="save-btn">SEND REPLY</button>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="save-btn">SEND REPLY</button>
+                                </div>
                             </div>
-                        </div>
+                        </form>
+
                     </div>
                 </div>
             </div>
@@ -163,14 +218,98 @@
 
 @push('js')
 <script type="text/javascript">
+    $(document).on("click", "#sendRply", function() {
+        $("#modalId").val($(this).data('id'));
+        $("#modalMsg").text($(this).data('msg'));
+        $("#modalTime").text($(this).data('time'));
+        $("#modalName").text($(this).data('name'));
+        $("#modalImg").attr("src", $(this).data('img'));
+        $("#adminSendReply").modal('show');
+    });
     
+    $(document).on("click", "#seeRply", function() {
+        $("#modal2Msg").text($(this).data('msg'));
+        $("#modal2Time").text($(this).data('time'));
+        $("#modal2Name").text($(this).data('name'));
+        $("#modal2Img").attr("src", $(this).data('img'));
+        $("#modalRplyMsg").text($(this).data('past'));
+        $("#modalRplyTime").text($(this).data('updatetime'));
+        $("#seeReply").modal('show');
+    });
+
     $(document).ready(function() {
+        $('#replyForm').validate({
+            rules: {
+                status: {
+                    required: true,
+                },
+                message: {
+                    required: true,
+                },
+            },
+            messages: {
+                status: {
+                    required: 'Please select query status',
+                },
+                message: {
+                    required: 'Please enter your message',
+                }
+            },
+            submitHandler: function(form, e) {
+                e.preventDefault();
+                let formData = new FormData(form);
+                $.ajax({
+                    type: 'post',
+                    url: form.action,
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    beforeSend: function() {
+                        $("#preloader").show()
+                    },
+                    success: function(response) {
+                        if (response.status) {
+                            toastr.success(response.message);
+                            window.location.reload();
+                            return false;
+                        } else {
+                            toastr.error(response.message);
+                            return false;
+                        }
+                    },
+                    complete: function() {
+                        $("#preloader").hide()
+                    },
+                    error: function(data, textStatus, errorThrown) {
+                        jsonValue = jQuery.parseJSON(data.responseText);
+                        console.error(jsonValue.message);
+                    },
+                })
+            },
+            errorElement: "span",
+            errorPlacement: function(error, element) {
+                error.addClass("invalid-feedback");
+                element.closest(".form-group").append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass("is-invalid");
+            },
+        });
+
         const getList = (page, search = null, inquiry = null, status = null, date = null) => {
             $.ajax({
                 type: 'get',
                 url: "{{ route('admin.support') }}",
                 data: {
-                    page, search, inquiry, status, date
+                    page,
+                    search,
+                    inquiry,
+                    status,
+                    date
                 },
                 dataType: 'json',
                 success: function(result) {
@@ -243,6 +382,5 @@
             getList($(this).data('page'), search, inquiry, status, date);
         });
     });
-
 </script>
 @endpush
