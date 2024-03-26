@@ -238,197 +238,359 @@
 @endsection
 
 @push('js')
-<script>
-    $('.communitycarousel1').owlCarousel({
-        loop: true,
-        margin: 10,
-        nav: false,
-        dots: false,
-        responsive: {
-            1000: {
-                items: 1
-            }
-        }
-    });
-
-    $(document).on('change', '.toggle__input', function(e) {
-        let status = ($(this).is(":checked")) ? 1 : 2;
-        let id = $(this).data('id');
-        e.preventDefault();
-        $.ajax({
-            type: 'post',
-            url: "{{ route('admin.community-management.change.status') }}",
-            data: {
-                id,
-                status,
-                '_token': "{{ csrf_token() }}"
-            },
-            dataType: 'json',
-            success: function(result) {
-                if (result.status) {
-                    toastr.success(result.message);
-                    window.location.reload();
-                } else {
-                    toastr.error(result.message);
-                    return false;
-                }
-            },
-            error: function(data, textStatus, errorThrown) {
-                jsonValue = jQuery.parseJSON(data.responseText);
-                console.error(jsonValue.message);
-            },
-        });
-    });
-
-    $(document).ready(function() {
-        $('#postForm').submit(function(e) {
+    <script>
+        $(document).on('change', '.toggle__input', function(e) {
+            let status = ($(this).is(":checked")) ? 1 : 2;
+            let id = $(this).data('id');
             e.preventDefault();
-            var formData = new FormData(this);
             $.ajax({
                 type: 'post',
-                url: "{{ route('admin.community-management.create-post') }}",
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function(response) {
-                    toastr.success(response.message);
-                    location.reload();
-                    // Clear the form fields
-                    $('#postForm')[0].reset(); // Reset the form
-                    $('#PostOnCommunity').modal('hide');
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    toastr.error(xhr.responseJSON.error);
-                }
-            });
-        });
-    });
-    $(document).ready(function() {
-        const communityId = "{{ encrypt_decrypt('encrypt', $data->id) }}";
-        const getPosts = (searchTerm = null) => {
-            $.ajax({
-                type: 'GET',
-                url: "{{ route('admin.community-management.posts') }}",
+                url: "{{ route('admin.community-management.change.status') }}",
                 data: {
-                    id: communityId,
-                    search: searchTerm // Pass the search term to the backend
+                    id,
+                    status,
+                    '_token': "{{ csrf_token() }}"
                 },
                 dataType: 'json',
+                success: function(result) {
+                    if (result.status) {
+                        toastr.success(result.message);
+                        window.location.reload();
+                    } else {
+                        toastr.error(result.message);
+                        return false;
+                    }
+                },
+                error: function(data, textStatus, errorThrown) {
+                    jsonValue = jQuery.parseJSON(data.responseText);
+                    console.error(jsonValue.message);
+                },
+            });
+        });
+
+
+        $(document).ready(function() {
+
+
+            // Fetch subscription plans from the backend
+            $.ajax({
+                type: 'GET',
+                url: "{{ route('admin.community-management.subscription-plans') }}",
+                dataType: 'json',
                 success: function(response) {
-                    console.log("response: ", response);
+                    console.log("response logged in successfully", response)
                     if (response.status) {
-                        // Clear existing posts
-                        $('#post-card-lists').empty();
-                        // Append new posts
-                        response.data.posts.forEach(post => {
-                            // Convert the created_at date to dd-mm-yyyy format
-                            const createdAtDate = new Date(post.created_at);
-                            const formattedDate =
-                                `${createdAtDate.getDate()}-${createdAtDate.getMonth() + 1}-${createdAtDate.getFullYear()}`;
-                            let subscription_plan;
-                            switch (post.plan_id) {
-                                case 6:
-                                    subscription_plan = "Plan A member";
-                                    break;
-                                case 5:
-                                    subscription_plan = "Plan B member";
-                                    break;
-                                case 4:
-                                    subscription_plan = "Plan C member";
-                                    break;
-                                default:
-                                    subscription_plan = "Unknown plan";
+                        // Populate select options dynamically
+                        var options = '';
+                        response.data.plans.forEach(function(plan) {
+                            options += '<option value="' + plan.name + '">' + plan.name +
+                                ' Users</option>';
+                        });
+                        $('#subscription_plan').append(options);
+                    } else {
+                        // Handle error response
+                        console.error(response.message);
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    console.error("Error fetching subscription plans:", errorThrown);
+                }
+            });
+
+
+            // Add validation to postForm
+            $('#postForm').validate({
+                rules: {
+                    title: {
+                        required: true,
+                    },
+                    subscription_plan: {
+                        required: true,
+                    },
+                    'images[]': {
+                        required: true,
+                    },
+                    post_description: {
+                        required: true,
+                    },
+                },
+                messages: {
+                    title: {
+                        required: 'Please enter title',
+                    },
+                    subscription_plan: {
+                        required: 'Please select subscription plan',
+                    },
+                    'images[]': {
+                        required: 'Please upload at least one image',
+                    },
+                    post_description: {
+                        required: 'Please enter description',
+                    },
+                },
+                submitHandler: function(form, e) {
+                    e.preventDefault();
+                    let formData = new FormData(form);
+                    $.ajax({
+                        type: 'post',
+                        url: form.action,
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        success: function(response) {
+                            if (response.status) {
+                                toastr.success(response.message);
+                                window.location.reload();
+                            } else {
+                                toastr.error(response.message);
                             }
-                            const imagesHtml = post.images.map(image => {
-                                return `<div class="item"><img src="{{ assets('${image}') }} "></div>`;
-                            }).join('');
-                            $('#post-card-lists').append(`
-                            <div class="jwj-posts-posts-card">
-                                <div class="jwj-posts-head">
-                                    <div class="post-member-item">
-                                        <div class="post-member-image">
-                                            <img src="{{ assets('assets/images/no-image.jpg') }}">
-                                        </div>
-                                        <div class="post-member-text">
-                                            <h3>${post.user_name}</h3>
-                                            <div class="post-member-plan"><img
-                                                    src="{{ assets('assets/images/freeplan.svg') }}"> ${subscription_plan}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="jwjcard-group-action">
-                                        <a class="managecommunity-btn" data-post-id="${post.id}"  href="javascript:void(0)">Delete Post</a>
-                                    </div>
-                                </div>
-                                <div class="jwj-posts-body">
-                                    <div class="row g-1">
-                                        <div class="col-md-5">
-                                            <div  class="owl-carousel owl-theme">
-                                                ${imagesHtml}
-                                            </div>
-                                        </div>
-                                        <div class="col-md-7">
-                                            <div class="jwjcard-body">
-                                                <div class="community-post-description">
-                                                    <h3>${post.title}</h3>
-                                                    <div class="post-date-info">
-                                                        <img src="">
-                                                        Submitted
-                                                        On ${formattedDate}
+                        },
+                        error: function(data, textStatus, errorThrown) {
+                            jsonValue = jQuery.parseJSON(data.responseText);
+                            console.error(jsonValue.message);
+                        },
+                    });
+                },
+                errorElement: "span",
+                errorPlacement: function(error, element) {
+                    error.addClass("invalid-feedback");
+                    element.closest(".form-group").append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass("is-invalid");
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass("is-invalid");
+                },
+            });
+
+            // Remove the manual appending of subscription plan
+
+            // Handle form submission
+            $('#postForm').submit(function(e) {
+                e.preventDefault();
+                // Validate form
+                if (!$(this).valid()) {
+                    return false;
+                }
+                $.ajax({
+                    type: 'post',
+                    url: "{{ route('admin.community-management.create-post') }}",
+                    data: new FormData(this), // Use FormData directly from the form
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        toastr.success(response.message);
+                        location.reload();
+                        // Clear the form fields
+                        $('#postForm')[0].reset(); // Reset the form
+                        $('#PostOnCommunity').modal('hide');
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        toastr.error(xhr.responseJSON.error);
+                    }
+                });
+            });
+
+
+
+            // Function to clear input fields and error messages
+            function clearForm() {
+                // Clear input fields
+                $('input[type="text"]').val('');
+                $('textarea').val('');
+
+
+                // Remove error messages
+                $('.form-group').removeClass('has-error');
+                $('.error-message').remove();
+            }
+
+            // Handle discard button click
+            $('.cancel-btn').click(function() {
+                clearForm();
+            });
+
+
+            const communityId = "{{ encrypt_decrypt('encrypt', $data->id) }}";
+
+            const getPosts = (page = 1, searchTerm = null) => {
+                $.ajax({
+                    type: 'GET',
+                    url: "{{ route('admin.community-management.posts') }}",
+                    data: {
+                        id: communityId,
+                        page: page, // Pass the page number
+                        search: searchTerm // Pass the search term to the backend
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log("response:----------- ", response);
+                        if (response.status) {
+                            // Clear existing posts
+                            $('#post-card-lists').empty();
+                            if (response.data.posts.length >
+                                0) { // Access the paginated posts through the `data` property
+                                // Append new posts
+                                response.data.posts.forEach(post => {
+                                    // Convert the created_at date to the desired format
+                                    const createdAtDate = new Date(post.created_at);
+                                    const formattedDate = createdAtDate.toLocaleString(
+                                        'en-US', {
+                                            day: '2-digit',
+                                            month: 'short',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true
+                                        });
+
+                                    const imagesHtml = post.images.map(image => {
+                                        return `<div class="item community-post-image"><img src="{{ assets('${image}') }} "></div>`;
+                                    }).join('');
+
+                                    //   $("#post-card-lists").html('');
+                                    $('#post-card-lists').append(`
+                                    <div class="jwj-posts-posts-card">
+                                        
+                                        <div class="jwj-posts-head">
+                                            <div class="post-member-item">
+                                                <div class="post-member-image">
+                                                    <img src="{{ assets('assets/images/no-image.jpg') }}">
+                                                </div>
+                                                <div class="post-member-text">
+                                                    <h3>${post.user_name}</h3>
+                                                    <div class="post-member-plan"><img
+                                                            src="{{ assets('assets/images/freeplan.svg') }}"> ${post.subscription_plan} member
                                                     </div>
-                                                    <p>${post.post_description}</p>
-                                                    <div class="community-post-action">
-                                                        <a class="Like-btn" href="javascript:void(0)"><img
-                                                                src="{{ assets('assets/images/like.svg') }}"> 2.5K
-                                                            likes</a>
-                                                        <a class="Comment-btn" href="javascript:void(0)"><img
-                                                                src="{{ assets('assets/images/comment.svg') }}"> 3.2K
-                                                            Comments</a>
+                                                </div>
+                                            </div>
+                                            <div class="jwjcard-group-action">
+                                                <a class="managecommunity-btn" id="delete-button" data-post-id="${post.id}"  href="javascript:void(0)">Delete Post</a>
+                                            </div>
+                                        </div>
+                                        <div class="jwj-posts-body">
+                                            <div class="row g-1">
+                                                <div class="col-md-5 " >
+                                                    <a href="{{ route('admin.community-management.post.details') }}" >
+                                                    <div  class="owl-carousel owl-theme" id="image-div" data-post-id="${post.id}">
+                                                        ${imagesHtml}
+                                                        </div>
+                                                        </a>
+                                                </div>
+
+                                                <div class="col-md-7">
+                                                    <div class="jwjcard-body">
+                                                        <div class="community-post-description" data-post-id="${post.id}">
+                                                            <h3>${post.title}</h3>
+                                                            <div class="post-date-info">
+                                                                <img src="">
+                                                                Submitted
+                                                                On ${formattedDate}
+                                                            </div>
+                                                            <p>${post.post_description}</p>
+                                                            <div class="community-post-action">
+                                                                <a class="Like-btn" href="javascript:void(0)"><img 
+                                                                        src="{{ assets('assets/images/like.svg') }}"> 2.5K
+                                                                    likes</a>
+                                                                <a class="Comment-btn" href="javascript:void(0)"><img
+                                                                        src="{{ assets('assets/images/comment.svg') }}"> 3.2K
+                                                                    Comments</a>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
+
                                     </div>
-                                </div>
-                            </div>
-                        `);
-                            // Initialize Owl Carousel for images
-                            $('.owl-carousel').owlCarousel({
-                                loop: true,
-                                margin: 10,
-                                nav: false,
-                                dots: false,
-                                responsive: {
-                                    1000: {
-                                        items: 1
+                                `);
+                                    // Initialize Owl Carousel for images
+                                    $('.owl-carousel').owlCarousel({
+                                        loop: true,
+                                        margin: 10,
+                                        nav: false,
+                                        dots: false,
+                                        responsive: {
+                                            1000: {
+                                                items: 1
+                                            }
+                                        }
+                                    });
+                                });
+
+                                // Render pagination links
+                                $("#appendPagination").show();
+                                $("#appendPagination").html('');
+                                if (response.data.pagination.lastPage != 1) {
+                                    let currentPage = parseInt(response.data.pagination
+                                        .current_page);
+                                    let lastPage = parseInt(response.data.pagination.last_page);
+                                    let paginate = `<li class="${currentPage == 1 ? 'disabled' : ''}" id="example_previous">
+                                                        <a href="javascript:void(0)" data-page="${currentPage - 1}" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                                    </li>`;
+
+                                    for (let i = 1; i <= lastPage; i++) {
+                                        paginate += `<li class="${currentPage == i ? 'active' : ''}">
+                                                        <a href="javascript:void(0)" data-page="${i}" class="page-link">${i}</a>
+                                                    </li>`;
                                     }
+
+                                    paginate += `<li class="${currentPage == lastPage ? 'disabled next' : 'next'}" id="example_next">
+                                                    <a href="javascript:void(0)" data-page="${currentPage + 1}" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                                </li>`;
+
+                                    $("#appendPagination").append(paginate);
                                 }
-                            });
-                        });
-                    } else {
-                        toastr.error(response.message);
+
+                            } else {
+                                // Display message when no posts are found
+                                $('#post-card-lists').html(`
+                                    <div class="text-center">
+                                        <img src="{{ assets('assets/images/no-data.svg') }}" style="width: 200px; height: auto;">
+                                    </div>
+                                `);
+
+                                $("#appendPagination").hide();
+                            }
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function(xhr, textStatus, errorThrown) {
+                        console.log("error: ", xhr, "========", textStatus, "========",
+                            errorThrown);
+                        toastr.error("Error retrieving posts.");
                     }
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.log("error: ", xhr, "========", textStatus, "========",
-                        errorThrown);
-                    toastr.error("Error retrieving posts.");
-                }
+                });
+            };
+
+
+            // Call the function to get posts when the document is ready
+            getPosts(1);
+
+            $(document).on('click', '.page-link', function(e) {
+                e.preventDefault();
+                getPosts($(this).data('page'));
+            })
+
+            $(document).on('keyup', '#PostSearch', function() {
+                let search = $(this).val();
+                getPosts($(this).data('page'), search);
             });
-        };
-        // Call the function to get posts when the document is ready
-        getPosts();
-        // Search functionality
-        $('#PostSearch').on('keyup', function() {
-            const searchTerm = $(this).val();
-            getPosts(searchTerm); // Call getPosts function with the search term
+
+
         });
-    });
-    $(document).on('click', '.managecommunity-btn', function(e) {
-        e.preventDefault();
-        if (confirm('Are you sure you want to delete this post?')) {
-            let postId = $(this).data('postId');
-            let $postCard = $(this).closest('.jwj-posts-posts-card');
+
+
+
+
+
+        $(document).on('click', '#confirmDeletePostBtn', function(e) {
+            e.preventDefault();
+            let postId = $('#deletePostModal').data('postId');
+            let $postCard = $('.jwj-posts-posts-card[data-post-id="' + postId + '"]');
             $.ajax({
                 type: 'post',
                 url: "{{ route('admin.community-management.post.delete') }}",
@@ -442,6 +604,7 @@
                         // If successful, remove the post card from the DOM
                         $postCard.remove();
                         toastr.success(response.message);
+                        $('#deletePostModal').modal('hide');
                         location.reload();
                     } else {
                         toastr.error(response.error);
@@ -452,7 +615,13 @@
                     toastr.error('Error deleting post. Please try again later.');
                 }
             });
-        }
-    });
-</script>
+        });
+
+        $(document).on('click', '#delete-button', function(e) {
+            e.preventDefault();
+            let postId = $(this).data('postId');
+            $('#deletePostModal').data('postId', postId); // Set postId to modal
+            $('#deletePostModal').modal('show');
+        });
+    </script>
 @endpush

@@ -72,6 +72,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/community-post-list/{id}', [CommunityController::class, 'communityPosts'])->name('community-management.post-list');
         Route::get('/community/posts', [CommunityController::class, 'getCommunityPosts'])->name('community-management.posts');
         Route::post('/community/post/delete', [CommunityController::class, 'deletePost'])->name('community-management.post.delete');
+        Route::get('/community-management/subscription-plans', [CommunityController::class, 'fetchSubscriptionPlans'])->name('community-management.subscription-plans');
+        Route::get('/post-details', [CommunityController::class, 'postDetails'])->name('community-management.post.details');
 
         // support & communication
         Route::get('/support-communication', [SupportController::class, 'supportCommunication'])->name('support');

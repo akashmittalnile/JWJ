@@ -434,23 +434,25 @@ class CommunityController extends Controller
     public function createPost(Request $request)
     {
         try {
+
             // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string',
                 'post_description' => 'required|string',
-                'subscription_plan' => 'required|string|in:A,B,C',
+                'subscription_plan' => 'required|string',
                 'images.*' => 'image|max:2048', // Validate each image uploaded
                 'community_id' => 'required|string',
             ]);
+
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], 400);
             } else {
-                // Define plan IDs using an associative array for constant lookup time
-                $planIds = [
-                    'A' => 6,
-                    'B' => 5,
-                    'C' => 4
-                ];
+                // Retrieve plan ID from the plan table
+                $plan = Plan::where('name', $request->input('subscription_plan'))->first();
+                if (!$plan) {
+                    return response()->json(['error' => 'Invalid subscription plan'], 400);
+                }
+
                 // Handle file uploads if provided
                 $imagePaths = []; // Initialize array to store image paths
                 if ($request->hasFile('images')) {
@@ -460,22 +462,25 @@ class CommunityController extends Controller
                         $imagePaths[] = 'uploads/community/post/' . $imageName;
                     }
                 }
+
                 // Create new post instance
                 $post = new Post();
-                $post->plan_id = $planIds[$request->input('subscription_plan')];
+                $post->plan_id = $plan->id;
                 $post->community_id = encrypt_decrypt('decrypt', $request->community_id);
                 $post->title = $request->input('title');
                 $post->post_description = $request->input('post_description');
                 $post->created_by = auth()->user()->id ?? null;
                 $post->save();
+
                 // Save post images to post_images table
                 foreach ($imagePaths as $path) {
-                    $postImage = new PostImage;
+                    $postImage = new PostImage();
                     $postImage->post_id = $post->id;
                     $postImage->name = $path;
                     $postImage->type = 'image';
                     $postImage->save();
                 }
+
                 return response()->json(['message' => 'Post created successfully'], 200);
             }
         } catch (\Exception $e) {
@@ -500,14 +505,18 @@ class CommunityController extends Controller
         try {
             // Decrypt the community ID
             $communityId = encrypt_decrypt('decrypt', $request->id);
+
             // Retrieve the community
             $community = Community::findOrFail($communityId);
+
             // Retrieve posts associated with the community along with the user's name and post images
             $posts = Post::where('community_id', $communityId)
                 ->leftJoin('users', 'posts.created_by', '=', 'users.id')
                 ->leftJoin('post_images', 'posts.id', '=', 'post_images.post_id')
-                ->select('posts.id', 'posts.title', 'posts.post_description', 'posts.created_at', 'posts.updated_at', 'users.name as user_name', 'post_images.name as image_path', 'posts.plan_id') // Include plan_id in the select statement
-                ->groupBy('posts.id', 'posts.title', 'posts.post_description', 'posts.created_at', 'posts.updated_at', 'users.name', 'post_images.name', 'posts.plan_id');
+                ->leftJoin('plan', 'posts.plan_id', '=', 'plan.id')
+                ->select('posts.id', 'posts.title', 'posts.post_description', 'posts.created_at', 'posts.updated_at', 'users.name as user_name', 'post_images.name as image_path', 'posts.plan_id', 'plan.name') // Include plan_id in the select statement
+                ->orderByDesc('posts.id'); // Ordering should be applied before pagination
+
             // Apply search filters
             if ($request->filled('search')) {
                 $searchTerm = $request->search;
@@ -517,13 +526,16 @@ class CommunityController extends Controller
                         ->orWhere('users.name', 'like', '%' . $searchTerm . '%');
                 });
             }
-            // Get the posts after applying filters
-            $posts = $posts->get();
+
+            // Paginate the posts
+            $paginatePerPage = config('constant.paginatePerPage');
+            $posts = $posts->paginate($paginatePerPage);
+
             // Format posts and their images
             $formattedPosts = [];
             foreach ($posts as $post) {
                 $postId = $post->id;
-                if (!isset($formattedPosts[$postId])) {
+                if (!isset ($formattedPosts[$postId])) {
                     $formattedPosts[$postId] = [
                         'id' => $postId,
                         'title' => $post->title,
@@ -531,22 +543,39 @@ class CommunityController extends Controller
                         'user_name' => $post->user_name,
                         'created_at' => $post->created_at,
                         'updated_at' => $post->updated_at,
-                        'images' => [], // Initialize an empty array for images
-                        'plan_id' => $post->plan_id // Add plan_id to the formatted post data
+                        'images' => [], // Initialize the images array
+                        'plan_id' => $post->plan_id,
+                        'subscription_plan' => $post->name
                     ];
                 }
                 // Add the image to the post's images array
-                if (!empty($post->image_path)) {
+                if (!empty ($post->image_path)) {
                     $formattedPosts[$postId]['images'][] = $post->image_path;
                 }
             }
-            // Return the view with community and formatted posts data
-            return response()->json(['status' => true, 'data' => ['community' => $community, 'posts' => array_values($formattedPosts)]]);
+
+            // Return the JSON response with paginated posts data
+            $responseData = [
+                'status' => true,
+                'data' => [
+                    'community' => $community,
+                    'posts' => array_values($formattedPosts),
+                    'pagination' => [
+                        'current_page' => $posts->currentPage(),
+                        'last_page' => $posts->lastPage(),
+                        'total' => $posts->total(),
+                        'per_page' => $paginatePerPage
+                    ]
+                ]
+            ];
+
+            return response()->json($responseData);
         } catch (\Exception $e) {
             // Handle any exceptions and return an error message
             return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
         }
     }
+
     public function deletePost(Request $request)
     {
         try {
@@ -578,10 +607,49 @@ class CommunityController extends Controller
                 ]);
             }
         } catch (\Exception $e) {
+            // Log the error for debugging purposes
+            \Log::error('Error deleting post: ' . $e->getMessage());
+            // Return error response
             return response()->json([
                 'status' => false,
                 'error' => 'Error deleting post: ' . $e->getMessage(),
             ]);
+        }
+    }
+
+    public function fetchSubscriptionPlans()
+    {
+        try {
+            // Retrieve all subscription plans
+            $plans = Plan::select('name')->get();
+
+            // Return the plans as JSON response
+            return response()->json(['status' => true, 'data' => ['plans' => $plans]], 200);
+        } catch (\Exception $e) {
+            // Handle any exceptions and return an error message
+            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function postDetails(Request $request)
+    {
+        try {
+            // Assuming 'postId' is the name of your input field
+            // $encryptedId = $request->input('postId');
+            // $id = encrypt_decrypt('decrypt', $encryptedId); // Make sure this function exists and works as expected
+            // Fetch the post using the decrypted ID
+            // Assuming you have a Post model and posts table
+            // $post = Post::find($id); // Make sure to use the correct model and adjust accordingly
+
+            // if (!$post) {
+            //     return errorMsg('Post not found'); // Make sure errorMsg is a valid method or change this to a proper error handling
+            // }
+
+            // If post is found, return the view with post details
+            return view('pages.admin.community.post-details');
+            // return view('pages.admin.community.details', compact('post'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage()); // Again, ensure errorMsg is correctly implemented
         }
     }
 }
