@@ -78,7 +78,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/send-reply', [SupportController::class, 'sendReply'])->name('support.send.reply');
         Route::get('/support-communication-download-report', [SupportController::class, 'supportDownloadReport'])->name('support.download.report');
         Route::get('/notifications', [SupportController::class, 'notification'])->name('notification');
+        Route::post('/create-notifications', [SupportController::class, 'createNotification'])->name('notification.store');
 
+        // routine category
         Route::get('/routine-category', [RoutineController::class, 'routineCategory'])->name('routine.category');
         Route::post('/routine-category-store', [RoutineController::class, 'routineCategoryStore'])->name('routine.category.store');
         Route::post('/routine-category-update', [RoutineController::class, 'routineCategoryUpdate'])->name('routine.category.update');

@@ -218,6 +218,10 @@
 
 @push('js')
 <script type="text/javascript">
+    $('#seeReply, #adminSendReply').on('hidden.bs.modal', function(e) {
+        $(this).find('form').trigger('reset');
+    });
+
     $(document).on("click", "#sendRply", function() {
         $("#modalId").val($(this).data('id'));
         $("#modalMsg").text($(this).data('msg'));

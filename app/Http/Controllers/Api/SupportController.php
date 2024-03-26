@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\HelpSupport;
+use App\Models\Notify;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -81,6 +82,41 @@ class SupportController extends Controller
             }
             
             return successMsg('Query list', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of all the notifications
+    public function notifications(Request $request) {
+        try{
+            $response = array();
+            $list = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->orderByDesc('id')->get();
+
+            foreach($list as $key => $val){
+                $temp['id'] = $val->id;
+                $temp['sender_name'] = $val->sender->name;
+                $temp['sender_image'] = isset($val->sender->profile) ? assets('uploads/profile/'.$val->sender->profile) : null;
+                $temp['title'] = $val->	title;
+                $temp['message'] = $val->message;
+                $temp['type'] = $val->type;
+                $temp['created_date'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $response[] = $temp;
+            }
+            
+            return successMsg('Notifications list', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of all the notifications
+    public function notificationSeen(Request $request) {
+        try{
+            Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->update(['is_seen', 2]);
+            return successMsg('Notifications seen');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

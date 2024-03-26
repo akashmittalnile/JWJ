@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\HelpSupport;
+use App\Models\Notification;
+use App\Models\Notify;
+use App\Models\Plan;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -162,7 +166,7 @@ class SupportController extends Controller
         }
     }
 
-        // Dev name : Dishant Gupta
+    // Dev name : Dishant Gupta
     // This function is used to download the csv file of journey with journals registered users
     public function downloadSupportReportFunction($data)
     {
@@ -196,10 +200,107 @@ class SupportController extends Controller
         }
     }
     
-    public function notification()
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of notification
+    public function notification(Request $request)
     {
         try {
-            return view('pages.admin.support.notification');
+            $plan = Plan::where('status', 1)->get();
+            if($request->ajax()){
+                $data = Notification::orderByDesc('id');
+                if($request->filled('search')){
+                    $data->whereRaw("(`text` LIKE '%" . $request->search . "%')");
+                }
+                if($request->filled('date')){
+                    $data->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)));
+                };
+                if($request->filled('inquiry')){
+                    $data->where('plan_id', $request->inquiry);
+                };
+                $data = $data->paginate(config('constant.paginatePerPage'));
+                if($data->total() < 1) return errorMsg("No notifications found");
+
+                $html = '';
+                foreach($data as $key => $val)
+                {
+                    $pageNum = $data->currentPage();
+                    $userProfileImage = isset($val->user->profile) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
+
+                    
+
+                    $html .= "<div class='col-md-12'>
+                    <div class='manage-notification-item'>
+                        <div class='manage-notification-icon'>
+                            <img src='". assets('assets/images/notification-bing.svg') ."'>
+                        </div>
+                        <div class='manage-notification-content'>
+                            <div class='notification-date'>$val->text</div>
+                            <div class='notification-descr'>$val->message</p>
+                            </div>
+                            <div class='notification-tag'>
+                                <div class='tags-list'>
+                                    <div class='Tags-text'>". $val->plan->name ." Users</div>
+                                </div>
+                            </div>
+                            <div class='notification-date'>Pushed on: ". date('d M, Y h:i a', strtotime($val->created_at)) ."</div>
+                        </div>
+                    </div>
+                </div>";
+                }
+
+                $response = array(
+                    'currentPage' => $data->currentPage(),
+                    'lastPage' => $data->lastPage(),
+                    'total' => $data->total(),
+                    'html' => $html,
+                );
+                return successMsg('Notification', $response);
+            }
+            return view('pages.admin.support.notification')->with(compact('plan'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to create a notification for admin
+    public function createNotification(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'text' => 'required',
+                'plan' => 'required',
+                'message'=>'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $notification = new Notification;
+                $notification->text = $request->text;
+                $notification->message = $request->message;
+                $notification->plan_id = $request->plan;
+                $notification->user_id = auth()->user()->id;
+                $notification->status = 1;
+                $notification->save();
+                $users = User::where('status', 1)->where('role', 1)->get();
+                foreach($users as $val){
+                    $notify = new Notify;
+                    $notify->sender_id = auth()->user()->id;
+                    $notify->receiver_id = $val->id;
+                    $notify->type = "PUSH_NOTIFICATION";
+                    $notify->title = $request->text;
+                    $notify->message = $request->message;
+                    $notify->save();
+                    if(isset($val->fcm_token) && $val->fcm_token != ''){
+                        $data = array(
+                            'msg' => $request->message,
+                            'title' => $request->text
+                        );
+                        sendNotification($val->fcm_token, $data);
+                    }
+                }
+                return successMsg('Notification sended successfully');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

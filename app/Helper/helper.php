@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
+use App\Models\Notify;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
 
@@ -13,9 +14,9 @@ if (!function_exists('sendNotification')) {
         $url = 'https://fcm.googleapis.com/fcm/send';
         $serverKey = env('FIREBASE_SERVER_KEY'); // ADD SERVER KEY HERE PROVIDED BY FCM
         $msg = array(
-            'body'  => $data['msg'],
-            'title' => $data['title'] ?? "ARKANSAS",
-            'icon'  => "{{ asset('assets/website-images/logo-2.png') }}", //Default Icon
+            'body'  => $data['msg'] ?? 'NA',
+            'title' => $data['title'] ?? "Journey with Journals",
+            'icon'  => "{{ assets('assets/images/logo.svg') }}", //Default Icon
             'sound' => 'default'
         );
         $arr = array(
@@ -191,5 +192,21 @@ if (!function_exists('fileRemove')) {
         if (File::exists($link)) {
             unlink($link);
         }
+    }
+}
+
+// Dev name : Dishant Gupta
+// This function is used to getting the list of notifications
+if (!function_exists('getNotification')) {
+    function getNotification($seen = null)
+    {
+        if($seen=='unseen'){
+            $notify = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->count();
+            return $notify;
+        } else {
+            $notify = Notify::where('receiver_id', auth()->user()->id)->get();
+            return $notify;
+        }
+        
     }
 }

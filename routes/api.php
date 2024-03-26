@@ -35,6 +35,9 @@ Route::get('plans', [CommunityController::class, 'plans']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
 
+    Route::get('notifications', [SupportController::class, 'notifications']);
+    Route::post('notification-seen', [SupportController::class, 'notificationSeen']);
+
     Route::get('home', [UserController::class, 'home']);
     Route::get('search', [UserController::class, 'search']);
     Route::post('mood-capture', [UserController::class, 'moodCapture']);

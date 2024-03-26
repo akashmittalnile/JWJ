@@ -13,11 +13,39 @@
                     <a class="nav-link  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
                         <div class="noti-icon">
                             <img src="{{ assets('assets/images/notification.svg') }}" alt="user">
-                            <span class="noti-badge">0</span>
+                            <span class="noti-badge">{{ getNotification('unseen') }}</span>
                         </div>
                     </a>
-                    <div class="dropdown-menu">
-
+                    <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right" data-bs-popper="none">
+                        <div class="notification-head">
+                            <h2>Notifications</h2>
+                        </div>
+                        <div class="notification-body">
+                            @forelse(getNotification() as $val)
+                            <div class="notification-item">
+                                <div class="notification-item-icon">
+                                    <i class="la la-bell"></i>
+                                </div>
+                                <div class="notification-item-text">
+                                    <h2>{{ $val->title ?? "NA" }}</h2>
+                                    <p style="color: #1079c0;;">{{ $val->message ?? "NA" }}</p>
+                                    <p><span><i class="fas fa-clock"></i>{{ date('d M, Y H:i A', strtotime($val->created_at)) }}</span></p>
+                                </div>
+                            </div>
+                            @empty
+                            <div class="d-flex justify-content-center align-items-center flex-column">
+                                <div>
+                                    <img width="200" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                                </div>
+                            </div>
+                            @endforelse
+                        </div>
+                        
+                        <a href="" data-bs-toggle="modal" data-bs-target="#clearModal">
+                            <div class="notification-foot">
+                                Clear All Notifications 
+                            </div>   
+                        </a> 
                     </div>
                 </li>
                 <li class="nav-item profile-dropdown dropdown">
@@ -51,7 +79,7 @@
     </nav>
 </div>
 
-<!-- ADD NEW COMMUNITY -->
+<!-- LOGOUT COMMUNITY -->
 <div class="modal lm-modal fade" id="openLogoutModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -66,6 +94,31 @@
                                 <div class="form-group">
                                     <button class="cancel-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Cancel</button>
                                     <button type="submit" class="save-btn">Yes! Logout</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CLEAR NOTIFICATION -->
+<div class="modal lm-modal fade" id="clearModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="jwj-modal-form text-center">
+                    <h2>Are You Sure?</h2>
+                    <p>You want to clear all the notifications!</p>
+                    <form action="" method="get">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button class="cancel-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Cancel</button>
+                                    <button type="submit" class="save-btn">Yes! Clear</button>
                                 </div>
                             </div>
                         </div>

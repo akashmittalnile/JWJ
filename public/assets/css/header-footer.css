@@ -1040,3 +1040,64 @@ input[type="number"]::-webkit-outer-spin-button {
     appearance: none;
     margin: 0;
 }
+
+.profile-dropdown .dropdown-toggle::after{content: inherit;}
+.noti-dropdown .dropdown-toggle::after{content: inherit;}
+.header .navbar .dropdown-menu {position: absolute; font-size: 0.9rem; margin-top: 0; right: 0; left: auto; top: 50px; border: none; box-shadow: 0px 8px 13px rgb(0 0 0 / 5%); width: 300px; padding: 0; background: #ffffff; }
+.header .navbar .dropdown-menu a.dropdown-item {font-size: 13px;font-weight: 500;color: #455a64;border-radius: 5px;}
+.header .navbar .dropdown-menu a.dropdown-item.active, 
+.header .navbar .dropdown-menu a.dropdown-item:active, 
+.header .navbar .dropdown-menu a.dropdown-item:focus, 
+.header .navbar .dropdown-menu a.dropdown-item:hover {color: #ffffff; text-decoration: none; background-color: #1079c0; }
+.noti-dropdown .dropdown-menu-right{
+    right: 0;
+    left: inherit;
+    border: none;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;
+}
+.notification-head{padding: 10px; position: relative;box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px !important;}
+.notification-head h2 {
+   font-size: 16px;
+   margin: 0;
+   color: #343a40;
+   padding: 0;
+   font-weight: 600;
+}
+.notification-body {
+   overflow: auto;
+   height: 260px;
+}
+.notification-foot {
+    background: #e1edff;
+    text-align: center;
+    padding: 10px 15px;
+    display: inline-block;
+    width: 100%;
+    color: #1079c0;
+}
+.notification-item {display: flex; padding: .75rem 1rem; }
+.notification-item:hover{background-color:#e8f6ff;}
+.notification-item-icon {
+   width: 32px;
+   height: 32px;
+   line-height: 32px;
+   background: #e8f6ff;
+   margin-right: 10px;
+   text-align: center;
+   border-radius: 50%;
+   border: 0.5px solid #1079c0;
+   color: #1079c0;;
+}
+.notification-item-text {
+   flex: 1;
+}
+.notification-item-text h2 {
+   font-size: 14px;
+   margin: 0 0 10px 0;color: #343a40;
+   padding: 0;
+}
+.notification-item-text p {
+   font-size: 12px;
+   color: #bcc4cf;
+   margin: 0;
+}
