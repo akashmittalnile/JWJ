@@ -29,11 +29,11 @@ Route::post('otp-verfication', [AuthController::class, 'otpVerification']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::get('test-push-notification', [AuthController::class, 'testPushNotification']);
 Route::get('mood', [JournalController::class, 'mood']);
-Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
 Route::get('plans', [CommunityController::class, 'plans']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
+    Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
 
     Route::get('notifications', [SupportController::class, 'notifications']);
     Route::post('notification-seen', [SupportController::class, 'notificationSeen']);

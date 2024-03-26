@@ -118,11 +118,12 @@ class RoutineController extends Controller
                     'description' => $routine->description,
                     'routinetype' => ($routine->privacy == 'P') ? 'Public Routine' : 'Private Routine',
                     'date' => date('d M, Y h:i A', strtotime($routine->created_at)),
-                    'category_name' => $routine->category->name ?? 'NA',
+                    'category_id' => $routine->category->id ?? null,
+                    'category_name' => $routine->category->name ?? null,
                     'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
                     'created_by' => ($routine->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
-                    'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? 'NA',
-                    'schedule_frequency' => $routine->schedule->frequency ?? 'NA',
+                    'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
+                    'schedule_frequency' => $routine->schedule->frequency ?? null,
                     'schedule_time' => $routine->schedule->schedule_time ?? null,
                     'interval' => $interval ?? null
                 );

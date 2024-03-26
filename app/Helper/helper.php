@@ -207,6 +207,23 @@ if (!function_exists('getNotification')) {
             $notify = Notify::where('receiver_id', auth()->user()->id)->get();
             return $notify;
         }
-        
+    }
+}
+
+// Dev name : Dishant Gupta
+// This function is used to getting the list of notifications
+if (!function_exists('notifyAdmin')) {
+    function notifyAdmin($data)
+    {
+        $admin = User::where('role', 2)->where('status', 1)->get();
+        foreach($admin as $val){
+            $notify = new Notify;
+            $notify->sender_id = $data['user_id'];
+            $notify->receiver_id = $val->id;
+            $notify->type = $data['type'];
+            $notify->title = $data['title'];
+            $notify->message = $data['message'];
+            $notify->save();
+        }
     }
 }

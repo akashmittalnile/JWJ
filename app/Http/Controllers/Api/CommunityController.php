@@ -181,7 +181,9 @@ class CommunityController extends Controller
                         $user = User::where('id', $item->created_by)->first();
                         $image = array();
                         foreach($img as $val){
-                            array_push($image, assets("uploads/community/post/".$val->name));
+                            $tem['id'] = $val->id;
+                            $tem['image'] = assets("uploads/community/post/".$val->name);
+                            $image[] = $tem;
                         }
                         $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $item->id)->where('object_type', 'post')->first();
                         $likesCount = UserLike::where('object_id', $item->id)->where('object_type', 'post')->count();
@@ -257,6 +259,12 @@ class CommunityController extends Controller
                         $communityImage->save();
                     }
                 }
+
+                $data['type'] = 'COMMUNITY';
+                $data['title'] = 'New Community';
+                $data['message'] = auth()->user()->name . ' was created a new community "' .$request->title . '"';
+                $data['user_id'] = auth()->user()->id;
+                notifyAdmin($data);
 
                 return successMsg('New community created successfully.');
             }
