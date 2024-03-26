@@ -447,7 +447,7 @@
                                         });
 
                                     const imagesHtml = post.images.map(image => {
-                                        return `<div class="item community-post-image"><img src="{{ assets('${image}') }} "></div>`;
+                                        return `<div class="item community-post-image"><img src="{{ assets('uploads/community/post/${image}') }}"></div>`;
                                     }).join('');
 
                                     //   $("#post-card-lists").html('');

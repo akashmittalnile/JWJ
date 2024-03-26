@@ -146,7 +146,7 @@
             description: {
                 required: true,
             },
-            file: {
+            "file[]": {
                 required: true,
             },
         },
@@ -160,7 +160,7 @@
             description: {
                 required: 'Please enter description',
             },
-            file: {
+            "file[]": {
                 required: 'Please upload file',
             },
         },
