@@ -98,6 +98,11 @@ class RoutineController extends Controller
                 $category->logo = $name;
                 $category->status = $request->status;
                 $category->save();
+
+                $data['title'] = 'New Routine Category';
+                $data['message'] = 'New routine category was created by administrator is "' . $request->title . '"';
+                $data['type'] = 'ROUTINE';
+                notifyUsers($data);
                 return successMsg('New category created successfully.');
             }
         } catch (\Exception $e) {

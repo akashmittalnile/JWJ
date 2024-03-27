@@ -198,7 +198,6 @@ class AuthController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'email' => 'required|email',
                 'name' => 'required',
                 'mobile' => 'required',
                 'address' => 'required',
@@ -218,7 +217,6 @@ class AuthController extends Controller
                 }
 
                 $user->name = ucwords($request->name);
-                $user->email = $request->email;
                 $user->mobile = $request->mobile;
                 $user->address = $request->address;
                 $user->zipcode = $request->zipcode;

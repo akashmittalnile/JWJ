@@ -44,6 +44,10 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('/reset-password', [AuthController::class, 'changePassword'])->name('change.password');
 
     Route::middleware(["isAdmin"])->group(function () {
+        // notification
+        Route::get('/notify-seen', [UserController::class, 'notifySeen'])->name('notify.seen');
+        Route::get('/clear-notification', [UserController::class, 'clearNotification'])->name('clear.notification');
+
         // dashboard
         Route::get('/dashboard', [DashboardController::class, 'dashboard'])->name('dashboard');
 

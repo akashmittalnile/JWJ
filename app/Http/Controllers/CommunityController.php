@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Community;
 use App\Models\CommunityImage;
+use App\Models\Notify;
 use App\Models\Plan;
 use App\Models\Post;
 use App\Models\PostImage;
@@ -223,6 +224,14 @@ class CommunityController extends Controller
                     'status'=> $request->status,
                     'reject_reason'=> $request->reason ?? null
                 ]);
+                $community = Community::where('id', $id)->first();
+                $notify = new Notify;
+                $notify->sender_id = auth()->user()->id;
+                $notify->receiver_id = $community->user->id ?? null;
+                $notify->type = 'COMMUNITY';
+                $notify->title = ($request->status == 1) ? 'Community Approved' : 'Community Rejected';
+                $notify->message = ($request->status == 1) ? 'Congratulations! Your community is approved by our administrator' : ($request->reason ?? null);
+                $notify->save();
                 return successMsg('Status changed successfully');
             }
         } catch (\Exception $e) {
@@ -420,17 +429,8 @@ class CommunityController extends Controller
         }
     }
 
-    public function communityPostDetails($id)
-    {
-        try {
-            $id = encrypt_decrypt('decrypt', $id);
-            return view('pages.admin.community.post-details');
-        } catch (\Exception $e) {
-            return errorMsg('Exception => ' . $e->getMessage());
-        }
-    }
-
-
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function createPost(Request $request)
     {
         try {
@@ -488,6 +488,8 @@ class CommunityController extends Controller
         }
     }
 
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function communityPosts($id)
     {
         try {
@@ -500,6 +502,8 @@ class CommunityController extends Controller
         }
     }
     
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function getCommunityPosts(Request $request)
     {
         try {
@@ -576,6 +580,8 @@ class CommunityController extends Controller
         }
     }
 
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function deletePost(Request $request)
     {
         try {
@@ -617,6 +623,8 @@ class CommunityController extends Controller
         }
     }
 
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function fetchSubscriptionPlans()
     {
         try {
@@ -631,6 +639,8 @@ class CommunityController extends Controller
         }
     }
 
+    // Dev name : Bodheesh vc
+    // This function is used ---
     public function postDetails(Request $request)
     {
         try {

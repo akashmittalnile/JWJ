@@ -211,7 +211,7 @@ if (!function_exists('getNotification')) {
 }
 
 // Dev name : Dishant Gupta
-// This function is used to getting the list of notifications
+// This function is used to send the notification to admin from user
 if (!function_exists('notifyAdmin')) {
     function notifyAdmin($data)
     {
@@ -219,6 +219,24 @@ if (!function_exists('notifyAdmin')) {
         foreach($admin as $val){
             $notify = new Notify;
             $notify->sender_id = $data['user_id'];
+            $notify->receiver_id = $val->id;
+            $notify->type = $data['type'];
+            $notify->title = $data['title'];
+            $notify->message = $data['message'];
+            $notify->save();
+        }
+    }
+}
+
+// Dev name : Dishant Gupta
+// This function is used to send the notification to users from admin
+if (!function_exists('notifyUsers')) {
+    function notifyUsers($data)
+    {
+        $admin = User::where('role', 1)->where('status', 1)->get();
+        foreach($admin as $val){
+            $notify = new Notify;
+            $notify->sender_id = auth()->user()->id;
             $notify->receiver_id = $val->id;
             $notify->type = $data['type'];
             $notify->title = $data['title'];

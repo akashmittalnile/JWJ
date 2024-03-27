@@ -17,8 +17,8 @@ class DashboardController extends Controller
     public function dashboard()
     {
         try {
-            $userCount = User::where('role', 1)->count();
-            $communityCount = Community::count();
+            $userCount = User::where('role', 1)->whereIn('status', [1,2])->count();
+            $communityCount = Community::whereIn('status', [1,2])->count();
             $communityFollowCount = CommunityFollower::count();
             $paymentReceived = PaymentDetail::sum('amount');
             $subscribeUserCount = UserPlan::distinct('user_id')->count();

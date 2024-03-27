@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MoodMaster;
+use App\Models\Notify;
 use App\Models\User;
 use App\Models\UserMood;
 use App\Models\UserPlan;
@@ -134,6 +135,30 @@ class UserController extends Controller
                 ]);
                 return successMsg('Status changed successfully');
             }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to change the notification from unseen to seen
+    public function notifySeen(Request $request)
+    {
+        try {
+            Notify::where('receiver_id', auth()->user()->id)->update(['is_seen' => '2']);
+            return response()->json(['status' => true]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to clear all the notification
+    public function clearNotification(Request $request)
+    {
+        try {
+            Notify::where('receiver_id', auth()->user()->id)->delete();
+            return redirect()->back()->with('success', 'All notifications cleared.');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -82,7 +82,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <h4>Email Address</h4>
-                                        <input type="email" class="form-control" value="{{ auth()->user()->email ?? '' }}" name="email" placeholder="Enter Email">
+                                        <input type="email" class="form-control" value="{{ auth()->user()->email ?? '' }}" name="email" placeholder="Enter Email" disabled>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -188,10 +188,6 @@
 
     $('#profile-form').validate({
         rules: {
-            email: {
-                required: true,
-                emailValidate: true,
-            },
             name: {
                 required: true,
             },
@@ -211,9 +207,6 @@
             @endif
         },
         messages: {
-            email: {
-                required: 'Please enter email address',
-            },
             name: {
                 required: 'Please enter your name',
             },

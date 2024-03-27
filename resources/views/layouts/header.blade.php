@@ -11,7 +11,7 @@
             <ul class="navbar-nav">
                 <li class="nav-item noti-dropdown dropdown">
                     <a class="nav-link  dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
-                        <div class="noti-icon">
+                        <div class="noti-icon" id="trigger-unseen">
                             <img src="{{ assets('assets/images/notification.svg') }}" alt="user">
                             <span class="noti-badge">{{ getNotification('unseen') }}</span>
                         </div>
@@ -40,12 +40,12 @@
                             </div>
                             @endforelse
                         </div>
-                        
+
                         <a href="" data-bs-toggle="modal" data-bs-target="#clearModal">
                             <div class="notification-foot">
-                                Clear All Notifications 
-                            </div>   
-                        </a> 
+                                Clear All Notifications
+                            </div>
+                        </a>
                     </div>
                 </li>
                 <li class="nav-item profile-dropdown dropdown">
@@ -112,7 +112,7 @@
                 <div class="jwj-modal-form text-center">
                     <h2>Are You Sure?</h2>
                     <p>You want to clear all the notifications!</p>
-                    <form action="" method="get">
+                    <form action="{{ route('admin.clear.notification') }}" method="get">
                         @csrf
                         <div class="row">
                             <div class="col-md-12">
@@ -128,3 +128,25 @@
         </div>
     </div>
 </div>
+
+@push('js')
+<script>
+    $(document).on('click', '#trigger-unseen', function() {
+        $.ajax({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            },
+            type: 'GET',
+            url: "{{ route('admin.notify.seen') }}",
+            success: function(data) {
+                if (data.status) {
+                    $('.noti-badge').text(0);
+                }
+            },
+            error: function(e) {
+                console.log(e);
+            }
+        })
+    })
+</script>
+@endpush

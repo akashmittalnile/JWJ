@@ -13,7 +13,7 @@ class Community extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => 'NA', 'email' => 'NA', 'profile' => 'NA']);
+        return $this->belongsTo(User::class, 'created_by', 'id')->withDefault(['name' => null, 'email' => null, 'profile' => null, 'mobile' => null]);
     }
 
     public function communityImages()

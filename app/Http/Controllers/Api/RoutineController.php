@@ -124,7 +124,7 @@ class RoutineController extends Controller
                     'created_by' => ($routine->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
                     'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
                     'schedule_frequency' => $routine->schedule->frequency ?? null,
-                    'schedule_time' => $routine->schedule->schedule_time ?? null,
+                    'schedule_date' => $routine->schedule->schedule_time ?? null,
                     'interval' => $interval ?? null
                 );
                 return successMsg('Routine detail', $response);
