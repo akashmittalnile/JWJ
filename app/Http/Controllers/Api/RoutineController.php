@@ -10,6 +10,7 @@ use App\Models\RoutineCategory;
 use App\Models\RoutineSharingDetail;
 use App\Models\Schedule;
 use App\Models\ScheduleInterval;
+use App\Models\SharingDetail;
 use App\Models\TaskAssignMember;
 use App\Models\UserHideTask;
 use Illuminate\Http\Request;
@@ -80,7 +81,7 @@ class RoutineController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $routine = Routine::where('id', $request->id)->where('type', 'R')->whereNull('shared_by')->first();
+                $routine = Routine::where('id', $request->id)->where('type', 'R')->first();
                 if(isset($routine->id)){
                     if($routine->created_by == auth()->user()->id){
                         $schedule = Schedule::where('routines_id', $routine->id)->first();
@@ -111,44 +112,23 @@ class RoutineController extends Controller
                     $temp['interval_time'] = $val->interval_time;
                     $interval[] = $temp;
                 }
-                $response = array(
-                    'id' => $routine->id,
-                    'name' => $routine->name,
-                    'subtitle' => $routine->subtitle,
-                    'description' => $routine->description,
-                    'routinetype' => ($routine->privacy == 'P') ? 'Public Routine' : 'Private Routine',
-                    'date' => date('d M, Y h:i A', strtotime($routine->created_at)),
-                    'category_id' => $routine->category->id ?? null,
-                    'category_name' => $routine->category->name ?? null,
-                    'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
-                    'created_by' => ($routine->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
-                    'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
-                    'schedule_frequency' => $routine->schedule->frequency ?? null,
-                    'schedule_date' => $routine->schedule->schedule_time ?? null,
-                    'interval' => $interval ?? null
-                );
-                return successMsg('Routine detail', $response);
-            } else return errorMsg('Routine not found');
-        } catch (\Exception $e) {
-            return errorMsg('Exception => ' . $e->getMessage());
-        }
-    }
-
-
-    // Dev name : Dishant Gupta
-    // This function is used to getting the details of particular routine
-    public function shareRoutine(Request $request, $id)
-    {
-        try {
-            $routine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'R')->first();
-            if (isset($routine->id)) {
-                $interval = array();
-                foreach ($routine->schedule->interval as $key => $val) {
-                    $temp['id'] = $val->id;
-                    $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
-                    $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
-                    $temp['interval_time'] = $val->interval_time;
-                    $interval[] = $temp;
+                $share = array();
+                if($routine->shared_by != null){
+                    $share = array(
+                        'shared_user_id' => $routine->sharedUser->id,
+                        'shared_user_name' => $routine->sharedUser->name,
+                        'shared_user_profile' => isset($routine->sharedUser->profile) ? assets('/uploads/profile/'.$routine->sharedUser->profile) : null,
+                    );
+                };
+                $list = SharingDetail::where('user_id', auth()->user()->id)->where('routine_id', $routine->id)->get();
+                $sharingList = array();
+                foreach($list as $val){
+                    $sha['id'] = $val->id;
+                    $sha['share_to_user_id'] = $val->user->id ?? null;
+                    $sha['share_to_user_name'] = $val->user->name ?? null;
+                    $sha['share_to_user_profile'] = isset($val->user->profile) ? assets('/uploads/profile/'.$val->user->profile) : null;
+                    $sha['shared_date'] = date('d M, Y h:i a', strtotime($val->created_at));
+                    $sharingList[] = $sha;
                 }
                 $response = array(
                     'id' => $routine->id,
@@ -164,10 +144,100 @@ class RoutineController extends Controller
                     'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
                     'schedule_frequency' => $routine->schedule->frequency ?? null,
                     'schedule_date' => $routine->schedule->schedule_time ?? null,
-                    'interval' => $interval ?? null
+                    'interval' => $interval ?? null,
+                    $share,
+                    'sharingList' => $sharingList
                 );
                 return successMsg('Routine detail', $response);
             } else return errorMsg('Routine not found');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the details of particular routine
+    public function shareRoutine(Request $request, $id)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'user_id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $oldroutine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'R')->first();
+                if (isset($oldroutine->id)) {
+                    $routine = new Routine;
+                    $routine->type = 'R';
+                    $routine->name = $oldroutine->name;
+                    $routine->subtitle = $oldroutine->subtitle ?? null;
+                    $routine->description = $oldroutine->description;
+                    $routine->priority = $oldroutine->priority ?? 'L';
+                    $routine->category_id = $oldroutine->category_id;
+                    $routine->created_by = $request->user_id;
+                    $routine->shared_by = auth()->user()->id;
+                    $routine->status = 1;
+                    $routine->save();
+
+                    $oldSchedule = Schedule::where('routines_id', $oldroutine->id)->first();
+                    $schedule = new Schedule;
+                    $schedule->routines_id = $routine->id;
+                    $schedule->frequency = $oldSchedule->frequency;
+                    $schedule->is_enable = 1;
+                    $schedule->save();
+
+                    $oldScheduleInterval = ScheduleInterval::where('schedule_id', $oldSchedule->id)->get();
+                    if ($oldSchedule->frequency == 'O') {
+                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = $scheduletime->interval_time;
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    } elseif ($oldSchedule->frequency == 'D') {
+                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = $scheduletime->interval_time;
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    } elseif ($oldSchedule->frequency == 'T') {
+                        $schedule = Schedule::find($schedule->id);
+                        $schedule->schedule_time = $oldSchedule->date;
+                        $schedule->update();
+                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = $scheduletime->interval_time;
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    } elseif ($oldSchedule->frequency == 'C') {
+                        $schedule = Schedule::find($schedule->id);
+                        $schedule->schedule_startdate = $oldSchedule->schedule_startdate ?? null;
+                        $schedule->schedule_enddate = $oldSchedule->schedule_enddate ?? null;
+                        $schedule->update();
+                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                            $interval = new ScheduleInterval;
+                            $interval->interval_time = $scheduletime->interval_time;
+                            $interval->interval_weak = $scheduletime->interval_weak;
+                            $interval->schedule_id = $schedule->id;
+                            $interval->save();
+                        }
+                    }
+
+                    $share = new SharingDetail;
+                    $share->user_id = auth()->user()->id;
+                    $share->routine_id = $routine->id;
+                    $share->shared_to = $request->user_id;
+                    $share->status = 1;
+                    $share->save();
+
+                    return successMsg('Routine shared successfully');
+                } else return errorMsg('Routine not found');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -189,8 +259,9 @@ class RoutineController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $routine = Routine::where('id', $request->id)->where('type', 'R')->whereNull('shared_by')->first();
+                $routine = Routine::where('id', $request->id)->where('type', 'R')->first();
                 if(isset($routine->id)){
+                    if($routine->shared_by != null) return errorMsg("You can't edit this routine");
                     if($routine->created_by == auth()->user()->id){
                         $routine->name = $request->name;
                         $routine->subtitle = $request->subtitle ?? null;

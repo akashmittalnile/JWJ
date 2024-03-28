@@ -28,4 +28,8 @@ class Routine extends Model
     public function taskAssignMember() {
         return $this->hasMany(TaskAssignMember::class, 'task_id', 'id');
     }
+
+    public function sharedUser(){
+        return $this->belongsTo(User::class, 'id', 'shared_by');
+    }
 }
