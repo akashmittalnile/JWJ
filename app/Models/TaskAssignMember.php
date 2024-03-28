@@ -10,4 +10,8 @@ class TaskAssignMember extends Model
     use HasFactory;
     protected $table = 'task_assign_members';
     protected $id = 'id';
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
 }

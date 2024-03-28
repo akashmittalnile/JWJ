@@ -332,4 +332,23 @@ class UserController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of users for sharing the routine
+    public function userList() {
+        try{
+            $user = User::where('id', '!=', auth()->user()->id)->where('role', 1)->orderByDesc('id')->where('status', 1)->get();
+            $users = array();
+            foreach($user as $val){
+                $temp['id'] = $val->id;
+                $temp['user_name'] = $val->user_name;
+                $temp['name'] = $val->name;
+                $temp['profile'] = isset($val->profile) ? assets('/uploads/profile/'.$val->profile) : null;
+                $users[] = $temp;
+            }
+            return successMsg('Users list', $users);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
 }

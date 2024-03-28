@@ -13,11 +13,19 @@ class Routine extends Model
 
     public function category()
     {
-        return $this->belongsTo(RoutineCategory::class, 'category_id', 'id')->withDefault(['name' => 'NA', 'description' => 'NA', 'logo' => 'NA', 'code' => 'NA']);
+        return $this->belongsTo(RoutineCategory::class, 'category_id', 'id')->withDefault(['name' => null, 'description' => null, 'logo' => null, 'code' => null]);
     }
 
     public function schedule()
     {
-        return $this->belongsTo(Schedule::class, 'id', 'routines_id')->withDefault(['schedule_name' => 'NA', 'frequency' => 'NA', 'frequency_interval' => 'NA', 'schedule_time' => 'NA']);
+        return $this->belongsTo(Schedule::class, 'id', 'routines_id')->withDefault(['schedule_name' => null, 'frequency' => null, 'frequency_interval' => null, 'schedule_time' => null]);
+    }
+
+    public function images(){
+        return $this->hasMany(Attachment::class, 'routine_id', 'id')->where('routine_type', 'T')->withDefault(['file'=> null, 'id'=> null]);
+    }
+
+    public function taskAssignMember() {
+        return $this->hasMany(TaskAssignMember::class, 'task_id', 'id');
     }
 }

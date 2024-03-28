@@ -80,7 +80,7 @@ class RoutineController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $routine = Routine::where('id', $request->id)->where('type', 'R')->first();
+                $routine = Routine::where('id', $request->id)->where('type', 'R')->whereNull('shared_by')->first();
                 if(isset($routine->id)){
                     if($routine->created_by == auth()->user()->id){
                         $schedule = Schedule::where('routines_id', $routine->id)->first();
@@ -97,8 +97,47 @@ class RoutineController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to getting the list of routines
+    // This function is used to getting the details of particular routine
     public function routineDetail(Request $request, $id)
+    {
+        try {
+            $routine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'R')->first();
+            if (isset($routine->id)) {
+                $interval = array();
+                foreach ($routine->schedule->interval as $key => $val) {
+                    $temp['id'] = $val->id;
+                    $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
+                    $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
+                    $temp['interval_time'] = $val->interval_time;
+                    $interval[] = $temp;
+                }
+                $response = array(
+                    'id' => $routine->id,
+                    'name' => $routine->name,
+                    'subtitle' => $routine->subtitle,
+                    'description' => $routine->description,
+                    'routinetype' => ($routine->privacy == 'P') ? 'Public Routine' : 'Private Routine',
+                    'date' => date('d M, Y h:i A', strtotime($routine->created_at)),
+                    'category_id' => $routine->category->id ?? null,
+                    'category_name' => $routine->category->name ?? null,
+                    'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
+                    'created_by' => ($routine->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
+                    'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
+                    'schedule_frequency' => $routine->schedule->frequency ?? null,
+                    'schedule_date' => $routine->schedule->schedule_time ?? null,
+                    'interval' => $interval ?? null
+                );
+                return successMsg('Routine detail', $response);
+            } else return errorMsg('Routine not found');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the details of particular routine
+    public function shareRoutine(Request $request, $id)
     {
         try {
             $routine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'R')->first();
@@ -150,7 +189,7 @@ class RoutineController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $routine = Routine::where('id', $request->id)->where('type', 'R')->first();
+                $routine = Routine::where('id', $request->id)->where('type', 'R')->whereNull('shared_by')->first();
                 if(isset($routine->id)){
                     if($routine->created_by == auth()->user()->id){
                         $routine->name = $request->name;
@@ -329,20 +368,6 @@ class RoutineController extends Controller
                     }
                 }
 
-                // check if the task have autohide option  
-                if ($request->autoHideTask == 'true') {
-                    foreach ($request->schedule_time as $key9 => $timetimehide) {
-                        $time = Carbon::parse($timetimehide)->format('H:i:s');
-                        $hide = new UserHideTask;
-                        $hide->user_id = auth()->user()->id;
-                        $hide->task_id = $task->id;
-                        $hide->task_date = date('Y-m-d');
-                        $hide->task_time = $time;
-                        $hide->status = 1;
-                        $hide->save();
-                    }
-                }
-
                 // entry for schedule task according to repeat time
                 $schedule = new Schedule();
                 $schedule->routines_id = $task->id;
@@ -412,6 +437,60 @@ class RoutineController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to getting the details of particular task
+    public function taskDetail(Request $request, $id)
+    {
+        try {
+            $task = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'T')->first();
+            if (isset($task->id)) {
+                $interval = array();
+                foreach ($task->schedule->interval as $key => $val) {
+                    $temp['id'] = $val->id;
+                    $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
+                    $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
+                    $temp['interval_time'] = $val->interval_time;
+                    $interval[] = $temp;
+                }
+                $images = array();
+                foreach ($task->images as $key => $val) {
+                    $tempImg['id'] = $val->id;
+                    $tempImg['image'] = isset($val->file) ? assets('/uploads/task/'.$val->file) : null;
+                    $images[] = $tempImg;
+                }
+                $taskAssign = array();
+                foreach ($task->taskAssignMember as $key => $val) {
+                    $tempAssign['id'] = $val->id;
+                    $tempAssign['user_id'] = $val->user_id;
+                    $tempAssign['name'] = $val->user->name;
+                    $tempAssign['profile'] = isset($val->user->profile) ? assets('/uploads/profile/'.$val->user->profile) : assets("assets/images/no-image.jpg");
+                    $taskAssign[] = $tempAssign;
+                }
+                $response = array(
+                    'id' => $task->id,
+                    'name' => $task->name,
+                    'subtitle' => $task->subtitle,
+                    'description' => $task->description,
+                    'tasktype' => ($task->privacy == 'P') ? 'Public Routine' : 'Private Routine',
+                    'date' => date('d M, Y h:i A', strtotime($task->created_at)),
+                    'category_id' => $task->category->id ?? null,
+                    'category_name' => $task->category->name ?? null,
+                    'category_logo' => isset($task->category->logo) ? assets('uploads/routine/' . $task->category->logo) : assets("assets/images/no-image.jpg"),
+                    'created_by' => ($task->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
+                    'schedule_frequency_name' => config('constant.frequency')[$task->schedule->frequency] ?? null,
+                    'schedule_frequency' => $task->schedule->frequency ?? null,
+                    'schedule_date' => $task->schedule->schedule_time ?? null,
+                    'interval' => $interval ?? null,
+                    'images' => $images ?? null,
+                    'taskAssign' => $taskAssign ?? null,
+                );
+                return successMsg('Task detail', $response);
+            } else return errorMsg('Task not found');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to update a task
     public function editTask(Request $request)
     {
@@ -442,6 +521,13 @@ class RoutineController extends Controller
                         $task->updated_at = date('Y-m-d H:i:s');
                         $task->save();
         
+                        if(isset($request->deletefile) && count($request->deletefile) > 0){
+                            foreach($request->deletefile as $val){
+                                $taskImage = Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->first();
+                                fileRemove("/uploads/task/$taskImage->name");
+                                Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->delete();
+                            }
+                        }
                         if ($request->hasfile('images')) {
                             foreach ($request->file('images') as $key => $file) {
                                 $attachement = new Attachment;
@@ -453,27 +539,10 @@ class RoutineController extends Controller
                                 $attachement->save();
                             }
                         }
-        
-                        // check if the task have autohide option  
-                        if ($request->autoHideTask == 'true') {
-                            foreach ($request->schedule_time as $key9 => $timetimehide) {
-                                $time = Carbon::parse($timetimehide)->format('H:i:s');
-                                $hide = new UserHideTask;
-                                $hide->user_id = auth()->user()->id;
-                                $hide->task_id = $task->id;
-                                $hide->task_date = date('Y-m-d');
-                                $hide->task_time = $time;
-                                $hide->status = 1;
-                                $hide->save();
-                            }
-                        }
-        
-                        // entry for schedule task according to repeat time
-                        $schedule = new Schedule();
-                        $schedule->routines_id = $task->id;
+
+                        $schedule = Schedule::where('routines_id', $task->id)->first();
+                        ScheduleInterval::where('schedule_id',$schedule->id)->delete();
                         $schedule->frequency = $request->frequency;
-                        $schedule->is_enable = 1;
-                        $schedule->save();
         
                         if ($request->frequency == 'O') {
                             foreach ($request->schedule_time as $key5 => $scheduletime) {
@@ -510,13 +579,11 @@ class RoutineController extends Controller
                                 }
                             }
                         }
-        
-                        // $tasksharing = new RoutineSharingDetail;
-                        // $tasksharing->routines_id = $task->id;
-                        // $tasksharing->user_id = $request->user_id;
-                        // $tasksharing->save();
+    
+                        $schedule->save();
                         if ($request->taskassignmembers) {
                             if (count($request->taskassignmembers) > 0) {
+                                TaskAssignMember::where('task_id', $task->id)->delete();
                                 foreach ($request->taskassignmembers as $key3 => $assignmembers) {
                                     $taskassignmember  = new TaskAssignMember;
                                     $taskassignmember->task_id = $task->id;
@@ -526,9 +593,6 @@ class RoutineController extends Controller
                                 }
                             }
                         }
-                        $tasks['taskid'] = $task->id;
-                        $tasks['created_by'] = auth()->user()->id;
-                        $tasks['taskname'] = $task->name;
                         return successMsg("Task updated successfully");
                     } else return errorMsg('This task is not created by you');
                 } else return errorMsg('Task not found');

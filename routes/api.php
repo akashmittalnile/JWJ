@@ -43,6 +43,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('mood-capture', [UserController::class, 'moodCapture']);
     Route::get('mood-calender', [UserController::class, 'moodCalender']);
     Route::post('submit-rating', [UserController::class, 'submitRating']);
+    Route::get('users-list', [UserController::class, 'userList']);
 
     Route::get('profile', [AuthController::class, 'profile']);
     Route::post('update-profile', [AuthController::class, 'updateProfile']);
@@ -78,9 +79,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('routine-detail/{id}', [RoutineController::class, 'routineDetail']);
     Route::post('create-routine', [RoutineController::class, 'createRoutine']);
     Route::post('edit-routine', [RoutineController::class, 'editRoutine']);
-    Route::delete('delete-routine', [RoutineController::class, 'deleteRoutine']);
+    Route::post('share-routine', [RoutineController::class, 'shareRoutine']);
+    
 
     Route::post('create-task', [RoutineController::class, 'createTask']);
+    Route::get('task-detail/{id}', [RoutineController::class, 'taskDetail']);
     Route::post('edit-task', [RoutineController::class, 'editTask']);
     Route::delete('delete-task', [RoutineController::class, 'deleteTask']);
 
