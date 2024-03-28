@@ -63,6 +63,24 @@
                     </a>
                 </li>
 
+                <li class="nav-item {{ Route::is('admin.journal*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.journal.list') }}">
+                        <span class="menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="24" viewBox="0 0 25 24" fill="none">
+                                <path d="M22.8 12C22.8 6.48 18.32 2 12.8 2C7.28005 2 2.80005 6.48 2.80005 12C2.80005 17.52 7.28005 22 12.8 22" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M8.80002 3H9.80002C7.85002 8.84 7.85002 15.16 9.80002 21H8.80002" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M15.8 3C16.77 5.92 17.2601 8.96 17.2601 12" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M3.80005 16V15C6.72005 15.97 9.76005 16.46 12.8 16.46" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M3.80005 9.0001C9.64005 7.0501 15.96 7.0501 21.8 9.0001" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M18.8366 18C18.8153 17.9969 18.7879 17.9969 18.7635 18C18.2269 17.9817 17.8 17.542 17.8 17.0015C17.8 16.4489 18.2452 16 18.8 16C19.3519 16 19.8 16.4489 19.8 17.0015C19.797 17.542 19.3732 17.9817 18.8366 18Z" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M21.8 20.8027C21.0078 21.5476 19.9573 22 18.8 22C17.6428 22 16.5923 21.5476 15.8 20.8027C15.8446 20.3732 16.1116 19.9528 16.5879 19.6238C17.8075 18.7921 19.8015 18.7921 21.0122 19.6238C21.4885 19.9528 21.7555 20.3732 21.8 20.8027Z" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M18.8 22C21.0092 22 22.8 20.2091 22.8 18C22.8 15.7909 21.0092 14 18.8 14C16.5909 14 14.8 15.7909 14.8 18C14.8 20.2091 16.5909 22 18.8 22Z" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span class="menu-title">Journal Management</span>
+                    </a>
+                </li>
+
                 <li class="nav-item {{ Route::is('admin.rating-review*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.rating-review.list') }}">
                         <span class="menu-icon">

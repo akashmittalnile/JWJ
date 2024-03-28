@@ -22,7 +22,10 @@ return [
 	),
 	'inquiry_type' => array(
 		1 => 'Plans Related', 2 => 'Billing Related', 3 => 'General Inquiry', 4 => 'Community Related', 5 => 'Community Guidelines', 6 => 'Community Creation', 7 => 'Task Management', 8 => 'Journals Related', 9 => 'Journaling Functionality'
-	)
+	),
+	'object_type' => array(
+		1 => 'post', 2 => 'community', 3 => 'routine', 4 => 'task', 5 => 'journal'
+	),
 ];
 
 ?>

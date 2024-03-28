@@ -88,14 +88,14 @@
                                                     <div class="User-contact-info-content">
                                                         <h2>Status</h2>
                                                         <div class="switch-toggle">
-                                                            <p>Inactive</p>
+                                                            <p style='color: #8C9AA1;'>Inactive</p>
                                                             <div class="">
                                                                 <label class="toggle" for="myToggle">
                                                                     <input data-id="{{encrypt_decrypt('encrypt', $data->id)}}" class="toggle__input" name="status" @if($data->status==1) checked @endif type="checkbox" id="myToggle">
                                                                     <div class="toggle__fill"></div>
                                                                 </label>
                                                             </div>
-                                                            <p>Active</p>
+                                                            <p style='color: #8C9AA1;'>Active</p>
                                                         </div>
                                                     </div>
                                                 </div>

@@ -10,4 +10,8 @@ class JournalSearchCriteria extends Model
     use HasFactory;
     protected $table = 'journals_search_criteria_mapping';
     protected $id = 'id';
+
+    public function criteria(){
+        return $this->belongsTo(SearchCriteria::class, 'search_id', 'id')->withDefault(['name' => null]);
+    }
 }
