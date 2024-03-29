@@ -11,6 +11,8 @@ use App\Models\SearchCriteria;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+use function Laravel\Prompts\error;
+
 class JournalController extends Controller
 {
     // Dev name : Dishant Gupta
@@ -182,12 +184,26 @@ class JournalController extends Controller
                 'mood_id' => 'required',
                 'file' => 'required|array',
                 'criteria' => 'required|array',
+                'new_criteria' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
                 if ($request->hasFile("file")) 
                     if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
+
+                if(isset($request->new_criteria)){
+                    $already = SearchCriteria::where('name', $request->new_criteria)->first();
+                    if(isset($already)) return errorMsg('Entered criteria already exists.');
+                    $criteria = new SearchCriteria;
+                    $criteria->name = $request->new_criteria ?? null;
+                    $criteria->description = $request->new_criteria ?? null;
+                    $criteria->created_by = auth()->user()->id;
+                    $criteria->status = 1;
+                    $criteria->save();
+                }
+                $criteriaArray = $request->criteria;
+                array_push($criteriaArray, $criteria->id);
 
                 $journal = new Journal;
                 $journal->title = $request->title;
@@ -209,7 +225,7 @@ class JournalController extends Controller
                 }
 
                 if(count($request->criteria)){
-                    foreach($request->criteria as $value){
+                    foreach($criteriaArray as $value){
                         $journalCriteria = new JournalSearchCriteria;
                         $journalCriteria->journal_id = $journal->id;
                         $journalCriteria->search_id = $value;
