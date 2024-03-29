@@ -157,7 +157,7 @@ class RoutineController extends Controller
 
 
     // Dev name : Dishant Gupta
-    // This function is used to getting the details of particular routine
+    // This function is used to getting the share the routine to another user
     public function shareRoutine(Request $request, $id)
     {
         try {

@@ -9,11 +9,14 @@ use App\Models\CommunityImage;
 use App\Models\Plan;
 use App\Models\Post;
 use App\Models\PostImage;
+use App\Models\PostReport;
+use App\Models\ReportReason;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use App\Models\UserLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 
 class CommunityController extends Controller
 {
@@ -652,6 +655,50 @@ class CommunityController extends Controller
                         $comment->status = 1;
                         $comment->save();
                         return successMsg('Comment posted successfully.');
+                    } else return errorMsg('Please follow community first.');
+                } else return errorMsg('Post not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of report reasons
+    public function reportReason(Request $request) {
+        try{
+            $list = ReportReason::where('status', 1)->orderByDesc('id')->get();
+            return successMsg('Report reasons', $list);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to report a post
+    public function postReport(Request $request) {
+        try{
+            if(isset($request->reason_id)) $valid = array('id' => 'required', 'reason_id' => 'required');
+            else $valid = array('id' => 'required', 'other_reason' => 'required');
+            $validator = Validator::make($request->all(), $valid);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = Post::where('id', $request->id)->first();
+                if(isset($post->id)){
+                    $ufc = UserFollowedCommunity::where('community_id', $post->community_id)->where('userid', auth()->user()->id)->first();
+                    $data = Community::where('id', $post->community_id)->first();
+                    if(isset($ufc) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
+                        $already = PostReport::where('user_id', auth()->user()->id)->where('post_id', $request->id)->first();
+                        if(isset($already->id)) return errorMsg('Already reported to this post');
+                        $report = new PostReport;
+                        $report->user_id = auth()->user()->id;
+                        $report->post_id = $post->id;
+                        $report->reason_id = $request->reason_id ?? null;
+                        $report->other_reason = $request->other_reason ?? null;
+                        $report->status = 1;
+                        $report->save();
+                        return successMsg('Post reported successfully.');
                     } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
             }
