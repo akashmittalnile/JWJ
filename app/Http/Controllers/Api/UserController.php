@@ -136,7 +136,25 @@ class UserController extends Controller
             if(count($moodCalen) > 0)
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($moodCalen), 2, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($moodCalen), 2, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($moodCalen), 2, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($moodCalen), 2, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
-            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood]);
+
+            $routines = Routine::where('created_by', auth()->user()->id)->limit(5)->orderByDesc('id')->get();
+            $routineArr = array();
+            foreach ($routines as $key => $myroutine) {
+                $tempRoutine['routineid'] = $myroutine->id;
+                $tempRoutine['routinename'] = $myroutine->name;
+                $tempRoutine['routinesubtitle'] = $myroutine->subtitle;
+                $tempRoutine['description'] = $myroutine->description;
+                $tempRoutine['created_by'] = $myroutine->created_by;
+                $tempRoutine['routinetype'] = ($myroutine->privacy == 'P') ? 'Public Routine' : 'Private Routine';
+                $tempRoutine['date'] = $myroutine->created_at;
+                $tempRoutine['category_name'] = $myroutine->category->name;
+                $tempRoutine['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
+                $tempRoutine['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
+                $tempRoutine['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
+                $routineArr[] = $tempRoutine;
+            }
+
+            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr]);
             return successMsg('Home', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

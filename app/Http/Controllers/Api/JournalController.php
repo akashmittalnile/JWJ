@@ -184,7 +184,7 @@ class JournalController extends Controller
                 'mood_id' => 'required',
                 'file' => 'required|array',
                 'criteria' => 'required|array',
-                'new_criteria' => 'required',
+                'new_criteria' => 'array',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -192,18 +192,25 @@ class JournalController extends Controller
                 if ($request->hasFile("file")) 
                     if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
-                if(isset($request->new_criteria)){
-                    $already = SearchCriteria::where('name', $request->new_criteria)->first();
-                    if(isset($already)) return errorMsg('Entered criteria already exists.');
-                    $criteria = new SearchCriteria;
-                    $criteria->name = $request->new_criteria ?? null;
-                    $criteria->description = $request->new_criteria ?? null;
-                    $criteria->created_by = auth()->user()->id;
-                    $criteria->status = 1;
-                    $criteria->save();
+                $newCriteriaArr = array();
+                if(isset($request->new_criteria) && count($request->new_criteria)){
+                    foreach($request->new_criteria as $vaal){
+                        $already = SearchCriteria::where('name', $vaal)->first();
+                        if(isset($already->id)) {
+                            array_push($newCriteriaArr, $already->id);
+                        } else {
+                            $criteria = new SearchCriteria;
+                            $criteria->name = $vaal ?? null;
+                            $criteria->description = $vaal ?? null;
+                            $criteria->created_by = auth()->user()->id;
+                            $criteria->status = 1;
+                            $criteria->save();
+                            array_push($newCriteriaArr, $criteria->id);
+                        }
+                    }
                 }
                 $criteriaArray = $request->criteria;
-                array_push($criteriaArray, $criteria->id);
+                array_push($criteriaArray, $newCriteriaArr);
 
                 $journal = new Journal;
                 $journal->title = $request->title;

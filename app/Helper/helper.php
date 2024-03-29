@@ -204,7 +204,7 @@ if (!function_exists('getNotification')) {
             $notify = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->count();
             return $notify;
         } else {
-            $notify = Notify::where('receiver_id', auth()->user()->id)->get();
+            $notify = Notify::where('receiver_id', auth()->user()->id)->orderByDesc('id')->get();
             return $notify;
         }
     }
