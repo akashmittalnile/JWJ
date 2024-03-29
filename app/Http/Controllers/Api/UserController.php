@@ -140,6 +140,14 @@ class UserController extends Controller
             $routines = Routine::where('created_by', auth()->user()->id)->limit(5)->orderByDesc('id')->get();
             $routineArr = array();
             foreach ($routines as $key => $myroutine) {
+                $interval = array();
+                foreach ($myroutine->schedule->interval as $key => $val) {
+                    $temp['id'] = $val->id;
+                    $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
+                    $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
+                    $temp['interval_time'] = $val->interval_time;
+                    $interval[] = $temp;
+                }
                 $tempRoutine['routineid'] = $myroutine->id;
                 $tempRoutine['routinename'] = $myroutine->name;
                 $tempRoutine['routinesubtitle'] = $myroutine->subtitle;
@@ -151,6 +159,10 @@ class UserController extends Controller
                 $tempRoutine['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
                 $tempRoutine['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
                 $tempRoutine['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
+                $tempRoutine['schedule_frequency_name'] = config('constant.frequency')[$myroutine->schedule->frequency] ?? null;
+                $tempRoutine['schedule_frequency'] = $myroutine->schedule->frequency ?? null;
+                $tempRoutine['schedule_date'] = $myroutine->schedule->schedule_time ?? null;
+                $tempRoutine['interval'] = $interval ?? null;
                 $routineArr[] = $tempRoutine;
             }
 
