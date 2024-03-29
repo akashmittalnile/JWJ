@@ -566,6 +566,18 @@ class CommunityController extends Controller
                     $temp['posted_by'] = $value->user->name ?? 'NA';
                     $commentArr[] = $temp;
                 };
+                $postReport = PostReport::where('user_id', auth()->user()->id)->where('post_id', $post->id)->first();
+                if(isset($postReport->id)){
+                    if(isset($postReport->reason_id))
+                        $reason = ReportReason::where('id', $postReport->reason_id)->first();
+                    $postReportArr = array(
+                        'id' => $postReport->id,
+                        'reason_id' => $postReport->reason_id ?? null,
+                        'reason' => isset($reason->text) ? $reason->text : null,
+                        'other_reason' => $postReport->other_reason ?? null,
+                        'report_date' => date('d M, Y h:i A', strtotime($postReport->created_at)),
+                    );
+                } else $postReportArr = array();
                 $response = array(
                     'id' => $post->id,
                     'title' => $post->title,
@@ -578,6 +590,7 @@ class CommunityController extends Controller
                     'community_id' => $post->community_id,
                     'community_title' => $community->name,
                     'community_description' => $community->description,
+                    'post_report' => isset($postReport->id) ? $postReportArr : null,
                     'posted_by_name' => $user->name,
                     'posted_by_user_name' => $user->user_name,
                     'created_at' => date('d M, Y h:i A', strtotime($post->created_at)),

@@ -210,7 +210,7 @@ class JournalController extends Controller
                     }
                 }
                 $criteriaArray = $request->criteria;
-                array_push($criteriaArray, $newCriteriaArr);
+                $criteriaArray = array_merge($criteriaArray, $newCriteriaArr);
 
                 $journal = new Journal;
                 $journal->title = $request->title;

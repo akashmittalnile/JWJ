@@ -710,12 +710,12 @@ class RoutineController extends Controller
 
     // public function sendroutinenotification(Request $request)
     // {
-    //     $task = Task::where('task_type', 'R')->get();
-    //     $tasks = array();
-    //     foreach ($task as $key => $alltask) {
-    //         $tasks[$key]['id'] = $alltask->id;
-    //         $tasks[$key]['createdby'] = $alltask->created_by;
-    //         $schedule = Schedule::where('task_id', $alltask->id)->first();
+    //     $routine = Routine::where('task_type', 'R')->get();
+    //     $routines = array();
+    //     foreach ($routine as $key => $alltask) {
+    //         $routines[$key]['id'] = $alltask->id;
+    //         $routines[$key]['createdby'] = $alltask->created_by;
+    //         $schedule = Schedule::where('routines_id', $alltask->id)->first();
     //         if ($schedule) {
     //             if ($schedule->frequency == 'D') {
     //                 $times = explode(',', $schedule->frequency_interval);
