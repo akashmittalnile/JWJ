@@ -30,6 +30,7 @@ Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::get('test-push-notification', [AuthController::class, 'testPushNotification']);
 Route::get('mood', [JournalController::class, 'mood']);
 Route::get('plans', [CommunityController::class, 'plans']);
+Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinenotification']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);

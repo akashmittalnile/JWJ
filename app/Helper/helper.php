@@ -233,8 +233,8 @@ if (!function_exists('notifyAdmin')) {
 if (!function_exists('notifyUsers')) {
     function notifyUsers($data)
     {
-        $admin = User::where('role', 1)->where('status', 1)->get();
-        foreach($admin as $val){
+        $users = User::where('role', 1)->where('status', 1)->get();
+        foreach($users as $val){
             $notify = new Notify;
             $notify->sender_id = auth()->user()->id;
             $notify->receiver_id = $val->id;

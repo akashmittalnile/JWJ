@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Attachment;
+use App\Models\Notify;
 use Carbon\Carbon;
 use App\Models\Routine;
 use App\Models\RoutineCategory;
@@ -12,6 +13,7 @@ use App\Models\Schedule;
 use App\Models\ScheduleInterval;
 use App\Models\SharingDetail;
 use App\Models\TaskAssignMember;
+use App\Models\User;
 use App\Models\UserHideTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -48,7 +50,10 @@ class RoutineController extends Controller
     public function routine(Request $request)
     {
         try {
-            $routines = Routine::where('created_by', auth()->user()->id)->orderby('id', 'desc')->get();
+            $routines = Routine::where('created_by', auth()->user()->id);
+            if($request->filled('name')) $routines->whereRaw("(`name` LIKE '%" . $request->name . "%' or `description` LIKE '%" . $request->name . "%' or `subtitle` LIKE '%" . $request->name . "%')");
+            if($request->filled('date')) $routines->whereMonth('created_at', $request->date);
+            $routines = $routines->orderby('id', 'desc')->get();
             $response = array();
             foreach ($routines as $key => $myroutine) {
                 $temp['routineid'] = $myroutine->id;
@@ -82,8 +87,8 @@ class RoutineController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $routine = Routine::where('id', $request->id)->where('type', 'R')->first();
-                if(isset($routine->id)){
-                    if($routine->created_by == auth()->user()->id){
+                if (isset($routine->id)) {
+                    if ($routine->created_by == auth()->user()->id) {
                         $schedule = Schedule::where('routines_id', $routine->id)->first();
                         ScheduleInterval::where('schedule_id', $schedule->id)->delete();
                         Schedule::where('routines_id', $routine->id)->delete();
@@ -113,20 +118,20 @@ class RoutineController extends Controller
                     $interval[] = $temp;
                 }
                 $share = array();
-                if($routine->shared_by != null){
+                if ($routine->shared_by != null) {
                     $share = array(
                         'shared_user_id' => $routine->sharedUser->id,
                         'shared_user_name' => $routine->sharedUser->name,
-                        'shared_user_profile' => isset($routine->sharedUser->profile) ? assets('/uploads/profile/'.$routine->sharedUser->profile) : null,
+                        'shared_user_profile' => isset($routine->sharedUser->profile) ? assets('/uploads/profile/' . $routine->sharedUser->profile) : null,
                     );
                 };
                 $list = SharingDetail::where('user_id', auth()->user()->id)->where('routine_id', $routine->id)->get();
                 $sharingList = array();
-                foreach($list as $val){
+                foreach ($list as $val) {
                     $sha['id'] = $val->id;
                     $sha['share_to_user_id'] = $val->user->id ?? null;
                     $sha['share_to_user_name'] = $val->user->name ?? null;
-                    $sha['share_to_user_profile'] = isset($val->user->profile) ? assets('/uploads/profile/'.$val->user->profile) : null;
+                    $sha['share_to_user_profile'] = isset($val->user->profile) ? assets('/uploads/profile/' . $val->user->profile) : null;
                     $sha['shared_date'] = date('d M, Y h:i a', strtotime($val->created_at));
                     $sharingList[] = $sha;
                 }
@@ -144,6 +149,8 @@ class RoutineController extends Controller
                     'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
                     'schedule_frequency' => $routine->schedule->frequency ?? null,
                     'schedule_date' => $routine->schedule->schedule_time ?? null,
+                    'schedule_start_date' => $routine->schedule->schedule_startdate ?? null,
+                    'schedule_end_date' => $routine->schedule->schedule_enddate ?? null,
                     'interval' => $interval ?? null,
                     $share,
                     'sharingList' => $sharingList
@@ -198,6 +205,8 @@ class RoutineController extends Controller
                             $interval->save();
                         }
                     } elseif ($oldSchedule->frequency == 'D') {
+                        $schedule->schedule_startdate = $request->schedule_startdate ?? null;
+                        $schedule->schedule_enddate = $request->schedule_enddate ?? null;
                         foreach ($oldScheduleInterval as $key5 => $scheduletime) {
                             $interval = new ScheduleInterval;
                             $interval->interval_time = $scheduletime->interval_time;
@@ -260,9 +269,9 @@ class RoutineController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $routine = Routine::where('id', $request->id)->where('type', 'R')->first();
-                if(isset($routine->id)){
-                    if($routine->shared_by != null) return errorMsg("You can't edit this routine");
-                    if($routine->created_by == auth()->user()->id){
+                if (isset($routine->id)) {
+                    if ($routine->shared_by != null) return errorMsg("You can't edit this routine");
+                    if ($routine->created_by == auth()->user()->id) {
                         $routine->name = $request->name;
                         $routine->subtitle = $request->subtitle ?? null;
                         $routine->description = $request->description;
@@ -270,11 +279,11 @@ class RoutineController extends Controller
                         $routine->category_id = $request->category_id;
                         $routine->updated_at = date('Y-m-d H:i:s');
                         $routine->save();
-        
+
                         $schedule = Schedule::where('routines_id', $routine->id)->first();
-                        ScheduleInterval::where('schedule_id',$schedule->id)->delete();
+                        ScheduleInterval::where('schedule_id', $schedule->id)->delete();
                         $schedule->frequency = $request->frequency;
-        
+
                         if ($request->frequency == 'O') {
                             foreach ($request->schedule_time as $key5 => $scheduletime) {
                                 $interval = new ScheduleInterval;
@@ -283,6 +292,8 @@ class RoutineController extends Controller
                                 $interval->save();
                             }
                         } elseif ($request->frequency == 'D') {
+                            $schedule->schedule_startdate = $request->schedule_startdate ?? null;
+                            $schedule->schedule_enddate = $request->schedule_enddate ?? null;
                             foreach ($request->schedule_time as $key5 => $scheduletime) {
                                 $interval = new ScheduleInterval;
                                 $interval->interval_time = Carbon::parse($scheduletime)->format('H:i');
@@ -310,7 +321,7 @@ class RoutineController extends Controller
                                 }
                             }
                         }
-    
+
                         $schedule->save();
                         return successMsg('Routine updated successfully');
                     } else return errorMsg('This routine is not created by you');
@@ -525,7 +536,7 @@ class RoutineController extends Controller
                 $images = array();
                 foreach ($task->images as $key => $val) {
                     $tempImg['id'] = $val->id;
-                    $tempImg['image'] = isset($val->file) ? assets('/uploads/task/'.$val->file) : null;
+                    $tempImg['image'] = isset($val->file) ? assets('/uploads/task/' . $val->file) : null;
                     $images[] = $tempImg;
                 }
                 $taskAssign = array();
@@ -533,7 +544,7 @@ class RoutineController extends Controller
                     $tempAssign['id'] = $val->id;
                     $tempAssign['user_id'] = $val->user_id;
                     $tempAssign['name'] = $val->user->name;
-                    $tempAssign['profile'] = isset($val->user->profile) ? assets('/uploads/profile/'.$val->user->profile) : assets("assets/images/no-image.jpg");
+                    $tempAssign['profile'] = isset($val->user->profile) ? assets('/uploads/profile/' . $val->user->profile) : assets("assets/images/no-image.jpg");
                     $taskAssign[] = $tempAssign;
                 }
                 $response = array(
@@ -578,10 +589,10 @@ class RoutineController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $task = Routine::where('id', $request->id)->where('type', 'T')->first();
-                if(isset($task->id)){
-                    if($task->created_by == auth()->user()->id){
-                        if ($request->hasFile("images")) 
-                            if(isInvalidExtension($request->images)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
+                if (isset($task->id)) {
+                    if ($task->created_by == auth()->user()->id) {
+                        if ($request->hasFile("images"))
+                            if (isInvalidExtension($request->images)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
 
                         $task->type = 'T';
                         $task->name = $request->name;
@@ -591,9 +602,9 @@ class RoutineController extends Controller
                         $task->category_id = $request->category_id;
                         $task->updated_at = date('Y-m-d H:i:s');
                         $task->save();
-        
-                        if(isset($request->deletefile) && count($request->deletefile) > 0){
-                            foreach($request->deletefile as $val){
+
+                        if (isset($request->deletefile) && count($request->deletefile) > 0) {
+                            foreach ($request->deletefile as $val) {
                                 $taskImage = Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->first();
                                 fileRemove("/uploads/task/$taskImage->name");
                                 Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->delete();
@@ -612,9 +623,9 @@ class RoutineController extends Controller
                         }
 
                         $schedule = Schedule::where('routines_id', $task->id)->first();
-                        ScheduleInterval::where('schedule_id',$schedule->id)->delete();
+                        ScheduleInterval::where('schedule_id', $schedule->id)->delete();
                         $schedule->frequency = $request->frequency;
-        
+
                         if ($request->frequency == 'O') {
                             foreach ($request->schedule_time as $key5 => $scheduletime) {
                                 $interval = new Scheduleinterval();
@@ -650,7 +661,7 @@ class RoutineController extends Controller
                                 }
                             }
                         }
-    
+
                         $schedule->save();
                         if ($request->taskassignmembers) {
                             if (count($request->taskassignmembers) > 0) {
@@ -667,7 +678,6 @@ class RoutineController extends Controller
                         return successMsg("Task updated successfully");
                     } else return errorMsg('This task is not created by you');
                 } else return errorMsg('Task not found');
-                
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -686,15 +696,15 @@ class RoutineController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $task = Routine::where('id', $request->id)->where('type', 'T')->first();
-                if(isset($task->id)){
-                    if($task->created_by == auth()->user()->id){
+                if (isset($task->id)) {
+                    if ($task->created_by == auth()->user()->id) {
                         $schedule = Schedule::where('routines_id', $task->id)->first();
                         ScheduleInterval::where('schedule_id', $schedule->id)->delete();
                         Schedule::where('routines_id', $task->id)->delete();
                         TaskAssignMember::where('task_id', $task->id)->delete();
                         UserHideTask::where('task_id', $task->id)->delete();
                         $attach = Attachment::where('routine_id', $task->id)->where('routine_type', 'T')->get();
-                        foreach($attach as $val){
+                        foreach ($attach as $val) {
                             fileRemove("/uploads/task/$val->file");
                         }
                         Attachment::where('routine_id', $task->id)->where('routine_type', 'T')->delete();
@@ -708,173 +718,138 @@ class RoutineController extends Controller
         }
     }
 
-    // public function sendroutinenotification(Request $request)
-    // {
-    //     $routine = Routine::where('task_type', 'R')->get();
-    //     $routines = array();
-    //     foreach ($routine as $key => $alltask) {
-    //         $routines[$key]['id'] = $alltask->id;
-    //         $routines[$key]['createdby'] = $alltask->created_by;
-    //         $schedule = Schedule::where('routines_id', $alltask->id)->first();
-    //         if ($schedule) {
-    //             if ($schedule->frequency == 'D') {
-    //                 $times = explode(',', $schedule->frequency_interval);
-    //                 foreach ($times as $key => $scheduletime) {
-    //                     if ($scheduletime != null) {
-    //                         $time =  date('H:i:s', strtotime($scheduletime));
-    //                         $currenttime =  date('H:i:s');
-    //                         $start_datetime = new DateTime($time);
-    //                         $diff = $start_datetime->diff(new DateTime($currenttime));
-    //                         $total_minutes = ($diff->days * 24 * 60);
-    //                         $total_minutes += ($diff->h * 60);
-    //                         $total_minutes += $diff->i;
-    //                         if ($total_minutes < 10) {
-    //                             $user = User::find($alltask->created_by);
-    //                             $fcmtoken = $user->token;
-    //                             $fullname = explode(' ', $user->full_name);
-    //                             $firstname = $fullname[0];
-    //                             $message = "Hi " . $firstname . ", Complete your " . $alltask->name . " routine";
-    //                             $load = array();
-    //                             $load['title']  = env('APP_NAME');
-    //                             $load['msg']    = $message;
-    //                             $load['action'] = 'CONFIRMED';
-    //                             $this->android_push($fcmtoken, $load);
-    //                             $notification = new Notification();
-    //                             $notification->user_id = $user->id;
-    //                             $notification->message = $message;
-    //                             $notification->created_at = date('Y-m-d H:i:s');
-    //                             $notification->updated_at = date('Y-m-d H:i:s');
-    //                             $notification->save();
-    //                         }
-    //                     }
-    //                 }
-    //             } elseif ($schedule->frequency == 'T') {
-    //                 $gettime = $schedule->schedule_time;
-    //                 $explodetime = explode(' ', $gettime);
-    //                 $todaydate = date('Y-m-d');
-    //                 if ($schedule->frequency_interval == $todaydate) {
-    //                     $times = explode(',', $explodetime[1]);
-    //                     foreach ($times as $key1 => $scheduletime) {
-    //                         if ($scheduletime != null) {
-    //                             $time =  date('H:i:s', strtotime($scheduletime));
-    //                             $currenttime =  date('H:i:s');
-    //                             $start_datetime = new DateTime($time);
-    //                             $diff = $start_datetime->diff(new DateTime($currenttime));
-    //                             $total_minutes = ($diff->days * 24 * 60);
-    //                             $total_minutes += ($diff->h * 60);
-    //                             $total_minutes += $diff->i;
-    //                             if ($total_minutes < 10) {
-    //                                 $user = User::find($alltask->created_by);
-    //                                 $fcmtoken = $user->token;
-    //                                 $fullname = explode(' ', $user->full_name);
-    //                                 $firstname = $fullname[0];
-    //                                 $message = "Hi " . $firstname . ", Complete your " . $alltask->name . " routine";
-    //                                 $load = array();
-    //                                 $load['title']  = env('APP_NAME');
-    //                                 $load['msg']    = $message;
-    //                                 $load['action'] = 'CONFIRMED';
-    //                                 $this->android_push($fcmtoken, $load);
-    //                                 $notification = new Notification();
-    //                                 $notification->user_id = $user->id;
-    //                                 $notification->message = $message;
-    //                                 $notification->created_at = date('Y-m-d H:i:s');
-    //                                 $notification->updated_at = date('Y-m-d H:i:s');
-    //                                 $notification->save();
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             } elseif ($schedule->frequency == 'C') {
-    //                 $todaydate = date('Y-m-d');
-    //                 // $todaydate = '2022-12-04';
-    //                 $todayday = Carbon::createFromFormat('Y-m-d', $todaydate)->format('l');
-    //                 $customdays = explode(',', $schedule->frequency_interval);
-    //                 $arraycustomdays = array();
-    //                 for ($x = 0; $x < (count($customdays) - 1); $x++) {
-    //                     if ($customdays[$x] == 'M') {
-    //                         $arraycustomdays[$x] = 'Monday';
-    //                     } elseif ($customdays[$x] == 'T') {
-    //                         $arraycustomdays[$x] = 'Tuesday';
-    //                     } elseif ($customdays[$x] == 'W') {
-    //                         $arraycustomdays[$x] = 'Wednesday';
-    //                     } elseif ($customdays[$x] == 'TH') {
-    //                         $arraycustomdays[$x] = 'Thursday';
-    //                     } elseif ($customdays[$x] == 'F') {
-    //                         $arraycustomdays[$x] = 'Friday';
-    //                     } elseif ($customdays[$x] == 'SA') {
-    //                         $arraycustomdays[$x] = 'Saturday';
-    //                     } elseif ($customdays[$x] == 'SU') {
-    //                         $arraycustomdays[$x] = 'Sunday';
-    //                     }
-    //                 }
-    //                 if (in_array($todayday, $arraycustomdays)) {
-    //                     $times = explode(',', $schedule->schedule_time);
-    //                     foreach ($times as $key3 => $scheduletime) {
-    //                         if ($scheduletime != null) {
-    //                             $time =  date('H:i:s', strtotime($scheduletime));
-    //                             $currenttime =  date('H:i:s');
-    //                             $start_datetime = new DateTime($time);
-    //                             $diff = $start_datetime->diff(new DateTime($currenttime));
-    //                             $total_minutes = ($diff->days * 24 * 60);
-    //                             $total_minutes += ($diff->h * 60);
-    //                             $total_minutes += $diff->i;
-    //                             if ($total_minutes < 10) {
-    //                                 $user = User::find($alltask->created_by);
-    //                                 $fcmtoken = $user->token;
-    //                                 $fullname = explode(' ', $user->full_name);
-    //                                 $firstname = $fullname[0];
-    //                                 $message = "Hi " . $firstname . ", Complete your " . $alltask->name . " routine";
-    //                                 $load = array();
-    //                                 $load['title']  = env('APP_NAME');
-    //                                 $load['msg']    = $message;
-    //                                 $load['action'] = 'CONFIRMED';
-    //                                 $this->android_push($fcmtoken, $load);
-    //                                 $notification = new Notification();
-    //                                 $notification->user_id = $user->id;
-    //                                 $notification->message = $message;
-    //                                 $notification->created_at = date('Y-m-d H:i:s');
-    //                                 $notification->updated_at = date('Y-m-d H:i:s');
-    //                                 $notification->save();
-    //                             }
-    //                         }
-    //                     }
-    //                 }
-    //             } elseif ($schedule->frequency == 'O') {
-    //                 $getdate = date('Y-m-d', strtotime($alltask->created_date));
-    //                 $todaydate = date('Y-m-d');
-    //                 if ($getdate == $todaydate) {
-    //                     $times = $schedule->frequency_interval;
-    //                     foreach ($times as $key => $scheduletime) {
-    //                         $time =  date('H:i:s', strtotime($scheduletime));
-    //                         $currenttime =  date('H:i:s');
-    //                         $start_datetime = new DateTime($time);
-    //                         $diff = $start_datetime->diff(new DateTime($currenttime));
-    //                         $total_minutes = ($diff->days * 24 * 60);
-    //                         $total_minutes += ($diff->h * 60);
-    //                         $total_minutes += $diff->i;
-    //                         if ($total_minutes < 10) {
-    //                             $user = User::find($alltask->created_by);
-    //                             $fcmtoken = $user->token;
-    //                             $fullname = explode(' ', $user->full_name);
-    //                             $firstname = $fullname[0];
-    //                             $message = "Hi " . $firstname . ", Complete your " . $alltask->name . " routine";
-    //                             $load = array();
-    //                             $load['title']  = env('APP_NAME');
-    //                             $load['msg']    = $message;
-    //                             $load['action'] = 'CONFIRMED';
-    //                             $this->android_push($fcmtoken, $load);
-    //                             $notification = new Notification();
-    //                             $notification->user_id = $user->id;
-    //                             $notification->message = $message;
-    //                             $notification->created_at = date('Y-m-d H:i:s');
-    //                             $notification->updated_at = date('Y-m-d H:i:s');
-    //                             $notification->save();
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-    //     return response(["status" => 1, "message" => "Notification send successfully"]);
-    // }
+    public function sendRoutinenotification(Request $request)
+    {
+        try {
+            $admin = User::where('role', 2)->where('status', 1)->first();
+            $task = Routine::join('schedule', 'schedule.task_id', '=', 'routines.id')
+                ->join('schedule_interval', 'schedule_interval.schedule_id', '=', 'schedule.id')
+                ->join('users', 'users.id', '=', 'routines.created_by')
+                ->where('routines.type', 'R')
+                ->orderby('routines.id', 'desc')
+                ->get(['schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'users.fcm_token', 'users.name as full_name']);
+            foreach ($task as $key => $alltask) {
+                if ($alltask->frequency == 'D') {
+                    $time = date('H:i', strtotime($alltask->interval_time));
+                    $currenttime = date('H:i');
+                    if ($time == $currenttime) {
+                        $fullname = $alltask->full_name;
+                        $message = 'Hello ' . $fullname . ', Complete your "' . $alltask->name . '" routine';
+                        $data = array(
+                            'msg' => $message,
+                            'title' => "Journey with Journals"
+                        );
+                        sendNotification($alltask->fcm_token, $data);
+                        $notify = new Notify;
+                        $notify->sender_id = $admin->id;
+                        $notify->receiver_id = $alltask->created_by;
+                        $notify->type = $data['type'];
+                        $notify->title = $data['title'];
+                        $notify->message = $data['message'];
+                        $notify->save();
+                    } else {
+                        continue;
+                    }
+                } elseif ($alltask->frequency == 'T') {
+                    if ($alltask->schedule_time == date('Y-m-d')) {
+                        $time = date('H:i', strtotime($alltask->interval_time));
+                        $currenttime = date('H:i');
+                        if ($time == $currenttime) {
+                            $fullname = $alltask->full_name;
+                            $message = 'Hello ' . $fullname . ', Complete your "' . $alltask->name . '" routine';
+                            $data = array(
+                                'msg' => $message,
+                                'title' => "Journey with Journals"
+                            );
+                            sendNotification($alltask->fcm_token, $data);
+                            $notify = new Notify;
+                            $notify->sender_id = $admin->id;
+                            $notify->receiver_id = $alltask->created_by;
+                            $notify->type = $data['type'];
+                            $notify->title = $data['title'];
+                            $notify->message = $data['message'];
+                            $notify->save();
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                    // dd($alltask->schedule_time);
+                } elseif ($alltask->frequency == 'O') {
+                    $getdate = date('Y-m-d', strtotime($alltask->created_date));
+                    $todaydate = date('Y-m-d');
+                    if ($getdate == $todaydate) {
+                        $time = date('H:i', strtotime($alltask->interval_time));
+                        $currenttime = date('H:i');
+                        if ($time == $currenttime) {
+                            $fullname = $alltask->full_name;
+                            $message = 'Hello ' . $fullname . ', Complete your "' . $alltask->name . '" routine';
+                            $data = array(
+                                'msg' => $message,
+                                'title' => "Journey with Journals"
+                            );
+                            sendNotification($alltask->fcm_token, $data);
+                            $notify = new Notify;
+                            $notify->sender_id = $admin->id;
+                            $notify->receiver_id = $alltask->created_by;
+                            $notify->type = $data['type'];
+                            $notify->title = $data['title'];
+                            $notify->message = $data['message'];
+                            $notify->save();
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                } elseif ($alltask->frequency == 'C') {
+                    $todayday = Carbon::createFromFormat('Y-m-d', date('Y-m-d'))->format('l');
+                    $presentday = '';
+                    if ($todayday == 'Wednesday') {
+                        $presentday = 'W';
+                    } elseif ($todayday == 'Thursday') {
+                        $presentday = 'TH';
+                    } elseif ($todayday == 'Friday') {
+                        $presentday = 'F';
+                    } elseif ($todayday == 'Saturday') {
+                        $presentday = 'SA';
+                    } elseif ($todayday == 'Sunday') {
+                        $presentday = 'S';
+                    } elseif ($todayday == 'Monday') {
+                        $presentday = 'M';
+                    } elseif ($todayday == 'Tuesday') {
+                        $presentday = 'T';
+                    }
+                    if ($presentday == $alltask->interval) {
+                        $time =  date('H:i', strtotime($alltask->interval_time));
+                        $currenttime = date('H:i');
+                        if ($time == $currenttime) {
+                            $fullname = $alltask->full_name;
+                            $message = 'Hello ' . $fullname . ', Complete your "' . $alltask->name . '" routine';
+                            $data = array(
+                                'msg' => $message,
+                                'title' => "Journey with Journals"
+                            );
+                            sendNotification($alltask->fcm_token, $data);
+                            $notify = new Notify;
+                            $notify->sender_id = $admin->id;
+                            $notify->receiver_id = $alltask->created_by;
+                            $notify->type = $data['type'];
+                            $notify->title = $data['title'];
+                            $notify->message = $data['message'];
+                            $notify->save();
+                        } else {
+                            continue;
+                        }
+                    } else {
+                        continue;
+                    }
+                }
+            }
+            return successMsg('Notification send successfully');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
 }

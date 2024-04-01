@@ -137,7 +137,7 @@ class UserController extends Controller
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($moodCalen), 2, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($moodCalen), 2, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($moodCalen), 2, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($moodCalen), 2, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
 
-            $routines = Routine::where('created_by', auth()->user()->id)->limit(5)->orderByDesc('id')->get();
+            $routines = Routine::where('created_by', auth()->user()->id)->whereDate('created_at', $now)->limit(5)->orderByDesc('id')->get();
             $routineArr = array();
             foreach ($routines as $key => $myroutine) {
                 $interval = array();
@@ -162,6 +162,8 @@ class UserController extends Controller
                 $tempRoutine['schedule_frequency_name'] = config('constant.frequency')[$myroutine->schedule->frequency] ?? null;
                 $tempRoutine['schedule_frequency'] = $myroutine->schedule->frequency ?? null;
                 $tempRoutine['schedule_date'] = $myroutine->schedule->schedule_time ?? null;
+                $tempRoutine['schedule_start_date'] = $myroutine->schedule->schedule_startdate ?? null;
+                $tempRoutine['schedule_end_date'] = $myroutine->schedule->schedule_enddate ?? null;
                 $tempRoutine['interval'] = $interval ?? null;
                 $routineArr[] = $tempRoutine;
             }
