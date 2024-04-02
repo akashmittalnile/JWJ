@@ -62,7 +62,7 @@ class RoutineController extends Controller
                 $temp['description'] = $myroutine->description;
                 $temp['created_by'] = $myroutine->created_by;
                 $temp['routinetype'] = ($myroutine->privacy == 'P') ? 'Public Routine' : 'Private Routine';
-                $temp['date'] = $myroutine->created_at;
+                $temp['date'] = date('Y-m-d', strtotime($myroutine->created_at));
                 $temp['category_name'] = $myroutine->category->name;
                 $temp['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
                 $temp['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
@@ -722,7 +722,7 @@ class RoutineController extends Controller
     {
         try {
             $admin = User::where('role', 2)->where('status', 1)->first();
-            $task = Routine::join('schedule', 'schedule.task_id', '=', 'routines.id')
+            $task = Routine::join('schedule', 'schedule.routines_id', '=', 'routines.id')
                 ->join('schedule_interval', 'schedule_interval.schedule_id', '=', 'schedule.id')
                 ->join('users', 'users.id', '=', 'routines.created_by')
                 ->where('routines.type', 'R')
@@ -743,9 +743,9 @@ class RoutineController extends Controller
                         $notify = new Notify;
                         $notify->sender_id = $admin->id;
                         $notify->receiver_id = $alltask->created_by;
-                        $notify->type = $data['type'];
-                        $notify->title = $data['title'];
-                        $notify->message = $data['message'];
+                        $notify->type = 'ROUTINE';
+                        $notify->title = "Journey with Journals";
+                        $notify->message = $message;
                         $notify->save();
                     } else {
                         continue;
@@ -765,9 +765,9 @@ class RoutineController extends Controller
                             $notify = new Notify;
                             $notify->sender_id = $admin->id;
                             $notify->receiver_id = $alltask->created_by;
-                            $notify->type = $data['type'];
-                            $notify->title = $data['title'];
-                            $notify->message = $data['message'];
+                            $notify->type = 'ROUTINE';
+                            $notify->title = "Journey with Journals";
+                            $notify->message = $message;
                             $notify->save();
                         } else {
                             continue;
@@ -793,9 +793,9 @@ class RoutineController extends Controller
                             $notify = new Notify;
                             $notify->sender_id = $admin->id;
                             $notify->receiver_id = $alltask->created_by;
-                            $notify->type = $data['type'];
-                            $notify->title = $data['title'];
-                            $notify->message = $data['message'];
+                            $notify->type = 'ROUTINE';
+                            $notify->title = "Journey with Journals";
+                            $notify->message = $message;
                             $notify->save();
                         } else {
                             continue;
@@ -835,9 +835,9 @@ class RoutineController extends Controller
                             $notify = new Notify;
                             $notify->sender_id = $admin->id;
                             $notify->receiver_id = $alltask->created_by;
-                            $notify->type = $data['type'];
-                            $notify->title = $data['title'];
-                            $notify->message = $data['message'];
+                            $notify->type = 'ROUTINE';
+                            $notify->title = "Journey with Journals";
+                            $notify->message = $message;
                             $notify->save();
                         } else {
                             continue;
@@ -847,7 +847,7 @@ class RoutineController extends Controller
                     }
                 }
             }
-            return successMsg('Notification send successfully');
+            return successMsg('Notification send successfully', date('Y-m-d H:i'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
