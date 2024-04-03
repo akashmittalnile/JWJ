@@ -725,6 +725,7 @@ class RoutineController extends Controller
     public function sendRoutinenotification(Request $request)
     {
         try {
+            $now = Carbon::now();
             $admin = User::where('role', 2)->where('status', 1)->first();
             $task = Routine::join('schedule', 'schedule.routines_id', '=', 'routines.id')
                 ->join('schedule_interval', 'schedule_interval.schedule_id', '=', 'schedule.id')
@@ -733,8 +734,8 @@ class RoutineController extends Controller
                 ->select('schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'users.fcm_token', 'users.name as full_name')
                 ->orderby('routines.id', 'desc')
                 ->get();
-                foreach ($task as $key => $alltask) {
-                    if ($alltask->frequency == 'D') {
+            foreach ($task as $key => $alltask) {
+                if ($alltask->frequency == 'D') {
                     $time = date('H:i', strtotime($alltask->interval_time));
                     $currenttime = date('H:i');
                     if ($time == $currenttime) {
@@ -826,7 +827,7 @@ class RoutineController extends Controller
                     } elseif ($todayday == 'Tuesday') {
                         $presentday = 'T';
                     }
-                    if ($presentday == $alltask->interval) {
+                    if (($presentday == $alltask->interval) && ($alltask->schedule_startdate <= $now && $alltask->schedule_enddate >= $now)) {
                         $time =  date('H:i', strtotime($alltask->interval_time));
                         $currenttime = date('H:i');
                         if ($time == $currenttime) {
