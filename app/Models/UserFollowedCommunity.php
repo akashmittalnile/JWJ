@@ -13,6 +13,6 @@ class UserFollowedCommunity extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'userid', 'id')->withDefault(['name' => 'NA', 'email' => 'NA', 'profile' => 'NA']);
+        return $this->belongsTo(User::class, 'userid', 'id')->withDefault(['name' => null, 'email' => null, 'profile' => null, 'user_name' => null]);
     }
 }

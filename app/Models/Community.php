@@ -20,4 +20,9 @@ class Community extends Model
     {
         return $this->hasMany(CommunityImage::class, 'community_id', 'id');
     }
+
+    public function communityFollower()
+    {
+        return $this->hasMany(UserFollowedCommunity::class, 'community_id', 'id')->orderByDesc('id');
+    }
 }

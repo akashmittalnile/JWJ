@@ -17,6 +17,7 @@ use App\Models\UserLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use SebastianBergmann\CodeCoverage\Report\Xml\Report;
+use DB;
 
 class CommunityController extends Controller
 {
@@ -155,13 +156,17 @@ class CommunityController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to get the details of community and their posts if user follow
-    public function communityDetails($id) {
+    public function communityDetails($id, Request $request) {
         try{
             $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->leftjoin('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name')->where('communities.id', $id)->first();
             if(isset($data->id)){
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id) || ($data->created_by == auth()->user()->id)){
-                    $posts = Post::where('community_id', $data->id)->get();
+                    $posts = Post::where('community_id', $data->id)->select(DB::raw("(select COUNT(object_id) from user_likes where user_likes.object_id = posts.id and user_likes.object_type = 'post') as likesCount, (select COUNT(object_id) from comments where comments.object_id = posts.id and comments.object_type = 'post') as commentCount, posts.*"));
+                    if($request->filled('post_latest')) $posts->orderByDesc('id');
+                    elseif($request->filled('post_like')) $posts->orderByDesc('likesCount');
+                    elseif($request->filled('post_comment')) $posts->orderByDesc('commentCount');
+                    $posts = $posts->get();
                     $postCount = Post::where('community_id', $data->id)->count();
                     $followCount = UserFollowedCommunity::where('community_id', $data->id)->count();
                     $follow = UserFollowedCommunity::where('community_id', $data->id)->orderByDesc('id')->limit(3)->get();
@@ -189,28 +194,37 @@ class CommunityController extends Controller
                             $image[] = $tem;
                         }
                         $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $item->id)->where('object_type', 'post')->first();
-                        $likesCount = UserLike::where('object_id', $item->id)->where('object_type', 'post')->count();
-                        $commentCount = Comment::where('object_id', $item->id)->where('object_type', 'post')->count();
                         $temp['id'] = $item->id;
                         $temp['title'] = $item->title;
                         $temp['description'] = $item->post_description;
                         $temp['image'] = $image;
                         $temp['is_liked'] = (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0;
-                        $temp['likes_count'] = $likesCount ?? 0;
-                        $temp['comment_count'] = $commentCount ?? 0;
-                        $temp['posted_by_name'] = $user->name;
-                        $temp['posted_by_user_name'] = $user->user_name;
+                        $temp['likes_count'] = $item->likesCount ?? 0;
+                        $temp['comment_count'] = $item->commentCount ?? 0;
+                        $temp['posted_by_name'] = $user->name ?? null;
+                        $temp['posted_by_user_name'] = $user->user_name ?? null;
                         $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
                         $post[] = $temp;
                     }
+
+                    $followers = array();
+                    foreach($data->communityFollower as $follow){
+                        $tempFollow['user_name'] = $follow->user->user_name ?? null;
+                        $tempFollow['name'] = $follow->user->name ?? null;
+                        $tempFollow['profile'] = isset($follow->user->profile) ? assets('uploads/profile/'.$follow->user->profile) : null;
+                        $followers[] = $tempFollow;
+                    }
+
                     $response = [
                         'id' => $data->id,
                         'name' => $data->name,
                         'description' => $data->description,
                         'status' => $data->status,
                         'image' => $images,
+                        'my_community' => ($data->created_by == auth()->user()->id) ? true : false,
                         'follow' => isset($ufc->id) ? true : false,
                         'member_follow_count' => $followCount ?? 0,
+                        'followers' => $followers ?? 0,
                         'member_image' => $memberImage,
                         'plan_name' => $plan->plan_name ?? null,
                         'plan_monthly_price' => $plan->monthly_price ?? null,

@@ -51,7 +51,7 @@ class RoutineController extends Controller
     {
         try {
             $routines = Routine::where('created_by', auth()->user()->id);
-            if($request->filled('name')) $routines->whereRaw("(`name` LIKE '%" . $request->name . "%' or `description` LIKE '%" . $request->name . "%' or `subtitle` LIKE '%" . $request->name . "%')");
+            if($request->filled('name')) $routines->whereRaw("(`name` LIKE '%" . $request->name . "%')");
             if($request->filled('date')) $routines->whereMonth('created_at', $request->date);
             $routines = $routines->orderby('id', 'desc')->get();
             $response = array();
@@ -170,80 +170,81 @@ class RoutineController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
-                'user_id' => 'required'
+                'user_id' => 'required|array'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
                 $oldroutine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'R')->first();
                 if (isset($oldroutine->id)) {
-                    $routine = new Routine;
-                    $routine->type = 'R';
-                    $routine->name = $oldroutine->name;
-                    $routine->subtitle = $oldroutine->subtitle ?? null;
-                    $routine->description = $oldroutine->description;
-                    $routine->priority = $oldroutine->priority ?? 'L';
-                    $routine->category_id = $oldroutine->category_id;
-                    $routine->created_by = $request->user_id;
-                    $routine->shared_by = auth()->user()->id;
-                    $routine->status = 1;
-                    $routine->save();
-
-                    $oldSchedule = Schedule::where('routines_id', $oldroutine->id)->first();
-                    $schedule = new Schedule;
-                    $schedule->routines_id = $routine->id;
-                    $schedule->frequency = $oldSchedule->frequency;
-                    $schedule->is_enable = 1;
-                    $schedule->save();
-
-                    $oldScheduleInterval = ScheduleInterval::where('schedule_id', $oldSchedule->id)->get();
-                    if ($oldSchedule->frequency == 'O') {
-                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
-                            $interval = new ScheduleInterval;
-                            $interval->interval_time = $scheduletime->interval_time;
-                            $interval->schedule_id = $schedule->id;
-                            $interval->save();
+                    foreach($request->user_id as $userid){
+                        $routine = new Routine;
+                        $routine->type = 'R';
+                        $routine->name = $oldroutine->name;
+                        $routine->subtitle = $oldroutine->subtitle ?? null;
+                        $routine->description = $oldroutine->description;
+                        $routine->priority = $oldroutine->priority ?? 'L';
+                        $routine->category_id = $oldroutine->category_id;
+                        $routine->created_by = $userid;
+                        $routine->shared_by = auth()->user()->id;
+                        $routine->status = 1;
+                        $routine->save();
+    
+                        $oldSchedule = Schedule::where('routines_id', $oldroutine->id)->first();
+                        $schedule = new Schedule;
+                        $schedule->routines_id = $routine->id;
+                        $schedule->frequency = $oldSchedule->frequency;
+                        $schedule->is_enable = 1;
+                        $schedule->save();
+    
+                        $oldScheduleInterval = ScheduleInterval::where('schedule_id', $oldSchedule->id)->get();
+                        if ($oldSchedule->frequency == 'O') {
+                            foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                                $interval = new ScheduleInterval;
+                                $interval->interval_time = $scheduletime->interval_time;
+                                $interval->schedule_id = $schedule->id;
+                                $interval->save();
+                            }
+                        } elseif ($oldSchedule->frequency == 'D') {
+                            $schedule->schedule_startdate = $request->schedule_startdate ?? null;
+                            $schedule->schedule_enddate = $request->schedule_enddate ?? null;
+                            foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                                $interval = new ScheduleInterval;
+                                $interval->interval_time = $scheduletime->interval_time;
+                                $interval->schedule_id = $schedule->id;
+                                $interval->save();
+                            }
+                        } elseif ($oldSchedule->frequency == 'T') {
+                            $schedule = Schedule::find($schedule->id);
+                            $schedule->schedule_time = $oldSchedule->date;
+                            $schedule->update();
+                            foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                                $interval = new ScheduleInterval;
+                                $interval->interval_time = $scheduletime->interval_time;
+                                $interval->schedule_id = $schedule->id;
+                                $interval->save();
+                            }
+                        } elseif ($oldSchedule->frequency == 'C') {
+                            $schedule = Schedule::find($schedule->id);
+                            $schedule->schedule_startdate = $oldSchedule->schedule_startdate ?? null;
+                            $schedule->schedule_enddate = $oldSchedule->schedule_enddate ?? null;
+                            $schedule->update();
+                            foreach ($oldScheduleInterval as $key5 => $scheduletime) {
+                                $interval = new ScheduleInterval;
+                                $interval->interval_time = $scheduletime->interval_time;
+                                $interval->interval_weak = $scheduletime->interval_weak;
+                                $interval->schedule_id = $schedule->id;
+                                $interval->save();
+                            }
                         }
-                    } elseif ($oldSchedule->frequency == 'D') {
-                        $schedule->schedule_startdate = $request->schedule_startdate ?? null;
-                        $schedule->schedule_enddate = $request->schedule_enddate ?? null;
-                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
-                            $interval = new ScheduleInterval;
-                            $interval->interval_time = $scheduletime->interval_time;
-                            $interval->schedule_id = $schedule->id;
-                            $interval->save();
-                        }
-                    } elseif ($oldSchedule->frequency == 'T') {
-                        $schedule = Schedule::find($schedule->id);
-                        $schedule->schedule_time = $oldSchedule->date;
-                        $schedule->update();
-                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
-                            $interval = new ScheduleInterval;
-                            $interval->interval_time = $scheduletime->interval_time;
-                            $interval->schedule_id = $schedule->id;
-                            $interval->save();
-                        }
-                    } elseif ($oldSchedule->frequency == 'C') {
-                        $schedule = Schedule::find($schedule->id);
-                        $schedule->schedule_startdate = $oldSchedule->schedule_startdate ?? null;
-                        $schedule->schedule_enddate = $oldSchedule->schedule_enddate ?? null;
-                        $schedule->update();
-                        foreach ($oldScheduleInterval as $key5 => $scheduletime) {
-                            $interval = new ScheduleInterval;
-                            $interval->interval_time = $scheduletime->interval_time;
-                            $interval->interval_weak = $scheduletime->interval_weak;
-                            $interval->schedule_id = $schedule->id;
-                            $interval->save();
-                        }
+    
+                        $share = new SharingDetail;
+                        $share->user_id = auth()->user()->id;
+                        $share->routine_id = $routine->id;
+                        $share->shared_to = $userid;
+                        $share->status = 1;
+                        $share->save();
                     }
-
-                    $share = new SharingDetail;
-                    $share->user_id = auth()->user()->id;
-                    $share->routine_id = $routine->id;
-                    $share->shared_to = $request->user_id;
-                    $share->status = 1;
-                    $share->save();
-
                     return successMsg('Routine shared successfully');
                 } else return errorMsg('Routine not found');
             }

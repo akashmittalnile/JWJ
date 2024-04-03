@@ -180,7 +180,7 @@ class UserController extends Controller
     public function search(Request $request) {
         try{
             $journal = Journal::where('journals.created_by', auth()->user()->id);
-            if($request->filled('search')) $journal->where('journals.title', 'like', '%' .$request->search . '%')->orWhere('journals.content', 'like', '%' .$request->search . '%');
+            if($request->filled('search')) $journal->whereRaw("(`journals`.`title` LIKE '%" . $request->search . "%' or `journals`.`content` LIKE '%" . $request->search . "%')");
             else if($request->filled('date')) $journal->whereDate('journals.created_at', date('Y-m-d', strtotime($request->date)));
             $journal = $journal->where('journals.status', 1)->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
             $journals = array();
@@ -214,9 +214,9 @@ class UserController extends Controller
                 $journals[] = $journaltemp;
             }
             $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency');
-            if($request->filled('search')) $data->where('communities.name', 'like', '%' .$request->search . '%')->orWhere('communities.description', 'like', '%' .$request->search . '%');
-            else if($request->filled('date')) $data->where('communities.created_by', auth()->user()->id)->whereDate('communities.created_at', date('Y-m-d', strtotime($request->date)));
-            $data = $data->where('communities.status', 1)->orderByDesc('communities.id')->get();
+            if($request->filled('search')) $data->whereRaw("(`communities`.`name` LIKE '%" . $request->search . "%' or `communities`.`description` LIKE '%" . $request->search . "%')");
+            else if($request->filled('date')) $data->whereDate('communities.created_at', date('Y-m-d', strtotime($request->date)));
+            $data = $data->where('communities.created_by', auth()->user()->id)->where('communities.status', 1)->orderByDesc('communities.id')->get();
             $community = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
@@ -249,9 +249,9 @@ class UserController extends Controller
                 $community[] = $communitytemp;
             }
             $routines = Routine::where('created_by', auth()->user()->id);
-            if($request->filled('search')) $routines->where('name', 'like', '%' .$request->search . '%')->orWhere('description', 'like', '%' .$request->search . '%')->orWhere('subtitle', 'like', '%' .$request->search . '%');
-            else if($request->filled('date')) $routines->where('created_by', auth()->user()->id)->whereDate('created_at', date('Y-m-d', strtotime($request->date)));
-            $routines = $routines->orderby('id', 'desc')->get();
+            if($request->filled('search')) $routines->whereRaw("(`name` LIKE '%" . $request->search . "%' or `description` LIKE '%" . $request->search . "%' or `subtitle` LIKE '%" . $request->search . "%')");
+            else if($request->filled('date')) $routines->whereDate('created_at', date('Y-m-d', strtotime($request->date)));
+            $routines = $routines->where('created_by', auth()->user()->id)->orderby('id', 'desc')->get();
             $routine = array();
             foreach ($routines as $key => $myroutine) {
                 $category = RoutineCategory::where('id', '=', $myroutine->category_id)->first();
@@ -367,9 +367,11 @@ class UserController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to getting the list of users for sharing the routine
-    public function userList() {
+    public function userList(Request $request) {
         try{
-            $user = User::where('id', '!=', auth()->user()->id)->where('role', 1)->orderByDesc('id')->where('status', 1)->get();
+            $user = User::where('id', '!=', auth()->user()->id)->where('role', 1);
+            if($request->filled('name')) $user->whereRaw("(`user_name` LIKE '%" . $request->name . "%')");
+            $user = $user->orderByDesc('id')->where('status', 1)->get();
             $users = array();
             foreach($user as $val){
                 $temp['id'] = $val->id;
