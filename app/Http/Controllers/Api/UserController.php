@@ -83,7 +83,7 @@ class UserController extends Controller
                 $journaltemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $journals[] = $journaltemp;
             }
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency')->where('communities.status', 1)->limit(5)->orderByDesc('communities.id')->get();
+            $data = Community::where('communities.status', 1)->limit(5)->orderByDesc('communities.id')->get();
             $community = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
@@ -99,6 +99,7 @@ class UserController extends Controller
                 foreach($imgs as $item){
                     array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
                 }
+                $planComm = Plan::where('id', $val->plan_id)->first();
                 $postCount = Post::where('community_id', $val->id)->count();
                 $communitytemp['id'] = $val->id;
                 $communitytemp['name'] = $val->name;
@@ -109,10 +110,10 @@ class UserController extends Controller
                 $communitytemp['member_follow_count'] = $followCount ?? 0;
                 $communitytemp['member_image'] = $memberImage;
                 $communitytemp['post_count'] = $postCount ?? 0;
-                $communitytemp['plan_name'] = $val->plan_name;
-                $communitytemp['plan_monthly_price'] = $val->monthly_price;
-                $communitytemp['plan_anually_price'] = $val->anually_price;
-                $communitytemp['plan_price_currency'] = $val->currency;
+                $communitytemp['plan_name'] = $planComm->plan_name ?? null;
+                $communitytemp['plan_monthly_price'] = $planComm->monthly_price ?? null;
+                $communitytemp['plan_anually_price'] = $planComm->anually_price ?? null;
+                $communitytemp['plan_price_currency'] = $planComm->currency ?? null;
                 $community[] = $communitytemp;
             }
             $plan = Plan::where('monthly_price', '0')->first();

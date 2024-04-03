@@ -201,6 +201,7 @@ class CommunityController extends Controller
                         $temp['is_liked'] = (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0;
                         $temp['likes_count'] = $item->likesCount ?? 0;
                         $temp['comment_count'] = $item->commentCount ?? 0;
+                        $temp['my_post'] = ($item->created_by == auth()->user()->id) ? true : false;
                         $temp['posted_by_name'] = $user->name ?? null;
                         $temp['posted_by_user_name'] = $user->user_name ?? null;
                         $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
@@ -601,6 +602,7 @@ class CommunityController extends Controller
                     'likes_count' => $likesCount ?? 0,
                     'comment_count' => $commentCount ?? 0,
                     'comments' => $commentArr,
+                    'my_post' => ($post->created_by==auth()->user()->id) ? true : false,
                     'community_id' => $post->community_id,
                     'community_title' => $community->name,
                     'community_description' => $community->description,

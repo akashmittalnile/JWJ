@@ -60,12 +60,12 @@ class RoutineController extends Controller
                 $temp['routinename'] = $myroutine->name;
                 $temp['routinesubtitle'] = $myroutine->subtitle;
                 $temp['description'] = $myroutine->description;
-                $temp['created_by'] = $myroutine->created_by;
+                $temp['my_routine'] = (($myroutine->created_by == auth()->user()->id) && ($myroutine->shared_by == null)) ? true : false;
                 $temp['routinetype'] = ($myroutine->privacy == 'P') ? 'Public Routine' : 'Private Routine';
                 $temp['date'] = date('Y-m-d', strtotime($myroutine->created_at));
                 $temp['category_name'] = $myroutine->category->name;
                 $temp['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
-                $temp['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
+                $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;
             }
@@ -145,7 +145,8 @@ class RoutineController extends Controller
                     'category_id' => $routine->category->id ?? null,
                     'category_name' => $routine->category->name ?? null,
                     'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
-                    'created_by' => ($routine->created_by == auth()->user()->id) ? 'mySelf' : 'shared',
+                    'created_by' => ($routine->shared_by == null) ? 'mySelf' : 'shared',
+                    'my_routine' => (($routine->created_by == auth()->user()->id) && ($routine->shared_by == null)) ? true : false,
                     'schedule_frequency_name' => config('constant.frequency')[$routine->schedule->frequency] ?? null,
                     'schedule_frequency' => $routine->schedule->frequency ?? null,
                     'schedule_date' => $routine->schedule->schedule_time ?? null,
