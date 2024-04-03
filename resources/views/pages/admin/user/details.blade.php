@@ -8,14 +8,19 @@
 @section('content')
 <div class="page-breadcrumb-title-section">
     <h4>User Details</h4>
-    <div class="search-filter wd3">
+    <div class="search-filter wd5">
         <div class="row g-1">
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <div class="form-group">
                     <a href="{{ route('admin.users.list') }}" class="btn-bl">Back</a>
                 </div>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <a href="{{ route('admin.users.routines', encrypt_decrypt('encrypt', $user->id)) }}" class="btn-bl">VIEW ALL ROUTINES</a>
+                </div>
+            </div>
+            <div class="col-md-6">
                 <div class="form-group">
                     <a href="{{ route('admin.community-management.list') }}" class="btn-bl">VIEW ALL CREATED COMMUNITY</a>
                 </div>

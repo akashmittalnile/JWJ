@@ -718,6 +718,8 @@ class RoutineController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to send a routine notification
     public function sendRoutinenotification(Request $request)
     {
         try {
@@ -726,10 +728,11 @@ class RoutineController extends Controller
                 ->join('schedule_interval', 'schedule_interval.schedule_id', '=', 'schedule.id')
                 ->join('users', 'users.id', '=', 'routines.created_by')
                 ->where('routines.type', 'R')
+                ->select('schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'users.fcm_token', 'users.name as full_name')
                 ->orderby('routines.id', 'desc')
-                ->get(['schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'users.fcm_token', 'users.name as full_name']);
-            foreach ($task as $key => $alltask) {
-                if ($alltask->frequency == 'D') {
+                ->get();
+                foreach ($task as $key => $alltask) {
+                    if ($alltask->frequency == 'D') {
                     $time = date('H:i', strtotime($alltask->interval_time));
                     $currenttime = date('H:i');
                     if ($time == $currenttime) {

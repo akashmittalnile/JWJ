@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MoodMaster;
 use App\Models\Notify;
+use App\Models\Routine;
+use App\Models\RoutineCategory;
 use App\Models\User;
 use App\Models\UserMood;
 use App\Models\UserPlan;
@@ -204,6 +206,90 @@ class UserController extends Controller
                     fputcsv($output, $final);
                 }
             }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    
+    // Dev name : Dishant Gupta
+    // This function is used to show the list of user routines
+    public function userRoutines(Request $request, $id)
+    {
+        try {
+            $id = encrypt_decrypt('decrypt', $id);
+            $rCategory = RoutineCategory::where('status', 1)->orderByDesc('id')->get();
+            if($request->ajax()){
+                $data = Routine::where('created_by', $id);
+                if($request->filled('search')){
+                    $data->whereRaw("(`name` LIKE '%" . $request->search . "%' or `description` LIKE '%" . $request->search . "%')");
+                }
+                if($request->filled('ustatus')){
+                    $data->where('category_id', $request->ustatus);
+                }
+                $data = $data->orderByDesc('id')->paginate(config('constant.paginatePerPage'));
+                
+                if($data->total() < 1) return errorMsg("No routine found");
+
+                $html = '';
+                foreach($data as $key => $val)
+                {
+                    $pageNum = $data->currentPage();
+                    $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
+                    $phone = isset($val->mobile) ? $val->country_code .' '. $val->mobile : 'NA';
+                    $image = isset($val->category->logo) ? assets("uploads/routine/".$val->category->logo) : assets("assets/images/no-image.jpg");
+                    $description = (strlen($val->description) > 50) ? substr($val->description, 0, 50).'....' : $val->description;
+                    $html .= "<tr>
+                    <td>
+                        <div class='sno'>$index</div>
+                    </td>
+                    <td>
+                        <img width='50' style='height: 50px; object-fit: cover; object-position: center; border-radius: 50%;' src='".$image."'>
+                    </td>
+                    <td>
+                        ".$val->category->name."
+                    </td>
+                    <td>
+                        $val->name
+                    </td>
+                    <td>
+                        $description
+                    </td>
+                    <td>
+                        <div class='action-btn-info'>
+                            <a class='action-btn dropdown-toggle' data-bs-toggle='dropdown' aria-expanded='false'>
+                                <i class='las la-ellipsis-v'></i>
+                            </a>
+                            <div class='dropdown-menu'>
+                                <a class='dropdown-item view-btn' href='".route('admin.users.routine.details', encrypt_decrypt('encrypt', $val->id))."'><i class='las la-eye'></i> &nbsp; View</a>
+                            </div>
+                        </div>
+                    </td>
+                </tr>";
+                }
+
+                $response = array(
+                    'currentPage' => $data->currentPage(),
+                    'lastPage' => $data->lastPage(),
+                    'total' => $data->total(),
+                    'html' => $html,
+                );
+                return successMsg('Routine list', $response);
+            }
+            return view('pages.admin.user.routines')->with(compact('id', 'rCategory'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the all details of routine
+    public function userRoutineDetails($id)
+    {
+        try {
+            $id = encrypt_decrypt('decrypt', $id);
+            $data = Routine::where('id', $id)->first();
+            return view('pages.admin.user.routine-details')->with(compact('data'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

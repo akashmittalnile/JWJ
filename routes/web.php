@@ -57,6 +57,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/users-reports', [UserController::class, 'usersDownloadReport'])->name('users.download.report');
         Route::get('/user-details/{id}', [UserController::class, 'userDetails'])->name('users.details');
         Route::post('/user-change-status', [UserController::class, 'userChangeStatus'])->name('users.change.status');
+        Route::get('/user/routines/{id}', [UserController::class, 'userRoutines'])->name('users.routines');
+        Route::get('/user/routine-details/{id}', [UserController::class, 'userRoutineDetails'])->name('users.routine.details');
 
         // revenue management
         Route::get('/revenue-management', [RevenueController::class, 'revenueManagement'])->name('revenue-management.list');
