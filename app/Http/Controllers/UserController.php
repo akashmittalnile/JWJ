@@ -12,7 +12,6 @@ use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use Mockery\Undefined;
 
 class UserController extends Controller
 {
@@ -101,7 +100,7 @@ class UserController extends Controller
             $user = User::where('id', $id)->first();
             $plan = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name')->first();
             $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
-            $totalMood = UserMood::where('user_id', $id)->get();
+            $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
             $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
             foreach($totalMood as $val){
                 $mood = MoodMaster::where('id', $val->mood_id)->first();
@@ -114,6 +113,30 @@ class UserController extends Controller
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
             return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the details of user mood
+    public function userChangeMoodData(Request $request, $id)
+    {
+        try {
+            $id = encrypt_decrypt('decrypt', $id);
+            $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->get();
+            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
+            foreach($totalMood as $val){
+                $mood = MoodMaster::where('id', $val->mood_id)->first();
+                if($mood->code=='happy') $happyCount ++;
+                elseif($mood->code=='sad') $sadCount ++;
+                elseif($mood->code=='anger') $angerCount ++;
+                else $anxietyCount ++;
+            }
+            if(count($totalMood) > 0)
+                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
+            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
+            return successMsg('Change mood data', $avgMood);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

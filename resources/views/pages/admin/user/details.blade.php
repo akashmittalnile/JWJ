@@ -103,7 +103,7 @@
 
         <div class="overview-section">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="plan-card">
                         <div class="plan-content">
                             <div class="plan-content-text">
@@ -117,15 +117,15 @@
                             </div>
                             <div class="plan-content-icon">
                                 @if(isset($plan->name))
-                                    @if($plan->name == 'Plan B')
-                                    <img src="{{ assets('assets/images/goldplan.svg') }}">
-                                    @elseif($plan->name == 'Plan A')
-                                    <img src="{{ assets('assets/images/freeplan.svg') }}">
-                                    @elseif($plan->name == 'Plan C')
-                                    <img src="{{ assets('assets/images/platinumplan.svg') }}">
-                                    @else
-                                    <img src="{{ assets('assets/images/goldplan.svg') }}">
-                                    @endif
+                                @if($plan->name == 'Plan B')
+                                <img src="{{ assets('assets/images/goldplan.svg') }}">
+                                @elseif($plan->name == 'Plan A')
+                                <img src="{{ assets('assets/images/freeplan.svg') }}">
+                                @elseif($plan->name == 'Plan C')
+                                <img src="{{ assets('assets/images/platinumplan.svg') }}">
+                                @else
+                                <img src="{{ assets('assets/images/goldplan.svg') }}">
+                                @endif
                                 @else
                                 <img src="{{ assets('assets/images/goldplan.svg') }}">
                                 @endif
@@ -133,41 +133,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feeling-card">
-                        <div class="row">
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/happy.png') }}"></div>
-                                    <p>Happy</p>
-                                    <h2>{{ ($avgMood['happy'] == 0 || !isset($avgMood['happy'])) ? 0 : $avgMood['happy'] }}%</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/sad.png') }}"></div>
-                                    <p>Sad</p>
-                                    <h2>{{ ($avgMood['sad'] == 0 || !isset($avgMood['sad'])) ? 0 : $avgMood['sad'] }}%</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anger.png') }}"></div>
-                                    <p>Anger</p>
-                                    <h2>{{ ($avgMood['anger'] == 0 || !isset($avgMood['anger'])) ? 0 : $avgMood['anger'] }}%</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anxiety.png') }}"></div>
-                                    <p>Anxiety</p>
-                                    <h2>{{ ($avgMood['anxiety'] == 0 || !isset($avgMood['anxiety'])) ? 0 : $avgMood['anxiety'] }}%</h2>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
+                <div class="col-md-6">
                     <div class="overview-card">
                         <div class="overview-card-body">
                             <div class="overview-content">
@@ -181,6 +147,57 @@
                                 </div>
                                 <div class="overview-content-icon">
                                     <img src="{{ assets('assets/images/dollar-circle.svg') }}" height="50">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="overview-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="page-filter-title-section">
+                        <!-- <h4>How Are You Feeling Today?</h4> -->
+                        <div class="search-filter wd2">
+                            <div class="row g-1">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <input type="month" name="date" id="date" value="{{ date('Y-m') }}" max="{{date('Y-m')}}" class="form-control">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feeling-card">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="feeling-content-item">
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/happy.png') }}"></div>
+                                    <p>Happy</p>
+                                    <h2 id="happy">{{ ($avgMood['happy'] == 0 || !isset($avgMood['happy'])) ? 0 : $avgMood['happy'] }}%</h2>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="feeling-content-item">
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/sad.png') }}"></div>
+                                    <p>Sad</p>
+                                    <h2 id="sad">{{ ($avgMood['sad'] == 0 || !isset($avgMood['sad'])) ? 0 : $avgMood['sad'] }}%</h2>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="feeling-content-item">
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anger.png') }}"></div>
+                                    <p>Anger</p>
+                                    <h2 id="anger">{{ ($avgMood['anger'] == 0 || !isset($avgMood['anger'])) ? 0 : $avgMood['anger'] }}%</h2>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="feeling-content-item">
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anxiety.png') }}"></div>
+                                    <p>Anxiety</p>
+                                    <h2 id="anxiety">{{ ($avgMood['anxiety'] == 0 || !isset($avgMood['anxiety'])) ? 0 : $avgMood['anxiety'] }}%</h2>
                                 </div>
                             </div>
                         </div>
@@ -250,7 +267,7 @@
                             </table>
                         </div>
                         <div class="jwj-table-pagination">
-                            
+
                         </div>
                     </div>
                 </div>
@@ -262,29 +279,64 @@
 @endsection
 
 @push('js')
-    <script type="text/javascript">
-        $(document).on('change', '#myToggle', function (e) {
-            let status = ($(this).is(":checked")) ? 1 : 2;
-            e.preventDefault();
-            $.ajax({
-                type: 'post',
-                url: "{{ route('admin.users.change.status') }}",
-                data: {id: "{{ encrypt_decrypt('encrypt', $user->id) }}", status, '_token': "{{ csrf_token() }}"},
-                dataType: 'json',
-                success: function (result) {
-                    if(result.status) {
-                        toastr.success(result.message);
-                        window.location.reload();
-                    } else {
-                        toastr.error(result.message);
-                        return false;
-                    }
-                },
-                error: function(data, textStatus, errorThrown) {
-                    jsonValue = jQuery.parseJSON( data.responseText );
-                    console.error(jsonValue.message);
-                },
-            });
+<script type="text/javascript">
+    $(document).on('change', "#date", function(e) {
+        e.preventDefault();
+        let date = $(this).val();
+        $.ajax({
+            type: 'get',
+            url: "{{ route('admin.users.change.mood.data', encrypt_decrypt('encrypt', $user->id)) }}",
+            data: {
+                date,
+                '_token': "{{ csrf_token() }}"
+            },
+            dataType: 'json',
+            success: function(result) {
+                if (result.status) {
+                    // toastr.success(result.message);
+                    // console.log(result.data);
+                    $("#happy").text(result.data.happy + "%");
+                    $("#sad").text(result.data.sad + "%");
+                    $("#anger").text(result.data.anger + "%");
+                    $("#anxiety").text(result.data.anxiety + "%");
+                } else {
+                    toastr.error(result.message);
+                    return false;
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
         });
-    </script>
+    });
+
+    $(document).on('change', '#myToggle', function(e) {
+        e.preventDefault();
+        let status = ($(this).is(":checked")) ? 1 : 2;
+        $.ajax({
+            type: 'post',
+            url: "{{ route('admin.users.change.status') }}",
+            data: {
+                id: "{{ encrypt_decrypt('encrypt', $user->id) }}",
+                status,
+                '_token': "{{ csrf_token() }}"
+            },
+            dataType: 'json',
+            success: function(result) {
+                if (result.status) {
+                    toastr.success(result.message);
+                    window.location.reload();
+                } else {
+                    toastr.error(result.message);
+                    return false;
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
+        });
+    });
+</script>
 @endpush

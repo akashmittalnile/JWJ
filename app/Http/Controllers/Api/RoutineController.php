@@ -52,7 +52,7 @@ class RoutineController extends Controller
         try {
             $routines = Routine::where('created_by', auth()->user()->id);
             if($request->filled('name')) $routines->whereRaw("(`name` LIKE '%" . $request->name . "%')");
-            if($request->filled('date')) $routines->whereMonth('created_at', $request->date);
+            if($request->filled('date')) $routines->whereDate('created_at', $request->date);
             $routines = $routines->orderby('id', 'desc')->get();
             $response = array();
             foreach ($routines as $key => $myroutine) {
@@ -166,7 +166,7 @@ class RoutineController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to getting the share the routine to another user
-    public function shareRoutine(Request $request, $id)
+    public function shareRoutine(Request $request)
     {
         try {
             $validator = Validator::make($request->all(), [
@@ -176,6 +176,7 @@ class RoutineController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                $id = $request->id;
                 $oldroutine = Routine::where('id', $id)->where('created_by', auth()->user()->id)->where('type', 'R')->first();
                 if (isset($oldroutine->id)) {
                     foreach($request->user_id as $userid){
