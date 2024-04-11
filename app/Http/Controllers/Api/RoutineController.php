@@ -76,6 +76,47 @@ class RoutineController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to getting the list of shared routines
+    public function shareRoutineList(Request $request)
+    {
+        try {
+            $routines = SharingDetail::join('routines as r', 'r.id', '=', 'sharing_details.routine_id')->where('sharing_details.user_id', auth()->user()->id);
+            if($request->filled('name')) $routines->whereRaw("(`r`.`name` LIKE '%" . $request->name . "%')");
+            if($request->filled('date')) $routines->whereDate('r.created_at', $request->date);
+            $routines = $routines->select('r.*')->orderby('sharing_details.id', 'desc')->distinct('sharing_details.routine_id')->get();
+            // dd($routines);
+            $response = array();
+            foreach ($routines as $key => $myroutine) {
+                $cat = RoutineCategory::where('id', $myroutine->category_id)->first();
+                $shareUser = SharingDetail::where('routine_id', $myroutine->id)->get();
+                $users = array();
+                foreach($shareUser as $val){
+                    $tem['user_name'] = $val->user->user_name ?? null;
+                    $tem['name'] = $val->user->name ?? null;
+                    $tem['profile'] = isset($val->user->profile) ? assets('uploads/profile'.$val->user->profile) : null;
+                    $users[] = $tem;
+                }
+                $temp['routineid'] = $myroutine->id;
+                $temp['routinename'] = $myroutine->name ?? null;
+                $temp['routinesubtitle'] = $myroutine->subtitle;
+                $temp['description'] = $myroutine->description;
+                $temp['my_routine'] = (($myroutine->created_by == auth()->user()->id) && ($myroutine->shared_by == null)) ? true : false;
+                $temp['routinetype'] = ($myroutine->privacy == 'P') ? 'Public Routine' : 'Private Routine';
+                $temp['date'] = date('Y-m-d', strtotime($myroutine->created_at));
+                $temp['shared_users'] = $users ?? null;
+                $temp['category_name'] = $cat->name ?? null;
+                $temp['category_logo'] = isset($cat->logo) ? assets('uploads/routine/' . $cat->logo) : assets("assets/images/no-image.jpg");
+                $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
+                $response[] = $temp;
+            }
+            return successMsg('My routines', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to delete a routine
     public function deleteRoutine(Request $request)
     {
@@ -242,7 +283,7 @@ class RoutineController extends Controller
     
                         $share = new SharingDetail;
                         $share->user_id = auth()->user()->id;
-                        $share->routine_id = $routine->id;
+                        $share->routine_id = $id;
                         $share->shared_to = $userid;
                         $share->status = 1;
                         $share->save();

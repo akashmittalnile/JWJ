@@ -83,6 +83,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-routine', [RoutineController::class, 'createRoutine']);
     Route::post('edit-routine', [RoutineController::class, 'editRoutine']);
     Route::post('share-routine', [RoutineController::class, 'shareRoutine']);
+    Route::get('share-routine-list', [RoutineController::class, 'shareRoutineList']);
     
 
     Route::post('create-task', [RoutineController::class, 'createTask']);

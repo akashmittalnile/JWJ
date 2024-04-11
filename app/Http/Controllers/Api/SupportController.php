@@ -74,6 +74,8 @@ class SupportController extends Controller
                 $temp['contact'] = $val->contact;
                 $temp['message'] = $val->message;
                 $temp['admin_reply'] = $val->past_response;
+                $temp['type_name'] = config("constant.inquiry_type")[$val->inquiry_type];
+                $temp['type'] = $val->inquiry_type;
                 $temp['status'] = $val->status;
                 $temp['status_name'] = ($val->status == 1) ? 'Closed' : (($val->status == 2) ? 'In-Progress' : 'Pending');
                 $temp['query_date'] = date('d M, Y h:i A', strtotime($val->created_at));

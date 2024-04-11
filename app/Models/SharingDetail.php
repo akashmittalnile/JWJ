@@ -12,6 +12,9 @@ class SharingDetail extends Model
     protected $id = 'id';
 
     public function user(){
-        return $this->belongsTo(User::class, 'id', 'shared_to');
+        return $this->belongsTo(User::class, 'shared_to', 'id');
+    }
+    public function routine(){
+        return $this->belongsTo(User::class, 'routine_id', 'id');
     }
 }
