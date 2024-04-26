@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\CommunityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JournalController;
@@ -82,7 +83,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/community-management/subscription-plans', [CommunityController::class, 'fetchSubscriptionPlans'])->name('community-management.subscription-plans');
         Route::get('/post-details', [CommunityController::class, 'postDetails'])->name('community-management.post.details');
 
-
+        // journals
         Route::get('/journals', [JournalController::class, 'journalList'])->name('journal.list');
         Route::get('/journal-details/{id}', [JournalController::class, 'journalDetails'])->name('journal.details');
         Route::post('/journal-change-status', [JournalController::class, 'journalChangeStatus'])->name('journal.change.status');
@@ -93,6 +94,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/support-communication-download-report', [SupportController::class, 'supportDownloadReport'])->name('support.download.report');
         Route::get('/notifications', [SupportController::class, 'notification'])->name('notification');
         Route::post('/create-notifications', [SupportController::class, 'createNotification'])->name('notification.store');
+
+        // chats
+        Route::get('/chat', [ChatController::class, 'chat'])->name('chats');
 
         // routine category
         Route::get('/routine-category', [RoutineController::class, 'routineCategory'])->name('routine.category');

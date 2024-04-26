@@ -81,6 +81,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('routine', [RoutineController::class, 'routine']);
     Route::get('routine-detail/{id}', [RoutineController::class, 'routineDetail']);
     Route::post('create-routine', [RoutineController::class, 'createRoutine']);
+    Route::delete('delete-routine', [RoutineController::class, 'deleteRoutine']);
     Route::post('edit-routine', [RoutineController::class, 'editRoutine']);
     Route::post('share-routine', [RoutineController::class, 'shareRoutine']);
     Route::get('share-routine-list', [RoutineController::class, 'shareRoutineList']);
