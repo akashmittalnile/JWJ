@@ -97,6 +97,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
 
         // chats
         Route::get('/chat', [ChatController::class, 'chat'])->name('chats');
+        Route::post('/chat-image', [ChatController::class, 'chatImage'])->name('chats.image');
+        Route::post('/chat-record', [ChatController::class, 'chatRecord'])->name('chats.record');
 
         // routine category
         Route::get('/routine-category', [RoutineController::class, 'routineCategory'])->name('routine.category');

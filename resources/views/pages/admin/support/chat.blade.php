@@ -23,49 +23,30 @@
 
                                         <div class="p-3">
 
-                                            <div class="input-group rounded mb-3">
+                                            <!-- <div class="input-group rounded mb-3">
                                                 <input type="text" class="form-control rounded border me-2" placeholder="Search" aria-label="Search" aria-describedby="search-addon" id="myinput" />
-                                                <span class="input-group-text border-0" id="search-addon" style="background: #E0B220;">
+                                                <span class="input-group-text border-0" id="search-addon" style="background: #1079c0;">
                                                     <i class="las la-search"></i>
                                                 </span>
+                                            </div> -->
+
+                                            <div class="search-filter wd9 mb-3">
+                                                <div class="row g-1">
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="search-form-group">
+                                                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name">
+                                                                <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
 
                                             <div data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px; overflow-y: scroll;">
-                                                <ul class="list-unstyled mb-0">
-                                                    @forelse($user as $val)
-                                                    <li class="p-2 border-bottom user-info" data-id="{{$val->id}}" data-name="{{$val->name ?? 'NA'}}" data-img="{{( ($val->profile=='' || $val->profile==null) ? null : assets('uploads/profile/'.$val->profile) )}}">
-                                                        <a href="javascript:void(0)" class="d-flex justify-content-between">
-                                                            <div class="d-flex flex-row">
-                                                                <div>
-                                                                    @if($val->profile!="" && $val->profile!=null)
-                                                                    <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="{{ assets('uploads/profile/'.$val->profile) }}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60">
-                                                                    @else
-                                                                    <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="{{ assets('assets/images/no-image.jpg') }}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60">
-                                                                    @endif
-                                                                    <span class="badge bg-success badge-dot"></span>
-                                                                </div>
-                                                                <div class="pt-1">
-                                                                    <p class="chat-name fw-bold mb-0" style="color: #E0B220; font-size: 0.8rem;">{{ $val->name ?? "NA" }}</p>
-                                                                    <p class="small text-muted"></p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="pt-1">
-                                                                <!-- <p class="small text-muted mb-1">Just now</p> -->
-                                                                <!-- <span class="badge bg-danger rounded-pill float-end">3</span> -->
-                                                            </div>
-                                                        </a>
-                                                    </li>
-                                                    @empty
-                                                    @endforelse
+                                                <ul class="list-unstyled mb-0" id="appendData">
 
-                                                    <div class="d-flex flex-column align-items-center justify-content-center mt-5 d-none" id="no_record_found">
-                                                        <div>
-                                                            <img src="{{ assets('/assets/website-images/no-data.svg') }}" alt="">
-                                                        </div>
-                                                        <div class="font-weight-bold">
-                                                            <p class="font-weight-bold" style="font-size: 1.2rem;">No users found </p>
-                                                        </div>
-                                                    </div>
+                                                    
 
                                                 </ul>
                                             </div>
@@ -83,12 +64,18 @@
                                         </div>
 
                                         <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-                                            <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="{{ assets('assets/website-images/user.jpg') }}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60" id="userAvatar">
-                                            <input type="text" class="form-control form-control-lg border ms-3" id="message-input" placeholder="Type message">
-                                            <a class="fs-24 ms-3 text-muted" id="image-attach" href="#!"><i class="las la-paperclip"></i></a>
+                                            <div>
+                                                <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="{{ assets('assets/images/user.svg') }}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60" id="userAvatar">
+                                            </div>
+
+                                            <input type="text" class="form-control-input form-control-lg border ms-3" id="message-input" placeholder="Type message">
+
+                                            <a class="fs-24 ms-3 text-muted" id="image-attach" href="javascript:void(0)"><i class="las la-paperclip"></i></a>
+
                                             <input type="file" hidden accept="image/png, image/jpg, image/jpeg" id="upload-file" name="image-attachment">
-                                            <!-- <a class="fs-24 ms-3 text-muted" href="#!"><i class="las la-smile"></i></a> -->
-                                            <a class="fs-24 ms-3" href="#!"><i class="las la-paper-plane btnSend"></i></a>
+
+                                            <!-- <a class="fs-24 ms-3 text-muted" href="javascript:void(0)"><i class="las la-smile"></i></a> -->
+                                            <a class="fs-24 ms-3" href="javascript:void(0)"><i class="las la-paper-plane btnSend"></i></a>
                                         </div>
 
                                     </div>
@@ -116,29 +103,12 @@
         $('.la-paperclip').css('color', '#0d6efd');
     })
 
-    $(document).ready(function() {
-        const userCount = "{{ count($user) }}";
-        $("#search-addon").on("click", function() {
-            var value = $('#myinput').val().toLowerCase();
-            $(".list-unstyled .user-info").filter(function() {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
-
-            var count = $('.list-unstyled .user-info:hidden').length;
-            if (count == userCount) {
-                $("#no_record_found").removeClass('d-none');
-            } else {
-                $("#no_record_found").addClass('d-none');
-            }
-        });
-    });
-
     $(document).on('click', '.user-info', function() {
         $("#ajax-chat-url").val($(this).attr('data-id'));
         $("#ajax-chat-url-name").val($(this).attr('data-name'));
         $("#ajax-chat-url-img").val($(this).attr('data-img'));
         $(".body-chat-message-user").removeClass('d-none');
-        let userAvaImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/website-images/user.jpg') }}" : $("#ajax-chat-url-img").val();
+        let userAvaImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/user.svg') }}" : $("#ajax-chat-url-img").val();
         // console.log(userAvaImg);
         $("#userAvatar").attr('src', userAvaImg);
     })
@@ -197,12 +167,14 @@
 
     window.sendNewMessage = async function(group_id_new2, message, receiver_id, userName, image = '') {
         // alert(6);
-        const chatCol = collection(defaultFirestore, 'jwj_support/' + group_id_new2 + '/messages');
+        const chatCol = collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages');
         let data = {
             text: message ?? "HHH",
             image: image,
             sendBy: '1',
             sendto: receiver_id,
+            // sendBy: receiver_id,
+            // sendto: '1',
             adminName: 'JourneyWithJournals',
             userName: userName,
             user: {
@@ -212,34 +184,65 @@
             createdAt: new Date()
         };
 
-        console.log("Data => ", data);
+        // console.log("Data => ", data);
 
         const add = await addDoc(chatCol, data);
-        const chatCols = query(collection(defaultFirestore, 'jwj_support/' + group_id_new2 + '/messages'), orderBy('createdAt', 'asc'));
+        const chatCols = query(collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages'), orderBy('createdAt', 'asc'));
         const chatSnapshot = await getDocs(chatCols);
         const chatList = chatSnapshot.docs.map(doc => doc.data());
         showAllMessages(chatList);
-        //location.reload();
+        $.ajax({
+            type: 'post',
+            url: "{{ route('admin.chats.record') }}",
+            data: {
+                _token: "{{ csrf_token() }}",
+                'msg': message ?? image,
+                'user_id': receiver_id
+            },
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            beforeSend: function() {
+                $("#preloader").show()
+            },
+            success: function(response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    return false;
+                } else {
+                    toastr.error(response.message);
+                    return false;
+                }
+            },
+            complete: function() {
+                $("#preloader").hide()
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
+        })
     }
 
 
     window.getClientChat = async function(group_id, ajax_call = false) {
         console.log("Group ID => ", group_id);
-        const chatCols = query(collection(defaultFirestore, 'jwj_support/' + group_id + '/messages'), orderBy('createdAt',
+        const chatCols = query(collection(defaultFirestore, 'jwj_chats/' + group_id + '/messages'), orderBy('createdAt',
             'asc'));
         const chatSnapshot = await getDocs(chatCols);
         const chatList = chatSnapshot.docs.map(doc => doc.data());
-        console.log("get client chat => ", chatList);
+        // console.log("get client chat => ", chatList);
 
-        showAllMessages(chatList);
+        showAllMessages(chatList, ajax_call);
     }
     $(document).on('click', '.user-info', function() {
-        getClientChat(group_id);
+        getClientChat(group_id, true);
     })
 </script>
 
 <script>
-    const baseChatUrl = "{{ url('/') }}" + '/upload/chat/';
+    const baseChatUrl = "{{ url('/') }}" + '/public/uploads/chat/';
+    console.log(baseChatUrl);
     $(document).ready(function() {
 
         const receiver_id = $("#ajax-chat-url").val();
@@ -262,7 +265,7 @@
                 if (image !== undefined && image !== '') {
                     $.ajax({
                         type: 'post',
-                        url: "{{url('/')}}" + '/super-admin/help-support-save-img',
+                        url: "{{ route('admin.chats.image') }}",
                         data: formData,
                         contentType: false,
                         cache: false,
@@ -306,13 +309,12 @@
         let msg = `<div class="d-flex flex-row justify-content-end">
                 <div>
                     ${(image !== undefined && image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
-                    ${(message !== '' && message !== undefined) ? `<p style="background: #261313;" class="small p-2 me-3 mb-1 text-white rounded-3">${message}</p>` : ''}
+                    ${(message !== '' && message !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${message}</p>` : ''}
                     <p class="small me-3 mb-3 rounded-3 text-muted">${time}</p>
                 </div>
-                <img src="{{ (auth()->user()->profile_image=='' || auth()->user()->profile_image == null) ? assets('assets/website-images/user.png') : uploadAssets('upload/profile-image/'.auth()->user()->profile_image) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
+                <img src="{{ (auth()->user()->profile=='' || auth()->user()->profile == null) ? assets('assets/images/user.svg') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
             </div>`;
         $('.messages-card').append(msg);
-
         $(".body-chat-message-user").stop().animate({
             scrollTop: $(".body-chat-message-user")[0].scrollHeight
         }, 1000);
@@ -320,7 +322,7 @@
 
 
     function admin(row) {
-        let userProImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/website-images/user.jpg') }}" : $("#ajax-chat-url-img").val();
+        let userProImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/user.svg') }}" : $("#ajax-chat-url-img").val();
         let html = '';
         var formattedDate = moment.unix(row.createdAt.seconds).format('MMM DD, YYYY HH:mm A');
         if (row.sendto == 1) {
@@ -328,19 +330,19 @@
             html = `<div class="d-flex flex-row justify-content-start">
                     <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="${userProImg}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60">
                     <div>
-                        ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseUrl+row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
-                        ${(row.text !== '' && row.text !== undefined) ? `<p class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">${row.text}</p>` : '' }
+                        ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
+                        ${(row.text !== '' && row.text !== undefined) ? `<p style="background: #9fc9e6;" class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">${row.text}</p>` : '' }
                         <p class="small ms-3 mb-3 rounded-3 text-muted float-end">${formattedDate}</p>
                     </div>
                 </div>`;
         } else {
             html = `<div class="d-flex flex-row justify-content-end">
                 <div>
-                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseUrl+row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
-                    ${(row.text !== '' && row.text !== undefined) ? `<p style="background: #261313;" class="small p-2 me-3 mb-1 text-white rounded-3">${row.text}</p>` : '' }
-                    <p class="small me-3 mb-3 rounded-3 text-muted">${formattedDate}</p>
+                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
+                    ${(row.text !== '' && row.text !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${row.text}</p>` : '' }
+                    <p class="small ms-3 mb-3 rounded-3 text-muted">${formattedDate}</p>
                 </div>
-                <img src="{{ (auth()->user()->profile_image=='' || auth()->user()->profile_image == null) ? assets('assets/website-images/user.png') : uploadAssets('upload/profile-image/'.auth()->user()->profile_image) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
+                <img src="{{ (auth()->user()->profile=='' || auth()->user()->profile == null) ? assets('assets/images/user.svg') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
             </div>`;
         }
         return html;
@@ -352,6 +354,42 @@
         const group_id = "1-" + receiver_id;
         getClientChat(group_id, true);
     }, 5000);
+
+    $(document).ready(function() {
+        const getList = (search = null) => {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.chats') }}",
+                data: {
+                    search
+                },
+                dataType: 'json',
+                success: function(result) {
+                    if (result.status) {
+                        let userData = result.data.html.data;
+                        let html = result.data.html;
+                        $("#appendData").html(result.data.html);
+                    } else {
+                        let html = `<div class="d-flex justify-content-center align-items-center flex-column">
+                                    <div>
+                                        <img width="250" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                                    </div>
+                                </div>`;
+                        $("#appendData").html(html);
+                    }
+                },
+                error: function(data, textStatus, errorThrown) {
+                    jsonValue = jQuery.parseJSON(data.responseText);
+                    console.error(jsonValue.message);
+                },
+            });
+        };
+        getList();
+        $(document).on('keyup', "#searchInput", function() {
+            let search = $("#searchInput").val();
+            getList(search);
+        });
+    })
 </script>
 
 @endsection

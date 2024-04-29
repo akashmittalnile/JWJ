@@ -103,7 +103,7 @@
                     </a>
                 </li>
 
-                <!-- <li class="nav-item {{ (Route::is('admin.chats*') || Route::is('admin.chats*')) ? 'active' : '' }}">
+                <li class="nav-item {{ (Route::is('admin.chats*') || Route::is('admin.chats*')) ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.chats') }}">
                         <span class="menu-icon">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,7 +115,7 @@
                         </span>
                         <span class="menu-title">Chats</span>
                     </a>
-                </li> -->
+                </li>
 
                 <li class="nav-item {{ Route::is('admin.routine*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.routine.category') }}">
