@@ -35,7 +35,7 @@
                                                     <div class="col-md-12">
                                                         <div class="form-group">
                                                             <div class="search-form-group">
-                                                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name">
+                                                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name & email address">
                                                                 <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
                                                             </div>
                                                         </div>
@@ -131,13 +131,12 @@
     } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyBzDieP3KXvTR9Sfp4vcbpb0ScpDcv769s",
-        authDomain: "journeywithjournal-33396.firebaseapp.com",
-        projectId: "journeywithjournal-33396",
-        storageBucket: "journeywithjournal-33396.appspot.com",
-        messagingSenderId: "291423025709",
-        appId: "1:291423025709:web:4bc40453072ace36fd96a4",
-        measurementId: "G-46NHXE74KS"
+        apiKey: "AIzaSyBopYjZG97AO9Da83d5AzsBXrdlNBFvPqk",
+        authDomain: "chatapp-29659.firebaseapp.com",
+        projectId: "chatapp-29659",
+        storageBucket: "chatapp-29659.appspot.com",
+        messagingSenderId: "1010083815791",
+        appId: "1:1010083815791:web:e26a047de4420d04a3889a"
     };
 
     const receiver_id = $("#ajax-chat-url").val();
@@ -190,32 +189,27 @@
         const chatCols = query(collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages'), orderBy('createdAt', 'asc'));
         const chatSnapshot = await getDocs(chatCols);
         const chatList = chatSnapshot.docs.map(doc => doc.data());
+        $(".last-message-"+receiver_id).text(message ?? image);
+        $(".time-message-"+receiver_id).text('Just Now');
         showAllMessages(chatList);
+        let form = new FormData();
+        form.append('msg', message ?? image);
+        form.append('user_id', receiver_id);
         $.ajax({
             type: 'post',
             url: "{{ route('admin.chats.record') }}",
-            data: {
-                _token: "{{ csrf_token() }}",
-                'msg': message ?? image,
-                'user_id': receiver_id
-            },
+            data: form,
             dataType: 'json',
             contentType: false,
             processData: false,
-            beforeSend: function() {
-                $("#preloader").show()
-            },
             success: function(response) {
                 if (response.status) {
-                    toastr.success(response.message);
+                    // console.log(response.message);
                     return false;
                 } else {
-                    toastr.error(response.message);
+                    console.error(response.message);
                     return false;
                 }
-            },
-            complete: function() {
-                $("#preloader").hide()
             },
             error: function(data, textStatus, errorThrown) {
                 jsonValue = jQuery.parseJSON(data.responseText);
@@ -226,7 +220,7 @@
 
 
     window.getClientChat = async function(group_id, ajax_call = false) {
-        console.log("Group ID => ", group_id);
+        // console.log("Group ID => ", group_id);
         const chatCols = query(collection(defaultFirestore, 'jwj_chats/' + group_id + '/messages'), orderBy('createdAt',
             'asc'));
         const chatSnapshot = await getDocs(chatCols);
@@ -237,7 +231,58 @@
     }
     $(document).on('click', '.user-info', function() {
         getClientChat(group_id, true);
-    })
+        $(".unseen-count-"+receiver_id).remove();
+        let form = new FormData();
+        form.append('user_id', $("#ajax-chat-url").val());
+        $.ajax({
+            type: 'post',
+            url: "{{ route('admin.chats.record.seen') }}",
+            data: form,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.status) {
+                    // console.log(response.message);
+                    return false;
+                } else {
+                    console.error(response.message);
+                    return false;
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
+        })
+        
+        $.ajax({
+            type: 'get',
+            url: "{{ route('admin.chats') }}",
+            data: {
+                search: $("#searchInput").val()
+            },
+            dataType: 'json',
+            success: function(result) {
+                if (result.status) {
+                    let userData = result.data.html.data;
+                    let html = result.data.html;
+                    $("#appendData").html(result.data.html);
+                } else {
+                    let html = `<div class="d-flex justify-content-center align-items-center flex-column">
+                                <div>
+                                    <img width="250" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                                </div>
+                            </div>`;
+                    $("#appendData").html(html);
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
+        });
+    });
 </script>
 
 <script>
