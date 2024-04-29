@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\FirebaseChat;
 use App\Models\HelpSupport;
 use App\Models\Notify;
 use Illuminate\Http\Request;
@@ -121,6 +122,52 @@ class SupportController extends Controller
             return successMsg('Notifications seen');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to manage the last message & unseen count of chats
+    public function chatRecord(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'msg' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $fire = FirebaseChat::where('user_id', auth()->user()->id)->first();
+                if(isset($fire->id)){
+                    $fire->last_msg = $request->msg;
+                    $fire->updated_at = date('Y-m-d H:i:s');
+                    $fire->save();
+                } else {
+                    $fire = new FirebaseChat;
+                    $fire->user_id = auth()->user()->id;
+                    $fire->last_msg = $request->msg;
+                    $fire->save();
+                }
+                return successMsg('Record updated successfully');
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to upload a chat image
+    public function chatImage(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'image' => 'required|mimes:jpeg,png,jpg|image',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $name = fileUpload($request->image, "/uploads/chat/");  
+                return response()->json(['status' => true, 'url' => $name, 'message' => 'Image upload successfully.']);
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage();
         }
     }
 }

@@ -80,6 +80,8 @@ class ChatController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to upload a chat image
     public function chatImage(Request $request){
         try {
             $name = fileUpload($request->image, "/uploads/chat/");  
@@ -89,6 +91,8 @@ class ChatController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to change the seen count of chats
     public function chatRecordSeen(Request $request){
         try {
             $validator = Validator::make($request->all(), [
@@ -108,6 +112,8 @@ class ChatController extends Controller
         }
     }
 
+    // Dev name : Dishant Gupta
+    // This function is used to manage the last message of chats
     public function chatRecord(Request $request){
         try {
             $validator = Validator::make($request->all(), [

@@ -204,6 +204,7 @@ class CommunityController extends Controller
                         $temp['my_post'] = ($item->created_by == auth()->user()->id) ? true : false;
                         $temp['posted_by_name'] = $user->name ?? null;
                         $temp['posted_by_user_name'] = $user->user_name ?? null;
+                        $temp['posted_by_profile_image'] = isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null;
                         $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
                         $post[] = $temp;
                     }
@@ -572,6 +573,8 @@ class CommunityController extends Controller
                         $temp1['reply_comment'] = $value1->comment;
                         $temp1['reply_posted_date'] = date('d M, Y h:i A', strtotime($value1->created_at));
                         $temp1['reply_posted_by'] = $value1->user->name ?? 'NA';
+                        $temp1['reply_posted_by_user_name'] = $value1->user->user_name ?? 'NA';
+                        $temp1['reply_posted_by_profile_image'] = isset($value1->user->profile) ? assets('uploads/profile/'.$value1->user->profile) : null;
                         $replyArr[] = $temp1;
                     }
                     $temp['comment_id'] = $value->id;
@@ -579,6 +582,8 @@ class CommunityController extends Controller
                     $temp['reply'] = $replyArr;
                     $temp['posted_date'] = date('d M, Y h:i A', strtotime($value->created_at));
                     $temp['posted_by'] = $value->user->name ?? 'NA';
+                    $temp['posted_by_user_name'] = $value->user->user_name ?? 'NA';
+                    $temp['posted_by_profile_image'] = isset($value->user->profile) ? assets('uploads/profile/'.$value->user->profile) : null;
                     $commentArr[] = $temp;
                 };
                 $postReport = PostReport::where('user_id', auth()->user()->id)->where('post_id', $post->id)->first();
@@ -686,6 +691,54 @@ class CommunityController extends Controller
                         return successMsg('Comment posted successfully.');
                     } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to edit the comment on a post
+    public function postEditComment(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'comment_id' => 'required', 
+                'comment' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $data = Comment::where('id', $request->comment_id)->first();
+                if(isset($data->id)){
+                    if($data->user_id == auth()->user()->id){
+                        $data->comment = $request->comment ?? null;
+                        $data->save();
+                        return successMsg('Comment updated successfully.');
+                    } else return errorMsg("This comment is not posted by you.");
+                } else return errorMsg('Comment not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete the comment on a post
+    public function postDeleteComment(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required', 
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $data = Comment::where('id', $request->id)->first();
+                if(isset($data->id)){
+                    if($data->user_id == auth()->user()->id){
+                        Comment::where('id', $request->id)->delete();
+                        return successMsg('Comment deleted successfully.');
+                    } else return errorMsg("This comment is not posted by you.");
+                } else return errorMsg('Comment not found');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

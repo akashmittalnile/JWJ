@@ -74,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('post/{id}', [CommunityController::class, 'postDetails']);
     Route::post('like-unlike-post', [CommunityController::class, 'postLikeUnlike']);
     Route::post('post-comment', [CommunityController::class, 'postComment']);
+    Route::post('post-comment-edit', [CommunityController::class, 'postEditComment']);
+    Route::delete('post-comment-delete', [CommunityController::class, 'postDeleteComment']);
     Route::get('report-reasons', [CommunityController::class, 'reportReason']);
     Route::post('post-report', [CommunityController::class, 'postReport']);
 
@@ -95,6 +97,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('create-query', [SupportController::class, 'createQuery']);
     Route::get('query-list', [SupportController::class, 'queryList']);
     Route::get('inquiry-type-list', [SupportController::class, 'inquiryList']);
+
+    Route::post('chat-record', [SupportController::class, 'chatRecord']);
+    Route::post('chat-image', [SupportController::class, 'chatImage']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');
