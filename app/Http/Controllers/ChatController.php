@@ -15,38 +15,38 @@ class ChatController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = User::where('status', 1)->where('role', 1);
+                $data = User::leftJoin('firebase_chats as fc', 'fc.user_id', '=', 'users.id')->where('users.status', 1)->where('users.role', 1);
                 if($request->filled('search')){
                     $data->whereRaw("(`name` LIKE '%" . $request->search . "%') or `email` LIKE '%" . $request->search . "%'");
                 }
-                $data = $data->get();
+                $data = $data->select('users.id', 'users.name', 'users.email', 'users.profile', 'fc.updated_at', 'fc.unseen_msg_count', 'fc.last_msg')->orderByDesc('fc.updated_at')->distinct('users.id')->get();
+                // dd($data);
                 $html = '';
                 foreach($data as $val){
-                    $fire = FirebaseChat::where('user_id', $val->id)->first();
-                    if(isset($fire->updated_at)){
-                        if(date('H:i') == date('H:i', strtotime($fire->updated_at)))
+                    if(isset($val->updated_at)){
+                        if(date('H:i') == date('H:i', strtotime($val->updated_at)))
                             $time = 'Just Now';
-                        elseif(date('Y-m-d') == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('h:i A', strtotime($fire->updated_at));
-                        elseif(date('Y-m-d',strtotime("-1 days")) == date('Y-m-d', strtotime($fire->updated_at)))
+                        elseif(date('Y-m-d') == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('h:i A', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-1 days")) == date('Y-m-d', strtotime($val->updated_at)))
                             $time = 'Yesterday';
-                        elseif(date('Y-m-d',strtotime("-2 days")) == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('D', strtotime($fire->updated_at));
-                        elseif(date('Y-m-d',strtotime("-3 days")) == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('D', strtotime($fire->updated_at));
-                        elseif(date('Y-m-d',strtotime("-4 days")) == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('D', strtotime($fire->updated_at));
-                        elseif(date('Y-m-d',strtotime("-5 days")) == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('D', strtotime($fire->updated_at));
-                        elseif(date('Y-m-d',strtotime("-6 days")) == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('D', strtotime($fire->updated_at));
-                        elseif(date('Y-m-d',strtotime("-7 days")) == date('Y-m-d', strtotime($fire->updated_at)))
-                            $time = date('D', strtotime($fire->updated_at));
-                        else $time = date('d M, Y', strtotime($fire->updated_at));
+                        elseif(date('Y-m-d',strtotime("-2 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('D', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-3 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('D', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-4 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('D', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-5 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('D', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-6 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('D', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-7 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                            $time = date('D', strtotime($val->updated_at));
+                        else $time = date('d M, Y', strtotime($val->updated_at));
                     } else $time = '';
                     
-                    $lastMsg = $fire->last_msg ?? 'No messages';
-                    $unseenCout = (isset($fire->unseen_msg_count) && ($fire->unseen_msg_count!=0)) ? "<span class='badge bg-danger rounded-pill float-end  unseen-count-$val->id'>$fire->unseen_msg_count</span>" : "";
+                    $lastMsg = $val->last_msg ?? 'No messages';
+                    $unseenCout = (isset($val->unseen_msg_count) && ($val->unseen_msg_count!=0)) ? "<span class='badge bg-danger rounded-pill float-end  unseen-count-$val->id'>$val->unseen_msg_count</span>" : "";
                     $userProfileImage = isset($val->profile) ? assets("uploads/profile/".$val->profile) : assets("assets/images/no-image.jpg");
                     $html .= "<li class='p-2 border-bottom user-info' data-id='$val->id' data-name='$val->name' data-img='$userProfileImage'>
                         <a href='javascript:void(0)' class='d-flex justify-content-between'>
@@ -103,7 +103,6 @@ class ChatController extends Controller
             } else {
                 $fire = FirebaseChat::where('user_id', $request->user_id)->first(); 
                 $fire->unseen_msg_count = 0;
-                $fire->updated_at = $fire->updated_at;
                 $fire->save();
                 return successMsg('Message seen');
             }
@@ -132,6 +131,7 @@ class ChatController extends Controller
                     $fire = new FirebaseChat;
                     $fire->user_id = $request->user_id;
                     $fire->last_msg = $request->msg;
+                    $fire->updated_at = date('Y-m-d H:i:s');
                     $fire->save();
                 }
                 return successMsg('Record updated successfully');
