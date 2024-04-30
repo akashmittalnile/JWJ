@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\MoodMaster;
 use App\Models\User;
+use App\Models\UserMood;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -240,9 +242,21 @@ class AuthController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to getting the particular user all details
-    public function profile() {
+    public function profile(Request $request) {
         try{
             $user = Auth::user();
+            $totalMood = UserMood::where('user_id', auth()->user()->id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->get();
+            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
+            foreach($totalMood as $val){
+                $mood = MoodMaster::where('id', $val->mood_id)->first();
+                if($mood->code=='happy') $happyCount ++;
+                elseif($mood->code=='sad') $sadCount ++;
+                elseif($mood->code=='anger') $angerCount ++;
+                else $anxietyCount ++;
+            }
+            if(count($totalMood) > 0)
+                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
+            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
             $response = [
                 'id' => $user->id,
                 'name' => $user->name,
@@ -254,7 +268,8 @@ class AuthController extends Controller
                 'status' => $user->status,
                 'fcm_token' => $user->fcm_token,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
-                'created_at' => date('d M, Y h:i A', strtotime($user->created_at))
+                'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
+                'average_mood_data' => $avgMood
             ];
             return successMsg('Profile data.', $response);
         } catch (\Exception $e) {
