@@ -6,6 +6,7 @@ use App\Models\MoodMaster;
 use App\Models\Notify;
 use App\Models\Routine;
 use App\Models\RoutineCategory;
+use App\Models\SharingDetail;
 use App\Models\User;
 use App\Models\UserMood;
 use App\Models\UserPlan;
@@ -312,7 +313,8 @@ class UserController extends Controller
         try {
             $id = encrypt_decrypt('decrypt', $id);
             $data = Routine::where('id', $id)->first();
-            return view('pages.admin.user.routine-details')->with(compact('data'));
+            $share = SharingDetail::where('routine_id', $id)->orderByDesc('id')->get();
+            return view('pages.admin.user.routine-details')->with(compact('data', 'share'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

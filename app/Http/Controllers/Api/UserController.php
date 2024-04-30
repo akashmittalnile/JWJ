@@ -15,6 +15,7 @@ use App\Models\Post;
 use App\Models\Rating;
 use App\Models\Routine;
 use App\Models\RoutineCategory;
+use App\Models\SharingDetail;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use App\Models\UserMood;
@@ -375,6 +376,10 @@ class UserController extends Controller
             $user = $user->orderByDesc('id')->where('status', 1)->get();
             $users = array();
             foreach($user as $val){
+                if(isset($request->routine_id)){
+                    $routine = SharingDetail::where('routine_id', $request->routine_id)->where('shared_to', $val->id)->first();
+                    if(isset($routine->id)) continue;
+                }
                 $temp['id'] = $val->id;
                 $temp['user_name'] = $val->user_name;
                 $temp['name'] = $val->name;

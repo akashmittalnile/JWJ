@@ -64,19 +64,75 @@
 
     <div class="community-page-section">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="sidebar-member-info">
                     <div class="sidebar-member-head">
-                        <h2>Schedule List</h2>
+                        <h2>Schedule Date & Time</h2>
                     </div>
                     <div class="sidebar-member-body">
                         <div class="sidebar-member-list-card" style="min-height: 37px; max-height: 520px; overflow-y: auto; overflow-x: hidden;">
-                            @forelse($data->schedule->interval as $item)
+                            @if($data->schedule->frequency == 'C')
+                                @php  $arr = array();  @endphp 
+                                @foreach($data->schedule->interval as $item)
+                                    @php array_push($arr, $item->interval_weak); @endphp
+                                @endforeach
+                                @for($i = strtotime($data->schedule->schedule_startdate); $i <= strtotime($data->schedule->schedule_enddate); $i += 86400 )
+                                    @if(in_array(config('constant.day_num')[date('N', $i)], $arr))
+                                        <div class="sidebar-member-item">
+                                            <div class="sidebar-member-item-image" style="padding: 16px;">
+                                                <img src="{{ assets('assets/images/calendar.svg') }}">
+                                            </div>
+                                            <div class="sidebar-member-item-text">
+                                                <h2>{{ date('d M, Y D', $i) }}</h2>
+                                                <div class="sidebar-member-plan">{{ date('h:i A', strtotime($data->schedule->interval[0]->interval_time)) }}</div>
+                                            </div>
+                                        </div>
+                                    @endif
+                                @endfor
+                            @else
+                                @forelse($data->schedule->interval as $item)
+                                <div class="sidebar-member-item">
+                                    <div class="sidebar-member-item-image" style="padding: 16px;">
+                                        <img src="{{ assets('assets/images/calendar.svg') }}">
+                                    </div>
+                                    <div class="sidebar-member-item-text">
+                                        @if($data->schedule->frequency == 'D')
+                                        <h2>Daily</h2>
+                                        <div class="sidebar-member-plan">{{ date('h:i A', strtotime($item->interval_time)) }}</div>
+                                        @else
+                                        <h2>{{ date('d M, Y D', strtotime($item->created_at)) }}</h2>
+                                        <div class="sidebar-member-plan">{{ date('h:i A', strtotime($item->interval_time)) }}</div>
+                                        @endif
+                                    </div>
+                                </div>
+                                @empty
+                                <div class="sidebar-member-item" style="border: none;">
+                                    <div class="mx-auto">
+                                        No schedules found
+                                    </div>
+                                </div>
+                                @endforelse
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="sidebar-member-info">
+                    <div class="sidebar-member-head">
+                        <h2>Routine Shared To</h2>
+                    </div>
+                    <div class="sidebar-member-body">
+                        <div class="sidebar-member-list-card" style="min-height: 37px; max-height: 520px; overflow-y: auto; overflow-x: hidden;">
+                            @forelse($share as $item)
                             <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
+                                <div class="sidebar-member-item-image">
+                                    <img src="{{ isset($item->user->profile) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                </div>
                                 <div class="sidebar-member-item-text">
-                                    <h2>{{ $item->interval_weak ?? "NA" }}</h2>
-                                    <div class="sidebar-member-plan">{{ $item->interval_time ?? "NA" }}</div>
+                                    <h2>{{ $item->user->user_name ?? 'NA' }}</h2>
+                                    <div class="sidebar-member-plan"></div>
                                 </div>
                             </div>
                             @empty
@@ -91,35 +147,6 @@
                 </div>
             </div>
 
-            <div class="col-md-8">
-                <div class="page-posts-title-section">
-                    <h4>Total Posts</h4>
-                    <div class="search-filter wd7">
-                        <div class="row g-1">
-                            <div class="col-md-7">
-                                <div class="form-group">
-                                    <div class="search-form-group">
-                                        <input type="text" name="search" id="PostSearch" class="form-control" placeholder="Search by name, tags">
-                                        <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-5">
-                                <div class="form-group">
-                                    <a data-bs-toggle="modal" data-bs-target="#PostOnCommunity" class="btn-bl"> Post
-                                        On Community</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-                        <div id="post-card-lists">
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
 

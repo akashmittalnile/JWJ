@@ -30,6 +30,6 @@ class Routine extends Model
     }
 
     public function sharedUser(){
-        return $this->belongsTo(User::class, 'id', 'shared_by');
+        return $this->belongsTo(User::class, 'shared_by', 'id')->withDefault(['name' => null, 'email' => null, 'profile' => null, 'mobile' => null]);
     }
 }
