@@ -185,8 +185,8 @@ class AuthController extends Controller
                     $data['body'] = $code;
                     sendMail($data);
                     $user->save();
-                    return successMsg('OTP sended to your email address.', ['otp' => $code]);
-                } else return errorMsg('Invalid Email or Password!');
+                    return successMsg('OTP sent to your email address', ['otp' => $code]);
+                } else return errorMsg('Email is not registered with us');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -232,7 +232,7 @@ class AuthController extends Controller
                 if(isset($user->id)) {
                     $user->password = Hash::make($request->password);
                     $user->save();
-                    return successMsg('Password reset successfully.');
+                    return successMsg('Password has been changed successfully');
                 } else return errorMsg('Wrong OTP Entered!');
             }
         } catch (\Exception $e) {
@@ -306,7 +306,7 @@ class AuthController extends Controller
                     $user->mobile = $request->mobile;
                     $user->updated_at = date('Y-m-d H:i:s');
                     $user->save();
-                    return successMsg('Updated successfully.');
+                    return successMsg('Profile updated successfully');
                 } else return errorMsg('Invalid user!');
             }
         } catch (\Exception $e) {
@@ -331,7 +331,7 @@ class AuthController extends Controller
                         if (!Hash::check($request->new_password, $user->password)) {
                             $user->password = Hash::make($request->new_password);
                             if ($user->save()) {
-                                return successMsg('Password changes successfully.');
+                                return successMsg('Password has been changed successfully');
                             }
                         } else return errorMsg('New password cannot same as old password.');
                     } else  return errorMsg('Old password is incorrect.');

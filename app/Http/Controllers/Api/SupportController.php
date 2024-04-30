@@ -71,6 +71,7 @@ class SupportController extends Controller
             foreach($list as $key => $val){
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
+                $temp['profile'] = isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null;
                 $temp['email'] = $val->email;
                 $temp['contact'] = $val->contact;
                 $temp['message'] = $val->message;

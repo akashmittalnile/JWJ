@@ -403,12 +403,12 @@ class CommunityController extends Controller
                         $follow->userid = auth()->user()->id;
                         $follow->community_id = $request->community_id;
                         $follow->save();
-                        return successMsg('You have followed '.$community->name);
+                        return successMsg('You are now following '.$community->name);
                     } else {
                         $isFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->first();
                         if(isset($isFollow->id)){
                             UserFollowedCommunity::where('userid', auth()->user()->id)->where('community_id', $request->community_id)->delete();
-                            return successMsg('You have unfollowed '.$community->name);
+                            return successMsg('You unfollowed '.$community->name);
                         }else{
                             return errorMsg("Community not found.");
                         }
@@ -646,7 +646,7 @@ class CommunityController extends Controller
                             $like->status = ($like->status == 0) ? 1 : 0;
                             $like->updated_at = date('Y-m-d H:i:s');
                             $like->save();
-                            $msg = ($like->status == 0) ? "You have liked $post->title" : "You have disliked $post->title";
+                            $msg = ($like->status == 0) ? "You have liked the post" : "You have unliked the post";
                             return successMsg($msg);
                         } else {
                             $like = new UserLike;
@@ -655,7 +655,7 @@ class CommunityController extends Controller
                             $like->user_id = auth()->user()->id;
                             $like->status = 1;
                             $like->save();
-                            return successMsg("You have liked $post->title");
+                            return successMsg("You have liked the post");
                         }
                     } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
@@ -690,7 +690,9 @@ class CommunityController extends Controller
                         $comment->comment = $request->comment ?? null;
                         $comment->status = 1;
                         $comment->save();
-                        return successMsg('Comment posted successfully.');
+                        if(isset($request->is_reply) && $request->is_reply == 1)
+                            return successMsg('Replied successfully.');
+                        else return successMsg('Comment posted successfully.');
                     } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
             }
