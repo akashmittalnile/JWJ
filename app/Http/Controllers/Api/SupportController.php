@@ -66,8 +66,7 @@ class SupportController extends Controller
     public function queryList(Request $request) {
         try{
             $response = array();
-            $list = HelpSupport::where('user_id', auth()->user()->id)->orderByDesc('id')->get();
-
+            $list = HelpSupport::where('user_id', auth()->user()->id)->orderByDesc('id')->paginate(config('constant.apiPaginatePerPage'));
             foreach($list as $key => $val){
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
@@ -84,8 +83,12 @@ class SupportController extends Controller
                 $temp['admin_reply_date'] = isset($val->past_response) ? date('d M, Y h:i A', strtotime($val->updated_at)) : null;
                 $response[] = $temp;
             }
-            
-            return successMsg('Query list', $response);
+            $pagination = array(
+                'currentPage' => $list->currentPage(),
+                'lastPage' => $list->lastPage(),
+                'total' => $list->total()
+            );
+            return successMsg('Query list', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -96,8 +99,7 @@ class SupportController extends Controller
     public function notifications(Request $request) {
         try{
             $response = array();
-            $list = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->orderByDesc('id')->get();
-
+            $list = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->orderByDesc('id')->paginate(config('constant.apiPaginatePerPage'));
             foreach($list as $key => $val){
                 $temp['id'] = $val->id;
                 $temp['sender_name'] = $val->sender->name;
@@ -108,8 +110,12 @@ class SupportController extends Controller
                 $temp['created_date'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $response[] = $temp;
             }
-            
-            return successMsg('Notifications list', $response);
+            $pagination = array(
+                'currentPage' => $list->currentPage(),
+                'lastPage' => $list->lastPage(),
+                'total' => $list->total()
+            );
+            return successMsg('Notifications list', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

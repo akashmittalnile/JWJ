@@ -53,7 +53,7 @@ class RoutineController extends Controller
             $routines = Routine::where('created_by', auth()->user()->id);
             if($request->filled('name')) $routines->whereRaw("(`name` LIKE '%" . $request->name . "%')");
             if($request->filled('date')) $routines->whereDate('created_at', $request->date);
-            $routines = $routines->orderby('id', 'desc')->get();
+            $routines = $routines->orderby('id', 'desc')->paginate(config('constant.apiPaginatePerPage'));
             $response = array();
             foreach ($routines as $key => $myroutine) {
                 $temp['routineid'] = $myroutine->id;
@@ -69,7 +69,12 @@ class RoutineController extends Controller
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;
             }
-            return successMsg('My routines', $response);
+            $pagination = array(
+                'currentPage' => $routines->currentPage(),
+                'lastPage' => $routines->lastPage(),
+                'total' => $routines->total()
+            );
+            return successMsg('My routines', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -83,7 +88,7 @@ class RoutineController extends Controller
             $routines = SharingDetail::join('routines as r', 'r.id', '=', 'sharing_details.routine_id')->where('sharing_details.user_id', auth()->user()->id);
             if($request->filled('name')) $routines->whereRaw("(`r`.`name` LIKE '%" . $request->name . "%')");
             if($request->filled('date')) $routines->whereDate('r.created_at', $request->date);
-            $routines = $routines->select('r.*')->orderby('sharing_details.id', 'desc')->distinct('sharing_details.routine_id')->get();
+            $routines = $routines->select('r.*')->orderby('sharing_details.id', 'desc')->distinct('sharing_details.routine_id')->paginate(config('constant.apiPaginatePerPage'));
             // dd($routines);
             $response = array();
             foreach ($routines as $key => $myroutine) {
@@ -110,7 +115,12 @@ class RoutineController extends Controller
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;
             }
-            return successMsg('My routines', $response);
+            $pagination = array(
+                'currentPage' => $routines->currentPage(),
+                'lastPage' => $routines->lastPage(),
+                'total' => $routines->total()
+            );
+            return successMsg('My routines', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -373,7 +373,7 @@ class UserController extends Controller
         try{
             $user = User::where('id', '!=', auth()->user()->id)->where('role', 1);
             if($request->filled('name')) $user->whereRaw("(`user_name` LIKE '%" . $request->name . "%')");
-            $user = $user->orderByDesc('id')->where('status', 1)->get();
+            $user = $user->orderByDesc('id')->where('status', 1)->paginate(config('constant.apiPaginatePerPage'));
             $users = array();
             foreach($user as $val){
                 if(isset($request->routine_id)){
@@ -386,7 +386,12 @@ class UserController extends Controller
                 $temp['profile'] = isset($val->profile) ? assets('/uploads/profile/'.$val->profile) : null;
                 $users[] = $temp;
             }
-            return successMsg('Users list', $users);
+            $pagination = array(
+                'currentPage' => $user->currentPage(),
+                'lastPage' => $user->lastPage(),
+                'total' => $user->total()
+            );
+            return successMsg('Users list', ['data' => $users, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -29,7 +29,7 @@ class CommunityController extends Controller
             if($request->filled('search')){
                 $data->where('communities.name', 'like', '%' . $request->search . '%');
             }
-            $data = $data->orderByDesc('communities.id')->get();
+            $data = $data->orderByDesc('communities.id')->paginate(config('constant.apiPaginatePerPage'));
             $response = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
@@ -67,7 +67,12 @@ class CommunityController extends Controller
                 $temp['plan_price_currency'] = $plan->currency ?? null;
                 $response[] = $temp;
             }
-            return successMsg('Community list', $response);
+            $pagination = array(
+                'currentPage' => $data->currentPage(),
+                'lastPage' => $data->lastPage(),
+                'total' => $data->total()
+            );
+            return successMsg('Community list', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -84,7 +89,7 @@ class CommunityController extends Controller
             if($request->filled('status')){
                 $data->where('communities.status', $request->status);
             }
-            $data = $data->orderByDesc('communities.id')->get();
+            $data = $data->orderByDesc('communities.id')->paginate(config('constant.apiPaginatePerPage'));
             $response = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
@@ -123,7 +128,12 @@ class CommunityController extends Controller
                 $temp['plan_price_currency'] = $plan->currency ?? null;
                 $response[] = $temp;
             }
-            return successMsg('Community list', $response);
+            $pagination = array(
+                'currentPage' => $data->currentPage(),
+                'lastPage' => $data->lastPage(),
+                'total' => $data->total()
+            );
+            return successMsg('Community list', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

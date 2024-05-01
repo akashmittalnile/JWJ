@@ -34,7 +34,7 @@ Route::get('/clear-cache', function () {
     return '<center>Cache clear</center>';
 });
 
-// Route::stripeWebhooks('stripe-auto-payment');
+Route::stripeWebhooks('stripe-auto-payment');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     // admin login panel

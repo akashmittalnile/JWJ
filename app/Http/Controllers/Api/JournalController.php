@@ -70,7 +70,7 @@ class JournalController extends Controller
             if($request->filled('mood_id')) $journal->where('journals.mood_id', $request->mood_id);
             if($request->filled('date')) $journal->whereDate('journals.created_at', $request->date);
             if($request->filled('search_criteria_id')) $journal->whereIn('jsc.search_id', $request->search_criteria_id);
-            $journal = $journal->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->get();
+            $journal = $journal->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->paginate(config('constant.apiPaginatePerPage'));
             $response = array();
             foreach($journal as $val){
                 $imgs = JournalImage::where('journal_id', $val->id)->get();
@@ -101,7 +101,12 @@ class JournalController extends Controller
                 $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $response[] = $temp;
             }
-            return successMsg('Journals', $response);
+            $pagination = array(
+                'currentPage' => $journal->currentPage(),
+                'lastPage' => $journal->lastPage(),
+                'total' => $journal->total()
+            );
+            return successMsg('Journals', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
