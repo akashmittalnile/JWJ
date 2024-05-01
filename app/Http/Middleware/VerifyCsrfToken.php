@@ -14,5 +14,6 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'admin/chat-record',
         'admin/chat-record-seen',
+        'stripe-auto-payment',
     ];
 }

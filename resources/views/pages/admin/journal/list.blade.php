@@ -7,7 +7,7 @@
 @section('title','Journey with Journals - Journal Management')
 @section('content')
 <div class="page-breadcrumb-title-section">
-    <h4>Rating & Reviews</h4>
+    <h4>Journal Management</h4>
     <div class="search-filter wd5">
         <div class="row g-1">
             <div class="col-md-4">

@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CommunityController;
 use App\Http\Controllers\Api\JournalController;
 use App\Http\Controllers\Api\RoutineController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SupportController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Http\Request;
@@ -29,7 +30,6 @@ Route::post('otp-verfication', [AuthController::class, 'otpVerification']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
 Route::get('test-push-notification', [AuthController::class, 'testPushNotification']);
 Route::get('mood', [JournalController::class, 'mood']);
-Route::get('plans', [CommunityController::class, 'plans']);
 Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinenotification']);
 
 Route::middleware('auth:sanctum')->group(function () {
@@ -38,6 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('notifications', [SupportController::class, 'notifications']);
     Route::post('notification-seen', [SupportController::class, 'notificationSeen']);
+
+    Route::get('plans', [SubscriptionController::class, 'plans']);
+    Route::post('buy-plan', [SubscriptionController::class, 'buyPlan']);
 
     Route::get('home', [UserController::class, 'home']);
     Route::get('search', [UserController::class, 'search']);

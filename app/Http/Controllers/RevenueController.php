@@ -17,7 +17,7 @@ class RevenueController extends Controller
     {
         try {
             $paymentReceived = PaymentDetail::sum('amount');
-            $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id')->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name')->get();
+            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id')->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name')->get();
             return view('pages.admin.revenue.revenue-management')->with(compact('list', 'paymentReceived'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -36,13 +36,15 @@ class RevenueController extends Controller
                 $product_id = $item["id"];
                 $price = $stripe->prices->all(['product' => $product_id]);
                 $plan = Plan::where("product_id", $product_id)->first();
-                // dd($plan, $item);
+                // dd($price->data);
                 if ($plan) {
                     foreach ($price->data as $val) {
                         if ($val->recurring->interval == 'month') {
                             $plan->monthly_price = $val->unit_amount / 100;
+                            $plan->monthly_price_id = $val->id ?? null;
                         } else {
                             $plan->anually_price = $val->unit_amount / 100;
+                            $plan->anually_price_id = $val->id ?? null;
                         }
                         $plan->currency = $val->currency;
                     }
@@ -52,6 +54,7 @@ class RevenueController extends Controller
                 } else {
                     $plan = new Plan();
                     $plan->monthly_price = $price->unit_amount / 100;
+                    $plan->monthly_price_id = $price->id ?? null;
                     $plan->name = $item->name;
                     $plan->currency = $price->currency;
                     $plan->product_id = $product_id;

@@ -22,31 +22,6 @@ use DB;
 class CommunityController extends Controller
 {
     // Dev name : Dishant Gupta
-    // This function is used to show all the plans
-    public function plans(Request $request) {
-        try{
-            $plan = Plan::orderBy('monthly_price')->get();
-            $response = array();
-            foreach($plan as $val){
-                $temp['id'] = $val->id;
-                $temp['name'] = $val->name;
-                $temp['monthly_price'] = $val->monthly_price;
-                $temp['anually_price'] = $val->anually_price;
-                $temp['currency'] = $val->currency;
-                $temp['current_plan'] = ($val->monthly_price == 0) ? true : false;
-                $temp['point1'] = $val->entries_per_day . ' Entry Per Day / ' . $val->words . ' Words';
-                $temp['point2'] = $val->routines . ' Routines With Ability To Share';
-                $temp['point3'] = 'Add ' . $val->picture_per_day . ' Picture Per Day';
-                $temp['point4'] = (($val->community == 3) ? 'Submit Your Own Communities/ App Approval Required' : ($val->community == 2 ? 'Participate In Communities' : 'View Community'));
-                $response[] = $temp;
-            }
-            return successMsg('Plans list', $response);
-        } catch (\Exception $e) {
-            return errorMsg('Exception => ' . $e->getMessage());
-        }
-    }
-
-    // Dev name : Dishant Gupta
     // This function is used to show all the active communities
     public function communityList(Request $request) {
         try{
