@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use App\Models\UserLike;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use SebastianBergmann\CodeCoverage\Report\Xml\Report;
 use DB;
@@ -72,6 +73,7 @@ class CommunityController extends Controller
                 'lastPage' => $data->lastPage(),
                 'total' => $data->total()
             );
+            Log::channel('community')->info($data);
             return successMsg('Community list', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -133,6 +135,7 @@ class CommunityController extends Controller
                 'lastPage' => $data->lastPage(),
                 'total' => $data->total()
             );
+            Log::channel('community')->info($data);
             return successMsg('Community list', ['data' => $response, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -222,6 +225,8 @@ class CommunityController extends Controller
                         'posted_by' => $val->user->name ?? 'NA',
                         'posted_by_image' => isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null,
                     ];
+                    Log::channel('community')->info($data);
+                    Log::channel('post')->info($posts);
                     return successMsg('Community found', $response);
                 } else return errorMsg('Please follow community first.');
             } else return errorMsg('Community not found.');
@@ -269,7 +274,7 @@ class CommunityController extends Controller
                 $data['message'] = auth()->user()->name . ' was created a new community "' .$request->title . '"';
                 $data['user_id'] = auth()->user()->id;
                 notifyAdmin($data);
-
+                Log::channel('community')->info($community);
                 return successMsg('New community created successfully.');
             }
         } catch (\Exception $e) {
@@ -320,7 +325,7 @@ class CommunityController extends Controller
                                 $communityImage->save();
                             }
                         }
-
+                        Log::channel('community')->info($community);
                         return successMsg('Community updated successfully.');
                     } else return errorMsg('This community is not created by you.');
                 } else return errorMsg('Community not found');
@@ -441,6 +446,7 @@ class CommunityController extends Controller
                             $postImage->save();
                         }
                     }
+                    Log::channel('post')->info($post);
                     return successMsg('New post created successfully.');
                 } else return errorMsg('Please follow community first.');
             }
@@ -491,6 +497,7 @@ class CommunityController extends Controller
                                 $postImage->save();
                             }
                         }
+                        Log::channel('post')->info($post);
                         return successMsg('Post updated successfully.');
                     } else return errorMsg('This post is not created by you');
                 } else return errorMsg('Post not found');
@@ -603,6 +610,7 @@ class CommunityController extends Controller
                     'posted_by_user_name' => $user->user_name,
                     'created_at' => date('d M, Y h:i A', strtotime($post->created_at)),
                 );
+                Log::channel('post')->info($post);
                 return successMsg('Post details', $response);
             } else return errorMsg('Post not found');
         } catch (\Exception $e) {
