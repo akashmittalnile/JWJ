@@ -26,7 +26,9 @@ class SubscriptionController extends Controller
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['monthly_price'] = $val->monthly_price;
+                $temp['monthly_price_id'] = $val->monthly_price_id;
                 $temp['anually_price'] = $val->anually_price;
+                $temp['anually_price_id'] = $val->anually_price_id;
                 $temp['currency'] = $val->currency;
                 $temp['current_plan'] = ($val->monthly_price == 0) ? true : false;
                 $temp['point1'] = $val->entries_per_day . ' Entry Per Day / ' . $val->words . ' Words';

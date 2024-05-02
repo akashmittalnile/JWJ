@@ -130,23 +130,13 @@
         query
     } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 
-    // const firebaseConfig = {
-    //     apiKey: "AIzaSyBopYjZG97AO9Da83d5AzsBXrdlNBFvPqk",
-    //     authDomain: "chatapp-29659.firebaseapp.com",
-    //     projectId: "chatapp-29659",
-    //     storageBucket: "chatapp-29659.appspot.com",
-    //     messagingSenderId: "1010083815791",
-    //     appId: "1:1010083815791:web:e26a047de4420d04a3889a"
-    // };
-
     const firebaseConfig = {
-        apiKey: "AIzaSyBzDieP3KXvTR9Sfp4vcbpb0ScpDcv769s",
-        authDomain: "journeywithjournal-33396.firebaseapp.com",
-        projectId: "journeywithjournal-33396",
-        storageBucket: "journeywithjournal-33396.appspot.com",
-        messagingSenderId: "291423025709",
-        appId: "1:291423025709:web:4bc40453072ace36fd96a4",
-        measurementId: "G-46NHXE74KS"
+        apiKey: "AIzaSyBopYjZG97AO9Da83d5AzsBXrdlNBFvPqk",
+        authDomain: "chatapp-29659.firebaseapp.com",
+        projectId: "chatapp-29659",
+        storageBucket: "chatapp-29659.appspot.com",
+        messagingSenderId: "1010083815791",
+        appId: "1:1010083815791:web:e26a047de4420d04a3889a"
     };
 
     const receiver_id = $("#ajax-chat-url").val();

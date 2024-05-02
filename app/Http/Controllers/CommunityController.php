@@ -265,10 +265,10 @@ class CommunityController extends Controller
                     $data->whereRaw("(`communities`.`name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }
                 if($request->filled('role')){
-                    $data->where('u.role', $request->role)->orderByDesc('communities.id');
+                    $data->where('u.role', $request->role);
                 }
 
-                $data = $data->paginate(config('constant.communityPerPage'));
+                $data = $data->orderByDesc('communities.id')->paginate(config('constant.communityPerPage'));
                 $html = '';
                 foreach($data as $val)
                 {

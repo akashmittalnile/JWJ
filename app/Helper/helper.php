@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
+use App\Models\FirebaseChat;
 use App\Models\Notify;
 use App\Models\User;
 use Illuminate\Support\Facades\File;
@@ -243,5 +244,16 @@ if (!function_exists('notifyUsers')) {
             $notify->message = $data['message'];
             $notify->save();
         }
+    }
+}
+
+// Dev name : Dishant Gupta
+// This function is used to check message alert for users
+if (!function_exists('isAlert')) {
+    function isAlert()
+    {
+        $chat = FirebaseChat::where('unseen_msg_count', '>=', '1')->count();
+        if($chat > 0) return true;
+        return false;
     }
 }

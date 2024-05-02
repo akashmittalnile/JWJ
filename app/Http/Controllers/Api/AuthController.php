@@ -111,8 +111,12 @@ class AuthController extends Controller
                         $user->role = 1;
                         $user->status = 1;
                         $user->updated_at = date('Y-m-d H:i:s');
+                        if(isset($request->fcm_token)){
+                            $user->fcm_token = $request->fcm_token;
+                        }
                         $user->save();
-                        return successMsg('Registered successfully.');
+                        $token = $user->createToken("journey_with_journals")->plainTextToken;
+                        return successMsg('Registered successfully.', ['access_token' => $token]);
                     } else return errorMsg('Email is not verified!');
                 } else return errorMsg('This email is already exist!');
             }   
