@@ -30,7 +30,7 @@ class RevenueController extends Controller
     {
         try {
             $stripe = new \Stripe\StripeClient(env("STRIPE_TEST_KEY"));
-            $plans = $stripe->products->all(['limit' => 3]);
+            $plans = $stripe->products->all(['active' => true]);
             // dd($plans);
             foreach ($plans as $item) {
                 $product_id = $item["id"];

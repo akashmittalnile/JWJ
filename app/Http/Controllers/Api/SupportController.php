@@ -180,4 +180,28 @@ class SupportController extends Controller
             return $e->getMessage();
         }
     }
+
+    // Dev name : Dishant Gupta
+    // This function is used to get a unseen message count
+    public function unseenMsgCount(){
+        try {
+            $count = FirebaseChat::where('user_id', auth()->user()->id)->first();  
+            return successMsg('Count', isset($count->user_unseen_msg_count) ? $count->user_unseen_msg_count : 0);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to seen all messages which is sended by admin
+    public function seenMsg(){
+        try {
+            FirebaseChat::where('user_id', auth()->user()->id)->update([
+                'user_unseen_msg_count' => 0
+            ]);  
+            return successMsg('Message seen');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }

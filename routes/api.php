@@ -103,6 +103,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('chat-record', [SupportController::class, 'chatRecord']);
     Route::post('chat-image', [SupportController::class, 'chatImage']);
+    Route::get('unseen-message-count', [SupportController::class, 'unseenMsgCount']);
+    Route::post('seen-message', [SupportController::class, 'seenMsg']);
 });
 
 Route::get('token-expire', [AuthController::class, 'tokenExpire'])->name('login');
