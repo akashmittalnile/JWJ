@@ -26,7 +26,7 @@
                 <div class="row g-1">
                     <div class="col-md-2">
                         <div class="form-group">
-                            <a href="{{ route('admin.support.download.report') }}" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
+                            <a href="{{ route('admin.support.download.report') }}" id="download-report" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
                         </div>
                     </div>
 
@@ -363,6 +363,7 @@
             let search = $("#searchInput").val();
             let date = $("#selectMonth").val();
             getList($(this).data('page'), search, inquiry, status, date);
+            $("#download-report").attr('href', "{{url('/')}}/admin/support-communication-download-report?search="+search+"&status="+status+"&inquiry="+inquiry+"&date="+date);
         });
         $(document).on('change', "#searchSelect", function() {
             let inquiry = $("#searchSelect").val();
@@ -370,6 +371,7 @@
             let search = $("#searchInput").val();
             let date = $("#selectMonth").val();
             getList($(this).data('page'), search, inquiry, status, date);
+            $("#download-report").attr('href', "{{url('/')}}/admin/support-communication-download-report?search="+search+"&status="+status+"&inquiry="+inquiry+"&date="+date);
         });
         $(document).on('change', "#searchSelect2", function() {
             let inquiry = $("#searchSelect").val();
@@ -377,6 +379,7 @@
             let search = $("#searchInput").val();
             let date = $("#selectMonth").val();
             getList($(this).data('page'), search, inquiry, status, date);
+            $("#download-report").attr('href', "{{url('/')}}/admin/support-communication-download-report?search="+search+"&status="+status+"&inquiry="+inquiry+"&date="+date);
         });
         $(document).on('change', "#selectMonth", function() {
             let inquiry = $("#searchSelect").val();
@@ -384,6 +387,7 @@
             let date = $("#selectMonth").val();
             let search = $("#searchInput").val();
             getList($(this).data('page'), search, inquiry, status, date);
+            $("#download-report").attr('href', "{{url('/')}}/admin/support-communication-download-report?search="+search+"&status="+status+"&inquiry="+inquiry+"&date="+date);
         });
     });
 </script>

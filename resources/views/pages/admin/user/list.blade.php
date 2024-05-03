@@ -141,11 +141,13 @@
             let status = $("#searchSelect").val();
             let search = $(this).val();
             getList($(this).data('page'), search, status);
+            $("#download-report").attr('href', "{{url('/')}}/admin/users-reports?search="+search+"&ustatus="+status);
         });
         $(document).on('change', "#searchSelect", function() {
             let status = $("#searchSelect").val();
             let search = $("#searchInput").val();
             getList($(this).data('page'), search, status);
+            $("#download-report").attr('href', "{{url('/')}}/admin/users-reports?search="+search+"&ustatus="+status);
         });
     })
 </script>

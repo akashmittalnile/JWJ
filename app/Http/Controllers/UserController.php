@@ -200,10 +200,13 @@ class UserController extends Controller
     public function usersDownloadReport(Request $request)
     {
         try {
-            $data = User::where('role', 1)->whereIn('status', [1,2]);
+            $data = User::where('role', 1);
             if($request->filled('search')){
-                $data->where('name', 'like', '%' . $request->search . '%')->orWhere('email', 'like', '%'. $request->search .'%')->orWhere('mobile', 'like', '%'. $request->search .'%');
+                $data->whereRaw("(`name` LIKE '%" . $request->search . "%' or `email` LIKE '%" . $request->search . "%' or `mobile` LIKE '%" . $request->search . "%')");
             }
+            if($request->filled('ustatus')){
+                $data->where('status', $request->ustatus);
+            } else $data->whereIn('status', [1,2]);
             $data = $data->orderByDesc('id')->get();
             $this->downloadUserReportFunction($data);
         } catch (\Exception $e) {
