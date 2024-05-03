@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Community;
+use App\Models\Journal;
 use App\Models\MoodMaster;
 use App\Models\Notify;
 use App\Models\Routine;
@@ -99,8 +101,8 @@ class UserController extends Controller
         try {
             $id = encrypt_decrypt('decrypt', $id);
             $user = User::where('id', $id)->first();
-            $plan = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name')->first();
-            $list = UserPlan::join('payment_details as pd', 'pd.user_payment_method_id', '=', 'user_plans.payment_id')->join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('pd.amount', 'plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
+            $plan = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name')->first();
+            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
             $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
             $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
             foreach($totalMood as $val){
@@ -113,7 +115,10 @@ class UserController extends Controller
             if(count($totalMood) > 0)
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
-            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood'));
+            $totalCommunity = Community::where('created_by', $id)->count();
+            $totalRoutine = Routine::where('created_by', $id)->count();
+            $totalJournal = Journal::where('created_by', $id)->count();
+            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood', 'totalCommunity', 'totalRoutine', 'totalJournal'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

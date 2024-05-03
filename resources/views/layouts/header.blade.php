@@ -22,16 +22,22 @@
                         </div>
                         <div class="notification-body">
                             @forelse(getNotification() as $val)
-                            <div class="notification-item">
-                                <div class="notification-item-icon">
-                                    <i class="la la-bell"></i>
+                            @if($val->type == 'COMMUNITY')
+                            <a href="{{ route('admin.community-management.approval') }}">
+                            @else
+                            <a href="javascript:void(0)">
+                            @endif
+                                <div class="notification-item">
+                                    <div class="notification-item-icon">
+                                        <i class="la la-bell"></i>
+                                    </div>
+                                    <div class="notification-item-text">
+                                        <h2>{{ $val->title ?? "NA" }}</h2>
+                                        <p style="color: #1079c0;;">{{ $val->message ?? "NA" }}</p>
+                                        <p><span><i class="fas fa-clock"></i>{{ date('d M, Y H:i A', strtotime($val->created_at)) }}</span></p>
+                                    </div>
                                 </div>
-                                <div class="notification-item-text">
-                                    <h2>{{ $val->title ?? "NA" }}</h2>
-                                    <p style="color: #1079c0;;">{{ $val->message ?? "NA" }}</p>
-                                    <p><span><i class="fas fa-clock"></i>{{ date('d M, Y H:i A', strtotime($val->created_at)) }}</span></p>
-                                </div>
-                            </div>
+                            </a>
                             @empty
                             <div class="d-flex justify-content-center align-items-center flex-column">
                                 <div>

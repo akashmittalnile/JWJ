@@ -19,30 +19,30 @@ class ChatController extends Controller
                 if($request->filled('search')){
                     $data->whereRaw("(`name` LIKE '%" . $request->search . "%') or `email` LIKE '%" . $request->search . "%'");
                 }
-                $data = $data->select('users.id', 'users.name', 'users.email', 'users.profile', 'fc.updated_at', 'fc.unseen_msg_count', 'fc.last_msg')->orderByDesc('fc.updated_at')->distinct('users.id')->get();
+                $data = $data->select('users.id', 'users.name', 'users.email', 'users.profile', 'fc.updated_at', 'fc.unseen_msg_count', 'fc.last_msg', 'last_msg_datetime')->orderByDesc('fc.last_msg_datetime')->distinct('users.id')->get();
                 // dd($data);
                 $html = '';
                 foreach($data as $val){
-                    if(isset($val->updated_at)){
-                        if(date('H:i') == date('H:i', strtotime($val->updated_at)))
+                    if(isset($val->last_msg_datetime)){
+                        if(date('H:i') == date('H:i', strtotime($val->last_msg_datetime)))
                             $time = 'Just Now';
-                        elseif(date('Y-m-d') == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('h:i A', strtotime($val->updated_at));
-                        elseif(date('Y-m-d',strtotime("-1 days")) == date('Y-m-d', strtotime($val->updated_at)))
+                        elseif(date('Y-m-d') == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('h:i A', strtotime($val->last_msg_datetime));
+                        elseif(date('Y-m-d',strtotime("-1 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
                             $time = 'Yesterday';
-                        elseif(date('Y-m-d',strtotime("-2 days")) == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('D', strtotime($val->updated_at));
-                        elseif(date('Y-m-d',strtotime("-3 days")) == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('D', strtotime($val->updated_at));
-                        elseif(date('Y-m-d',strtotime("-4 days")) == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('D', strtotime($val->updated_at));
-                        elseif(date('Y-m-d',strtotime("-5 days")) == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('D', strtotime($val->updated_at));
-                        elseif(date('Y-m-d',strtotime("-6 days")) == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('D', strtotime($val->updated_at));
-                        elseif(date('Y-m-d',strtotime("-7 days")) == date('Y-m-d', strtotime($val->updated_at)))
-                            $time = date('D', strtotime($val->updated_at));
-                        else $time = date('d M, Y', strtotime($val->updated_at));
+                        elseif(date('Y-m-d',strtotime("-2 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('D', strtotime($val->last_msg_datetime));
+                        elseif(date('Y-m-d',strtotime("-3 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('D', strtotime($val->last_msg_datetime));
+                        elseif(date('Y-m-d',strtotime("-4 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('D', strtotime($val->last_msg_datetime));
+                        elseif(date('Y-m-d',strtotime("-5 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('D', strtotime($val->last_msg_datetime));
+                        elseif(date('Y-m-d',strtotime("-6 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('D', strtotime($val->last_msg_datetime));
+                        elseif(date('Y-m-d',strtotime("-7 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
+                            $time = date('D', strtotime($val->last_msg_datetime));
+                        else $time = date('d M, Y', strtotime($val->last_msg_datetime));
                     } else $time = '';
                     
                     $lastMsg = $val->last_msg ?? 'No messages';
@@ -125,13 +125,16 @@ class ChatController extends Controller
                 $fire = FirebaseChat::where('user_id', $request->user_id)->first();
                 if(isset($fire->id)){
                     $fire->last_msg = $request->msg;
-                    $fire->updated_at = date('Y-m-d H:i:s');
+                    $fire->user_unseen_msg_count = $fire->user_unseen_msg_count+1;
+                    $fire->last_msg_datetime = date('Y-m-d H:i:s');
                     $fire->save();
                 } else {
                     $fire = new FirebaseChat;
                     $fire->user_id = $request->user_id;
                     $fire->last_msg = $request->msg;
-                    $fire->updated_at = date('Y-m-d H:i:s');
+                    $fire->user_unseen_msg_count = $fire->user_unseen_msg_count+1;
+                    $fire->last_msg_datetime = date('Y-m-d H:i:s');
+                    $fire->status = 1;
                     $fire->save();
                 }
                 return successMsg('Record updated successfully');
