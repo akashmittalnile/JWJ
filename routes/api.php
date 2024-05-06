@@ -67,6 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('my-community-list', [CommunityController::class, 'myCommunityList']);
     Route::get('community/{id}', [CommunityController::class, 'communityDetails']);
     Route::post('follow-unfollow', [CommunityController::class, 'followUnfollow']);
+    Route::get('followed-community', [CommunityController::class, 'followedCommunityList']);
     Route::post('create-community', [CommunityController::class, 'createCommunity']);
     Route::post('edit-community', [CommunityController::class, 'editCommunity']);
     Route::delete('delete-community', [CommunityController::class, 'deleteCommunity']);

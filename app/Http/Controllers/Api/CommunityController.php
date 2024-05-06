@@ -73,8 +73,9 @@ class CommunityController extends Controller
                 'lastPage' => $data->lastPage(),
                 'total' => $data->total()
             );
+            $totalFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->distinct('community_id')->count();
             Log::channel('community')->info($data);
-            return successMsg('Community list', ['data' => $response, 'pagination' => $pagination]);
+            return successMsg('Community list', ['data' => $response, 'totalFollow' => $totalFollow ?? 0, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -135,8 +136,68 @@ class CommunityController extends Controller
                 'lastPage' => $data->lastPage(),
                 'total' => $data->total()
             );
+            $totalFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->distinct('community_id')->count();
             Log::channel('community')->info($data);
-            return successMsg('Community list', ['data' => $response, 'pagination' => $pagination]);
+            return successMsg('Community list', ['data' => $response, 'totalFollow' => $totalFollow ?? 0, 'pagination' => $pagination]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to show all my followed communities 
+    public function followedCommunityList(Request $request) {
+        try{
+            $data = UserFollowedCommunity::join('communities', 'communities.id', '=', 'user_followed_community.community_id')->where('user_followed_community.userid', auth()->user()->id);
+            if($request->filled('search')){
+                $data->where('communities.name', 'like', '%' . $request->search . '%');
+            }
+            $data = $data->select('communities.*')->orderByDesc('user_followed_community.id')->paginate(config('constant.apiPaginatePerPage'));
+            $response = [];
+            foreach($data as $val){
+                $followCount = UserFollowedCommunity::where('community_id', $val->id)->count();
+                $follow = UserFollowedCommunity::where('community_id', $val->id)->orderByDesc('id')->limit(3)->get();
+                $memberImage = array();
+                foreach($follow as $items){
+                    $followedUser = User::where('id', $items->userid)->first();
+                    array_push($memberImage, isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg'));
+                }
+                $imgs = CommunityImage::where('community_id', $val->id)->get();
+                $images = array();
+                foreach($imgs as $item){
+                    $tem['id'] = $item->id;
+                    $tem['image'] = isset($item->name) ? assets("uploads/community/".$item->name) : null;
+                    $images[] = $tem;
+                }
+                $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
+                $plan = Plan::where('id', $val->plan_id)->first();
+                $post = Post::where('community_id', $val->id)->count();
+                $temp['id'] = $val->id;
+                $temp['name'] = $val->name;
+                $temp['description'] = $val->description;
+                $temp['status'] = $val->status;
+                $temp['status_name'] = $status_name;
+                $temp['image'] = $images;
+                $temp['follow'] = true;
+                $temp['member_follow_count'] = $followCount ?? 0;
+                $temp['post_count'] = $post ?? 0;
+                $temp['posted_by'] = $val->user->name ?? 'NA';
+                $temp['posted_by_image'] =  isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null;
+                $temp['member_image'] = $memberImage;
+                $temp['plan_name'] = $plan->plan_name ?? null;
+                $temp['plan_monthly_price'] = $plan->monthly_price ?? null;
+                $temp['plan_anually_price'] = $plan->anually_price ?? null;
+                $temp['plan_price_currency'] = $plan->currency ?? null;
+                $response[] = $temp;
+            }
+            $pagination = array(
+                'currentPage' => $data->currentPage(),
+                'lastPage' => $data->lastPage(),
+                'total' => $data->total()
+            );
+            $totalFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->distinct('community_id')->count();
+            Log::channel('community')->info($data);
+            return successMsg('Community list', ['data' => $response, 'totalFollow' => $totalFollow ?? 0, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
