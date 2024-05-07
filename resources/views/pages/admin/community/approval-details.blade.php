@@ -87,7 +87,7 @@
                                             <div class="managecommunity-group-action">
                                                 <a class="approvecommunity-btn" href="javascript:void(0)">Approve Community Request</a>
                                                 @if($data->status!=3)
-                                                <a class="rejectcommunity-btn" data-bs-toggle="modal" data-bs-target="#rejectcommunityrequest">Reject Community Request</a>
+                                                <a style="cursor: pointer;" class="rejectcommunity-btn" data-bs-toggle="modal" data-bs-target="#rejectcommunityrequest">Reject Community Request</a>
                                                 @endif
                                             </div>
                                         </div>
@@ -121,7 +121,7 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <textarea type="text" class="form-control" name="reason" placeholder="Type Your Reply Message Here.."></textarea>
+                                    <textarea type="text" class="form-control" name="reason" placeholder="Enter reject reason"></textarea>
                                 </div>
                                 <input type="hidden" name="id" value="{{ encrypt_decrypt('encrypt', $data->id) }}">
                                 <input type="hidden" name="status" value="3">
@@ -143,6 +143,10 @@
 
 @push('js')
 <script>
+    $('#rejectcommunityrequest').on('hidden.bs.modal', function(e) {
+        $(this).find('form').trigger('reset');
+        $(".form-control").removeClass("is-invalid");
+    });
     $('.communitycarousel1').owlCarousel({
         loop: true,
         margin: 10,

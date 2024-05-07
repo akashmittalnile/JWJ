@@ -120,7 +120,7 @@
                         }
                     } else {
                         let html = `<tr class="text-center">
-                                        <td colspan="5"> No record found</td>
+                                        <td colspan="8"> No record found</td>
                                     </tr>`;
                         $("#appendData").html(html);
                         $("#appendPagination").html('');

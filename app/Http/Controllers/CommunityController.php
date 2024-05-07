@@ -232,7 +232,8 @@ class CommunityController extends Controller
                 $notify->title = ($request->status == 1) ? 'Community Approved' : 'Community Rejected';
                 $notify->message = ($request->status == 1) ? 'Congratulations! "' . $community->name .'" community is approved by our administrator' : ($request->reason ?? null);
                 $notify->save();
-                return successMsg('Status changed successfully');
+                $msg = ($request->status == 1) ? 'Community approved' : 'Community rejected';
+                return successMsg("$msg successfully");
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

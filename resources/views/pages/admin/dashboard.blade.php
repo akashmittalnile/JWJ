@@ -111,7 +111,7 @@
                                     <div class="row g-1">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <input type="date" name="" class="form-control">
+                                                <input readonly type="text" placeholder="MM-DD-YYYY" id="date" name="" class="form-control">
                                             </div>
                                         </div>
                                         <div class="col-md-3">
@@ -245,6 +245,18 @@
 
 @push('js')
 <script type="text/javascript">
+    $("#date").daterangepicker({
+        singleDatePicker: true,
+        autoUpdateInput: false,
+        showDropdowns: true,
+        autoApply: true,
+        locale: {
+            format: 'MM-DD-YYYY'
+        }
+    }).on('apply.daterangepicker', function(ev, picker) {
+        $(this).val(picker.startDate.format('MM-DD-YYYY'));
+    });
+
     $(document).ready(function() {
         const updateDashboardReviewsCarousel = (data) => {
             const carouselContainer = $('#review-carousel');
