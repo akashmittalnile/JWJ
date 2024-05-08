@@ -669,6 +669,7 @@ class CommunityController extends Controller
                     'post_report' => isset($postReport->id) ? $postReportArr : null,
                     'posted_by_name' => $user->name,
                     'posted_by_user_name' => $user->user_name,
+                    'posted_by_profile' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                     'created_at' => date('d M, Y h:i A', strtotime($post->created_at)),
                 );
                 Log::channel('post')->info($post);

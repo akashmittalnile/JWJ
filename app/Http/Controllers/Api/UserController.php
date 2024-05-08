@@ -170,7 +170,17 @@ class UserController extends Controller
                 $routineArr[] = $tempRoutine;
             }
 
-            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr]);
+            $submitRating = Rating::where('userid', auth()->user()->id)->first();
+            $isSubmit = isset($submitRating->id) ? true : false;
+            $reviewDetails = array();
+            if(isset($submitRating->id)){
+                $tempRate['id'] = $submitRating->id;
+                $tempRate['rating'] = $submitRating->rating ?? 0;
+                $tempRate['description'] = $submitRating->description ?? null;
+                $tempRate['review_on'] = date('d M, Y', strtotime($submitRating->created_at));
+                $reviewDetails[] = $tempRate;
+            }
+            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
             return successMsg('Home', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
