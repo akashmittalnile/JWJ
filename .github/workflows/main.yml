@@ -1,7 +1,8 @@
-'on':
+on:
   push:
     branches:
       - main
+
 name: Deploy website on push
 jobs:
   web-deploy:
@@ -17,10 +18,13 @@ jobs:
       - name: Add env
         run: php -r "file_exists('.env') || copy('.env.example', '.env');"
 
+      - name: Optimize app
+        run: php artisan optimize:clear
+
       - name: Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.0.0
         with:
           server: 166.62.30.116
           username: jwj@nileprojects.in
           password: 'B]4GGm,i{MRH'
-          server-dir: /public_html/journeywithjournals
+          server-dir: /public_html/journeywithjournals/
