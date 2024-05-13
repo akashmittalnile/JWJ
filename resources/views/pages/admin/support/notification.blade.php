@@ -17,7 +17,7 @@
             </div>
             <div class="col-md-9">
                 <div class="form-group">
-                    <a class="btn-bl" data-bs-toggle="modal" data-bs-target="#CreateNotification">Push New App Notifcation</a>
+                    <a href="javascript:void(0)" class="btn-bl" data-bs-toggle="modal" data-bs-target="#CreateNotification">Push New App Notifcation</a>
                 </div>
             </div>
         </div>

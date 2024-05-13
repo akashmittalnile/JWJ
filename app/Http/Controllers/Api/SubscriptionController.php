@@ -57,8 +57,8 @@ class SubscriptionController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                Stripe::setApiKey(env("STRIPE_TEST_KEY"));
-                $stripe = new \Stripe\StripeClient(env("STRIPE_TEST_KEY"));
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
                 $plan = Plan::where('id', $request->plan_id)->first();
                 if(isset($plan->id)){
@@ -77,7 +77,7 @@ class SubscriptionController extends Controller
                         ]);
                     }
                     if ($customer && $request->price_id) {
-                        $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                        
                         $subscription =  $stripe->subscriptions->create([
                             'customer' => $customer->id,
                             'items' => [

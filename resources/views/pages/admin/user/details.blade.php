@@ -115,7 +115,7 @@
                             <div class="overview-card-body" style="padding: 1rem;">
                                 <div class="overview-content">
                                     <div class="overview-content-text">
-                                        <p>Total Communitys</p>
+                                        <p>Total Communities</p>
                                         <h2>{{ $totalCommunity ?? 0 }}</h2>
                                     </div>
                                     <div class="overview-content-icon">

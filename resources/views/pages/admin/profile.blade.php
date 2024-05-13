@@ -105,7 +105,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <h4>Upload Profile</h4>
+                                        <h4>Profile Image</h4>
                                         <input type="file" class="file-form-control" accept="image/png, image/jpg, image/jpeg" name="file">
                                     </div>
                                 </div>
