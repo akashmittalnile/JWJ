@@ -91,7 +91,7 @@ class CommunityController extends Controller
             }
             if($request->filled('status')){
                 $data->where('communities.status', $request->status);
-            }
+            }else $data->where('communities.status', 1);
             $data = $data->orderByDesc('communities.id')->paginate(config('constant.apiPaginatePerPage'));
             $response = [];
             foreach($data as $val){
@@ -117,6 +117,7 @@ class CommunityController extends Controller
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
+                $temp['reject_reason'] = $val->reject_reason ?? null;
                 $temp['status_name'] = $status_name;
                 $temp['image'] = $images;
                 $temp['follow'] = isset($ufc->id) ? true : false;

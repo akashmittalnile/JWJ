@@ -162,7 +162,7 @@ class AuthController extends Controller
                             return successMsg('Logged In Successfully.', $response);
                         } else  return errorMsg('Invalid Email or Password!');  
                     } else return errorMsg('Your account was temporarily inactive by administrator!');
-                } else return errorMsg('Invalid Email or Password!');
+                } else return errorMsg('This account is not registered with us!');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

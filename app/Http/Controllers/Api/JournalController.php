@@ -67,6 +67,7 @@ class JournalController extends Controller
             $journal = Journal::where('journals.created_by', auth()->user()->id);
             if($request->filled('title')) $journal->where('journals.title', 'LIKE', '%'.$request->title.'%');
             if($request->filled('status')) $journal->where('journals.status', $request->status);
+            else $journal->where('journals.status', 1);
             if($request->filled('mood_id')) $journal->where('journals.mood_id', $request->mood_id);
             if($request->filled('date')) $journal->whereDate('journals.created_at', $request->date);
             if($request->filled('search_criteria_id')) $journal->whereIn('jsc.search_id', $request->search_criteria_id);
@@ -188,7 +189,7 @@ class JournalController extends Controller
                 'content' => 'required',
                 'mood_id' => 'required',
                 'file' => 'required|array',
-                'criteria' => 'required|array',
+                'criteria' => 'array',
                 'new_criteria' => 'array',
             ]);
             if ($validator->fails()) {
@@ -215,7 +216,9 @@ class JournalController extends Controller
                     }
                 }
                 $criteriaArray = $request->criteria;
-                $criteriaArray = array_merge($criteriaArray, $newCriteriaArr);
+                if(isset($request->criteria) && count($request->criteria))
+                    $criteriaArray = array_merge($criteriaArray, $newCriteriaArr);
+                else $criteriaArray = $newCriteriaArr;
 
                 $journal = new Journal;
                 $journal->title = $request->title;
@@ -236,7 +239,7 @@ class JournalController extends Controller
                     }
                 }
 
-                if(count($request->criteria)){
+                if(isset($criteriaArray) && count($criteriaArray)){
                     foreach($criteriaArray as $value){
                         $journalCriteria = new JournalSearchCriteria;
                         $journalCriteria->journal_id = $journal->id;

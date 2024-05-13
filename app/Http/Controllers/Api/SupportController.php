@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\FirebaseChat;
 use App\Models\HelpSupport;
 use App\Models\Notify;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -66,7 +67,10 @@ class SupportController extends Controller
     public function queryList(Request $request) {
         try{
             $response = array();
-            $list = HelpSupport::where('user_id', auth()->user()->id)->orderByDesc('id')->paginate(config('constant.apiPaginatePerPage'));
+            $list = HelpSupport::where('user_id', auth()->user()->id);
+            if($request->filled('date')) $list->whereDate('created_at', $request->date);
+            $list = $list->orderByDesc('id')->paginate(config('constant.apiPaginatePerPage'));
+            $admin = User::where('role', 2)->first();
             foreach($list as $key => $val){
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
@@ -75,6 +79,9 @@ class SupportController extends Controller
                 $temp['contact'] = $val->contact;
                 $temp['message'] = $val->message;
                 $temp['admin_reply'] = $val->past_response;
+                $temp['admin_name'] = $admin->name;
+                $temp['admin_user_name'] = $admin->user_name;
+                $temp['admin_profile'] = isset($admin->profile) ? assets('uploads/profile/'.$admin->profile) : null;
                 $temp['type_name'] = config("constant.inquiry_type")[$val->inquiry_type];
                 $temp['type'] = $val->inquiry_type;
                 $temp['status'] = $val->status;

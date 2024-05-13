@@ -230,7 +230,7 @@ class CommunityController extends Controller
                 $notify->receiver_id = $community->user->id ?? null;
                 $notify->type = 'COMMUNITY';
                 $notify->title = ($request->status == 1) ? 'Community Approved' : 'Community Rejected';
-                $notify->message = ($request->status == 1) ? 'Congratulations! "' . $community->name .'" community is approved by our administrator' : ($request->reason ?? null);
+                $notify->message = ($request->status == 1) ? 'Congratulations, Your "' . $community->name .'" community is approved' : 'Sorry, Your "' . $community->name .'"  community is rejected. Please contact administrator';
                 $notify->save();
                 $msg = ($request->status == 1) ? 'Community approved' : 'Community rejected';
                 return successMsg("$msg successfully");

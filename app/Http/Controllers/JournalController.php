@@ -53,13 +53,13 @@ class JournalController extends Controller
                     }
 
                     $checked = ($val->status==1) ? 'checked' : '';
-                    
+                    $journalImg = isset($image->name) ? assets("uploads/journal/".$image->name) : assets("assets/images/no-image.jpg");
                     $html .= "<div class='col-md-6'>
                     <div class='jwj-community-card'>
                         <div class='jwjcard-head'>
                             <div class='jwjcard-group-card'>
                                 <div class='jwjcard-group-avtar'>
-                                    <img src='".assets("uploads/journal/".$image->name)."'>
+                                    <img src='".$journalImg."'>
                                 </div>
                                 <div class='jwjcard-group-text'>
                                     <h4 class='text-capitalize'>".$val->title."</h4>
