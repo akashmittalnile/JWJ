@@ -1,0 +1,29 @@
+on:
+  push:
+    branches:
+      - main
+
+name: Deploy website on push
+jobs:
+  web-deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get latest code
+        uses: actions/checkout@v2.3.2
+
+      - name: Install dependencies
+        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+
+      - name: Add env
+        run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+      - name: Optimize app
+        run: php artisan optimize:clear
+
+      - name: Sync files
+        uses: SamKirkland/FTP-Deploy-Action@4.0.0
+        with:
+          server: 166.62.30.116
+          username: jwj@nileprojects.in
+          password: 'B]4GGm,i{MRH'
