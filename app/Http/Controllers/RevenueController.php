@@ -29,7 +29,7 @@ class RevenueController extends Controller
     public function subscriptionPlan()
     {
         try {
-            $stripe = new \Stripe\StripeClient(env("STRIPE_TEST_KEY"));
+            $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
             $plans = $stripe->products->all(['active' => true]);
             // dd($plans);
             foreach ($plans as $item) {
@@ -49,6 +49,7 @@ class RevenueController extends Controller
                         $plan->currency = $val->currency;
                     }
                     $plan->name = $item->name;
+                    $plan->image = $item->description ?? null;
                     $plan->status = 1;
                     $plan->save();
                 } else {

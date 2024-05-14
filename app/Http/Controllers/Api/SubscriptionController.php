@@ -44,6 +44,85 @@ class SubscriptionController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to cancel a plan
+    public function cancelPlan(Request $request)
+    {
+        try {
+            $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+            Stripe::setApiKey(env("STRIPE_SECRET"));
+            $userPlanExists = UserPlan::where("user_id", auth()->user()->id)->where("status", 1)->first();
+            if (isset($userPlanExists->id)) {
+                $userPlanExists->status = 2;
+                $userPlanExists->save();
+                $user = User::where('id', auth()->user()->id)->first();
+                $user->subscription_id = null;
+                $user->plan_id = planData(true);
+                $user->save();
+                $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                return successMsg('Subscription cancelled successfully.');
+            } else return errorMsg('Subscription not found!');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of save card lists
+    public function cardList(Request $request)
+    {
+        try {
+            $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+            $user = User::where("id", auth()->user()->id)->where("status", 1)->first();
+            if(isset($user->customer_id)){
+                $list = $stripe->customers->allPaymentMethods($user->customer_id, []);
+                if (count($list) > 0) {
+                    $response = array();
+                    foreach($list as $val){
+                        $temp['brand'] = $val['card']['brand'] ?? null;
+                        $temp['exp_month'] = $val['card']['exp_month'] ?? null;
+                        $temp['exp_year'] = $val['card']['exp_year'] ?? null;
+                        $temp['funding'] = $val['card']['funding'] ?? null;
+                        $temp['last4'] = $val['card']['last4'] ?? null;
+                        $temp['type'] = $val['type'] ?? null;
+                        $response[] = $temp;
+                    }
+                    return successMsg('Card list', $response);
+                } else return errorMsg('Card not found!');
+            } else return errorMsg('Card not found!');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of transaction lists
+    public function transactionList(Request $request)
+    {
+        try {
+            $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+            $user = User::where("id", auth()->user()->id)->where("status", 1)->first();
+            if(isset($user->customer_id)){
+                $invoice = $stripe->invoices->all(['customer'=> $user->customer_id]);
+                if (count($invoice) > 0) {
+                    $response = array();
+                    foreach($invoice as $val){
+                        $temp['total'] = isset($val['total']) ? number_format((float)($val['total']/100), 2, '.', '') : null;
+                        $temp['currency'] = $val['currency'] ?? null;
+                        $temp['paid'] = $val['paid'] ?? null;
+                        $temp['invoice_number'] = $val['number'] ?? null;
+                        $temp['date'] = date('d M, Y h:iA', $val['created']);
+                        $temp['invoice_download_url'] = $val['hosted_invoice_url'] ?? null;
+                        $response[] = $temp;
+                    }
+                    return successMsg('Transaction list', $response);
+                } else return errorMsg('Transaction not found!');
+            } else return errorMsg('Transaction not found!');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to purchase a plan
     public function buyPlan(Request $request)
     {
@@ -77,7 +156,6 @@ class SubscriptionController extends Controller
                         ]);
                     }
                     if ($customer && $request->price_id) {
-                        
                         $subscription =  $stripe->subscriptions->create([
                             'customer' => $customer->id,
                             'items' => [

@@ -110,6 +110,7 @@ class AuthController extends Controller
                         $user->password = Hash::make($request->password);
                         $user->role = 1;
                         $user->status = 1;
+                        $user->plan_id = planData(true);
                         $user->updated_at = date('Y-m-d H:i:s');
                         if(isset($request->fcm_token)){
                             $user->fcm_token = $request->fcm_token;
