@@ -13,12 +13,115 @@ class RevenueController extends Controller
 {
     // Dev name : Dishant Gupta
     // This function is used to getting the list of stripe plans. Which is created in stripe account... product catalog
-    public function revenueManagement()
+    public function revenueManagement(Request $request)
     {
         try {
             $paymentReceived = UserPlan::sum('price');
-            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id')->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->get();
-            return view('pages.admin.revenue.revenue-management')->with(compact('list', 'paymentReceived'));
+            $plan = Plan::where('status', 1)->get();
+            if($request->ajax()) {
+                $data = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id');
+                if($request->filled('planDate')) $data->whereDate('user_plans.activated_date', $request->planDate);
+                if($request->filled('status')) $data->where('user_plans.plan_id', $request->status);
+                if($request->filled('search')){
+                    $data->whereRaw("(`u`.`user_name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
+                }
+                $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->orderByDesc('user_plans.id')->paginate(config('constant.paginatePerPage'));
+
+                $html = '';
+                foreach($data as $key => $val) {
+                    $planImg = isset($val->image) ? assets('assets/images/'.$val->image) : assets('assets/images/no-image.jpg');
+                    $timePeriod = $val->plan_timeperiod == 1 ? 'Monthly' : 'Yearly';
+
+                    $html .= "<tr>
+                        <td>
+                            <div class='sno'>". $key+1 ."</div>
+                        </td>
+                        <td>
+                            $val->user_name
+                        </td>
+                        <td>
+                            <img src='$planImg' height='24'>
+                            $val->name
+                        </td>
+                        <td>
+                            $$val->paid_amount
+                        </td>
+                        <td>
+                            $timePeriod
+                        </td>
+                        <td>
+                            ".date('d M, Y', strtotime($val->activated_date))."
+                        </td>
+                        <td>
+                            ".date('d M, Y', strtotime($val->renewal_date))."
+                        </td>
+                        <td>
+                            $val->transaction_id
+                        </td>
+                    </tr>";
+                }
+                if($data->total() < 1) return errorMsg("No revenue found");
+                $response = array(
+                    'currentPage' => $data->currentPage(),
+                    'lastPage' => $data->lastPage(),
+                    'total' => $data->total(),
+                    'html' => $html,
+                );
+                return successMsg('Revenue list', $response);
+            }
+
+            return view('pages.admin.revenue.revenue-management')->with(compact('paymentReceived', 'plan'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to download a revenue report
+    public function revenueDownloadReport(Request $request)
+    {
+        try {
+            $data = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id');
+            if($request->filled('planDate')) $data->whereDate('user_plans.activated_date', $request->planDate);
+            if($request->filled('status')) $data->where('user_plans.plan_id', $request->status);
+            if($request->filled('search')){
+                $data->whereRaw("(`u`.`user_name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
+            }
+            $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->orderByDesc('user_plans.id')->get();
+            $this->downloadRevenueReportFunction($data);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to download the csv file of journey with journals revenue report
+    public function downloadRevenueReportFunction($data)
+    {
+        try {
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="Users Revenue List "' . time() . '.csv');
+            $output = fopen("php://output", "w");
+
+            fputcsv($output, array('S.No.', 'User Name', 'Subscription Plan', 'Amount Paid', 'Billing Type', 'Plan Activate On', 'Amount Received On', 'Transaction ID'));
+
+            if (count($data) > 0) {
+                foreach ($data as $key => $row) {
+
+                    $final = [
+                        $key + 1,
+                        $row->user_name,
+                        $row->name,
+                        $row->paid_amount,
+                        $row->plan_timeperiod == 1 ? 'Monthly' : 'Yearly',
+                        date('d M, Y', strtotime($row->activated_date)),
+                        date('d M, Y', strtotime($row->renewal_date)),
+                        $row->transaction_id
+                    ];
+
+                    fputcsv($output, $final);
+                }
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

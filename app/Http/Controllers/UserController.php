@@ -196,7 +196,7 @@ class UserController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to show user details page
+    // This function is used to download a users report
     public function usersDownloadReport(Request $request)
     {
         try {

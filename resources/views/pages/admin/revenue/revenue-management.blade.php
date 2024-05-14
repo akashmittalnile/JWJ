@@ -31,38 +31,31 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <input type="date" name="" class="form-control">
+                            <a href="{{ route('admin.revenue-management.report') }}" id="download-report" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
                         </div>
                     </div>
                     <div class="col-md-2">
-                        <!-- <div class="form-group">
-                            <a href="javascript:void(0)" class="btn-bl"><img src="{{ assets('assets/images/download.svg') }}"> Download report</a>
-                        </div> -->
+                        <div class="form-group">
+                            <input type="date" name="" id="selectDate" class="form-control">
+                        </div>
                     </div>
-                    <div class="col-md-1">
-                        <!-- <div class="form-group">
-                            <select class="form-control">
-                                <option>Show All</option>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <select class="form-control" name="subscription" id="selectStatus">
+                                <option value="">Select Subscription Plan</option>
+                                @foreach($plan as $val)
+                                <option value="{{ $val->id }}">{{ $val->name }}</option>
+                                @endforeach
                             </select>
-                        </div> -->
-                    </div>
-                    <div class="col-md-1">
-                        <!-- <div class="form-group">
-                            <select class="form-control">
-                                <option>Choose Plan</option>
-                                <option>Plan A</option>
-                                <option>Plan B</option>
-                                <option>Plan C</option>
-                            </select>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="col-md-3">
-                        <!-- <div class="form-group">
+                        <div class="form-group">
                             <div class="search-form-group">
-                                <input type="text" name="" class="form-control" placeholder="Search by name, amount & transaction ID">
+                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by name, amount & transaction ID">
                                 <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
                             </div>
-                        </div> -->
+                        </div>
                     </div>
 
                 </div>
@@ -82,50 +75,20 @@
                                             <th>Subscription Plan</th>
                                             <th>Amount Paid</th>
                                             <th>Billing Type</th>
-                                            <th>Billing Due Date</th>
+                                            <th>Plan Activate On</th>
                                             <th>Amount Recieved On</th>
                                             <th>Transaction ID</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @forelse($list as $key => $val)
-                                        <tr>
-                                            <td>
-                                                <div class="sno">{{ $key+1 }}</div>
-                                            </td>
-                                            <td>
-                                                {{ $val->user_name }}
-                                            </td>
-                                            <td>
-                                                <img src="{{ assets('assets/images/'.$val->image) }}" height="24">
-                                                {{ $val->name }}
-                                            </td>
-                                            <td>
-                                                ${{ number_format((float)$val->paid_amount, 2, '.', '') }}
-                                            </td>
-                                            <td>
-                                                {{ $val->plan_timeperiod == 1 ? 'Monthly' : 'Yearly' }}
-                                            </td>
-                                            <td>
-                                                {{ date('d M, Y', strtotime($val->activated_date)) }}
-                                            </td>
-                                            <td>
-                                                {{ date('d M, Y', strtotime($val->renewal_date)) }}
-                                            </td>
-                                            <td>
-                                                {{ $val->transaction_id ?? 'NA' }}
-                                            </td>
-                                        </tr>
-                                        @empty
-                                        <tr class="text-center">
-                                            <td colspan="8">No record found</td>
-                                        </tr>
-                                        @endforelse
+                                    <tbody id="appendData">
+                                        
                                     </tbody>
                                 </table>
                             </div>
                             <div class="jwj-table-pagination">
-                                
+                                <ul class="jwj-pagination" id="appendPagination">
+
+                                </ul>
                             </div>
                         </div>
                     </div>
@@ -135,3 +98,78 @@
     </div>
 </div>
 @endsection
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        const getList = (page, search = null, status = null, planDate = null) => {
+            $.ajax({
+                type: 'get',
+                url: "{{ route('admin.revenue-management.list') }}",
+                data: {
+                    page, search, status, planDate
+                },
+                dataType: 'json',
+                success: function(result) {
+                    if (result.status) {
+                        let userData = result.data.html.data;
+                        let html = result.data.html;
+                        $("#appendData").html(result.data.html);
+                        $("#appendPagination").html('');
+                        if (result.data.lastPage != 1) {
+                            let paginate = `<li class="${result.data.currentPage==1 ? 'disabled' : ''}" id="example_previous">
+                                    <a href="javascript:void(0)" data-page="${result.data.currentPage-1}" aria-controls="example" data-dt-idx="0" tabindex="0" class="page-link">Previous</a>
+                                </li>`;
+                            for (let i = 1; i <= result.data.lastPage; i++) {
+                                paginate += `<li class="${result.data.currentPage==i ? 'active' : ''}">
+                                        <a href="javascript:void(0)" data-page="${i}" class="page-link">${i}</a>
+                                    </li>`;
+                            }
+                            paginate += `<li class="${result.data.currentPage==result.data.lastPage ? 'disabled next' : 'next'}" id="example_next">
+                                        <a href="javascript:void(0)" data-page="${result.data.currentPage+1}" aria-controls="example" data-dt-idx="7" tabindex="0" class="page-link">Next</a>
+                                    </li>`;
+                            $("#appendPagination").append(paginate);
+                        }
+                    } else {
+                        let html = `<tr class="text-center">
+                                            <td colspan="8">No record found</td>
+                                        </tr>`;
+                        $("#appendData").html(html);
+                        $("#appendPagination").html('');
+                    }
+                },
+                error: function(data, textStatus, errorThrown) {
+                    jsonValue = jQuery.parseJSON(data.responseText);
+                    console.error(jsonValue.message);
+                },
+            });
+        };
+        getList(1);
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            getList($(this).data('page'));
+        })
+        $(document).on('keyup', "#searchInput", function() {
+            let status = $("#selectStatus").val();
+            let planDate = $("#selectDate").val();
+            let search = $("#searchInput").val();
+            getList($(this).data('page'), search, status, planDate);
+            $("#download-report").attr('href', "{{url('/')}}/admin/revenue-management-reports?search="+search+"&planDate="+planDate+"&status="+status);
+        });
+        $(document).on('change', "#selectStatus", function() {
+            let status = $("#selectStatus").val();
+            let planDate = $("#selectDate").val();
+            let search = $("#searchInput").val();
+            getList($(this).data('page'), search, status, planDate);
+            $("#download-report").attr('href', "{{url('/')}}/admin/revenue-management-reports?search="+search+"&planDate="+planDate+"&status="+status);
+        });
+        $(document).on('change', "#selectDate", function() {
+            let status = $("#selectStatus").val();
+            let planDate = $("#selectDate").val();
+            let search = $("#searchInput").val();
+            getList($(this).data('page'), search, status, planDate);
+            $("#download-report").attr('href', "{{url('/')}}/admin/revenue-management-reports?search="+search+"&planDate="+planDate+"&status="+status);
+        });
+    })
+</script>
+@endpush
