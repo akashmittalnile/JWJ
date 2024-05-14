@@ -95,16 +95,6 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <select class="form-control" name="subscription">
-                                        <option value="">Select Subscription Plan</option>
-                                        @foreach($plan as $val)
-                                        <option value="{{ $val->id }}">{{ $val->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
                                     <input type="file" class="form-control" accept="image/png, image/jpg, image/jpeg" name="file[]" multiple>
                                 </div>
                             </div>
@@ -140,9 +130,6 @@
             title: {
                 required: true,
             },
-            subscription: {
-                required: true,
-            },
             description: {
                 required: true,
             },
@@ -153,9 +140,6 @@
         messages: {
             title: {
                 required: 'Please enter title',
-            },
-            subscription: {
-                required: 'Please select subscription plan',
             },
             description: {
                 required: 'Please enter description',

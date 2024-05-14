@@ -96,24 +96,15 @@
                                             <td>
                                                 {{ $val->user_name }}
                                             </td>
-
                                             <td>
-                                                @if($val->name == 'Plan B')
-                                                <img src="{{ assets('assets/images/goldplan.svg') }}" height="24">
-                                                @elseif($val->name == 'Plan A')
-                                                <img src="{{ assets('assets/images/freeplan.svg') }}" height="24">
-                                                @elseif($val->name == 'Plan C')
-                                                <img src="{{ assets('assets/images/platinumplan.svg') }}" height="24">
-                                                @else
-                                                <img src="{{ assets('assets/images/goldplan.svg') }}" height="24">
-                                                @endif
+                                                <img src="{{ assets('assets/images/'.$val->image) }}" height="24">
                                                 {{ $val->name }}
                                             </td>
                                             <td>
-                                                ${{ number_format((float)$val->amount, 2, '.', '') }}
+                                                ${{ number_format((float)$val->paid_amount, 2, '.', '') }}
                                             </td>
                                             <td>
-                                                Montly
+                                                {{ $val->plan_timeperiod == 1 ? 'Monthly' : 'Yearly' }}
                                             </td>
                                             <td>
                                                 {{ date('d M, Y', strtotime($val->activated_date)) }}

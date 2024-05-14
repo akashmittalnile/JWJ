@@ -16,8 +16,8 @@ class RevenueController extends Controller
     public function revenueManagement()
     {
         try {
-            $paymentReceived = PaymentDetail::sum('amount');
-            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id')->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name')->get();
+            $paymentReceived = UserPlan::sum('price');
+            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id')->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->get();
             return view('pages.admin.revenue.revenue-management')->with(compact('list', 'paymentReceived'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
