@@ -40,9 +40,12 @@ class AuthController extends Controller
                         $user->status = -1;
                     }
                     $data['subject'] = 'Email Verification OTP';
-                    $data['to_mail'] = $request->email;
-                    $data['body'] = $code;
-                    sendMail($data);
+                    $data['site_title'] = 'Journey with Journals - Email Verification Code';
+                    $data['view'] = 'pages.user.email.email-verify';
+                    $data['to_email'] = $request->email;
+                    $data['otp'] = $code;
+                    $data['user'] = 'User';
+                    sendEmail($data);
                     $user->save();
                     return successMsg('OTP sended to your email address.', ['otp' => $code]);
                 } else return errorMsg('This email is already exist!');
@@ -116,6 +119,12 @@ class AuthController extends Controller
                             $user->fcm_token = $request->fcm_token;
                         }
                         $user->save();
+                        $data['subject'] = 'Registration Successful';
+                        $data['site_title'] = 'Journey with Journals - Registration';
+                        $data['view'] = 'pages.user.email.registration-successful';
+                        $data['to_email'] = $request->email;
+                        $data['customer_name'] = $user->name;
+                        sendEmail($data);
                         $token = $user->createToken("journey_with_journals")->plainTextToken;
                         return successMsg('Registered successfully.', ['access_token' => $token]);
                     } else return errorMsg('Email is not verified!');
@@ -186,9 +195,13 @@ class AuthController extends Controller
                     $user->otp = $code;
                     $user->updated_at = date('Y-m-d H:i:s');
                     $data['subject'] = 'Forgot Password OTP';
-                    $data['to_mail'] = $request->email;
-                    $data['body'] = $code;
-                    sendMail($data);
+                    $data['site_title'] = 'Journey with Journals - Verification Code';
+                    $data['view'] = 'pages.user.email.send-otp';
+                    $data['to_email'] = $request->email;
+                    $data['otp'] = $code;
+                    $data['user'] = 'User';
+                    $data['customer_name'] = $user->name;
+                    sendEmail($data);
                     $user->save();
                     return successMsg('OTP sent to your email address', ['otp' => $code]);
                 } else return errorMsg('Email is not registered with us');

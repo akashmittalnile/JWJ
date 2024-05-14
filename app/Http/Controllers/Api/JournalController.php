@@ -75,7 +75,7 @@ class JournalController extends Controller
             $response = array();
             foreach($journal as $val){
                 $imgs = JournalImage::where('journal_id', $val->id)->get();
-                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $val->id)->select('sc.id', 'sc.name')->get();
+                $criteria = JournalSearchCriteria::join('search_criteria as sc', 'sc.id', '=', 'journals_search_criteria_mapping.search_id')->where('journal_id', $val->id)->select('journals_search_criteria_mapping.id', 'sc.name')->get();
                 $mood = MoodMaster::where('id', $val->mood_id)->first();
                 $path = array();
                 foreach($imgs as $item){
@@ -267,6 +267,7 @@ class JournalController extends Controller
                 'file' => 'array',
                 'deletefile' => 'array',
                 'criteria' => 'array',
+                'new_criteria' => 'array',
                 'deletecriteria' => 'array',
             ]);
             if ($validator->fails()) {
@@ -285,7 +286,9 @@ class JournalController extends Controller
                 if(isset($request->deletefile) && count($request->deletefile) > 0){
                     foreach($request->deletefile as $val){
                         $journalImage = JournalImage::where('id', $val)->where('journal_id', $journal->id)->first();
-                        fileRemove("/uploads/journal/$journalImage->name");
+                        if(isset($journalImage->name)){
+                            fileRemove("/uploads/journal/$journalImage->name");
+                        }
                         JournalImage::where('id', $val)->where('journal_id', $journal->id)->delete();
                     }
                 }
@@ -305,8 +308,31 @@ class JournalController extends Controller
                         $journalImage = JournalSearchCriteria::where('id', $val)->where('journal_id', $journal->id)->delete();
                     }
                 }
-                if(count($request->criteria)){
-                    foreach($request->criteria as $value){
+
+                $newCriteriaArr = array();
+                if(isset($request->new_criteria) && count($request->new_criteria)){
+                    foreach($request->new_criteria as $vaal){
+                        $already = SearchCriteria::where('name', $vaal)->first();
+                        if(isset($already->id)) {
+                            array_push($newCriteriaArr, $already->id);
+                        } else {
+                            $criteria = new SearchCriteria;
+                            $criteria->name = $vaal ?? null;
+                            $criteria->description = $vaal ?? null;
+                            $criteria->created_by = auth()->user()->id;
+                            $criteria->status = 1;
+                            $criteria->save();
+                            array_push($newCriteriaArr, $criteria->id);
+                        }
+                    }
+                }
+                $criteriaArray = $request->criteria;
+                if(isset($request->criteria) && count($request->criteria))
+                    $criteriaArray = array_merge($criteriaArray, $newCriteriaArr);
+                else $criteriaArray = $newCriteriaArr;
+                
+                if(isset($criteriaArray) && count($criteriaArray)){
+                    foreach($criteriaArray as $value){
                         $journalCriteria = new JournalSearchCriteria;
                         $journalCriteria->journal_id = $journal->id;
                         $journalCriteria->search_id = $value;
@@ -314,6 +340,7 @@ class JournalController extends Controller
                         $journalCriteria->save();
                     }
                 }
+
                 return successMsg('Journal updated successfully.', $journal);
             }
         } catch (\Exception $e) {
