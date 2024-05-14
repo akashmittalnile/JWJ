@@ -90,12 +90,14 @@ class SubscriptionController extends Controller
                         $user->customer_id = $customer->id;
                         $user->plan_id = $request->plan_id;
                         $user->save();
+                        $msg = "Subscription has been done successfully.";
                         $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
                         if ($userPlanExist) {
-                            $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
-                            $userPlanExist->status = 2;
-                            $userPlanExist->save();
-                            $stripe->subscriptions->cancel($userPlanExist->subscription_id, []);
+                            $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
+                            $userPlanExists->status = 2;
+                            $userPlanExists->save();
+                            $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                            $msg = "Subscription has been updated successfully.";
                         }
 
                         $userPlan = new UserPlan;
@@ -106,9 +108,9 @@ class SubscriptionController extends Controller
                         $userPlan->price = $request->price;
                         $userPlan->subscription_id = $subscription->id;
                         $userPlan->status = 1;
-                        $userPlan->activated_date = date('Y-m-d');
+                        $userPlan->activated_date = date('Y-m-d H:i:s');
                         $userPlan->save();
-                        return successMsg("Subscription has been done successfully.");
+                        return successMsg($msg);
                     } else return errorMsg('Something went wrong with subscription process');
                 } else return errorMsg('Invalid plan');
             }

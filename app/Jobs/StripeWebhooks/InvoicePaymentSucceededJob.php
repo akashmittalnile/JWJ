@@ -38,10 +38,11 @@ class InvoicePaymentSucceededJob implements ShouldQueue
         // echo "</pre>";
         // die();
         $user = User::where('email',$charge['customer_email'])->first();
-        if($user)
+        if(isset($user->id))
         {
-            $payment = UserPlan::where("subscription_id", $charge['subscription'])->where("status", 1)->first();
+            $payment = UserPlan::where("subscription_id", $charge['subscription'])->where('user_id', $user->id)->where("status", 1)->first();
             $payment->transaction_id = $charge['charge'] ?? null;
+            $payment->renewal_date = date('Y-m-d H:i:s');
             $payment->save();
         }
         

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dfc0712195f58262a953eae9f1b318f7",
+    "content-hash": "a80c64f0677d38a2510930f7ed79d5d6",
     "packages": [
         {
             "name": "brick/math",
@@ -3247,23 +3247,23 @@
         },
         {
             "name": "spatie/laravel-stripe-webhooks",
-            "version": "3.7.0",
+            "version": "3.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-stripe-webhooks.git",
-                "reference": "555ad0ad75c6f5d40af9dc0868b53d9c32ec7583"
+                "reference": "48b3bbc46379add191a90a69d9c8579af963d790"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-stripe-webhooks/zipball/555ad0ad75c6f5d40af9dc0868b53d9c32ec7583",
-                "reference": "555ad0ad75c6f5d40af9dc0868b53d9c32ec7583",
+                "url": "https://api.github.com/repos/spatie/laravel-stripe-webhooks/zipball/48b3bbc46379add191a90a69d9c8579af963d790",
+                "reference": "48b3bbc46379add191a90a69d9c8579af963d790",
                 "shasum": ""
             },
             "require": {
                 "illuminate/support": "^8.0|^9.0|^10.0|^11.0",
                 "php": "^8.0",
                 "spatie/laravel-webhook-client": "^3.0",
-                "stripe/stripe-php": "^7.51|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0"
+                "stripe/stripe-php": "^7.51|^8.0|^9.0|^10.0|^11.0|^12.0|^13.0|^14.0"
             },
             "require-dev": {
                 "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0",
@@ -3302,7 +3302,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-stripe-webhooks/issues",
-                "source": "https://github.com/spatie/laravel-stripe-webhooks/tree/3.7.0"
+                "source": "https://github.com/spatie/laravel-stripe-webhooks/tree/3.8.0"
             },
             "funding": [
                 {
@@ -3310,7 +3310,7 @@
                     "type": "custom"
                 }
             ],
-            "time": "2024-03-02T05:33:59+00:00"
+            "time": "2024-05-02T09:36:41+00:00"
         },
         {
             "name": "spatie/laravel-webhook-client",
