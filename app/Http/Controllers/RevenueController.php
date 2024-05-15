@@ -17,7 +17,7 @@ class RevenueController extends Controller
     {
         try {
             $paymentReceived = UserPlan::sum('price');
-            $plan = Plan::where('status', 1)->get();
+            $plan = Plan::where('status', 1)->where('monthly_price', '!=', 0)->get();
             if($request->ajax()) {
                 $data = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id');
                 if($request->filled('planDate')) $data->whereDate('user_plans.activated_date', $request->planDate);

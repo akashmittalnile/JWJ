@@ -69,10 +69,11 @@
                 <div class="subscription-card1">
                     <div class="subscription-content">
                         <h2 class="subscription-title">Total Subscription Payment received</h2>
-                        <p class="subscription-price">${{ number_format((float)$paymentReceived, 2, '.', '') }}</p>
+                        <p class="subscription-price month">${{ number_format((float)$monthReceived, 2, '.', '') }}</p>
+                        <p class="subscription-price year d-none">${{ number_format((float)$yearReceived, 2, '.', '') }}</p>
                         <div class="subscription-button">
-                            <a href="javascript:void(0)" class="Plan-btn">Monthly</a>
-                            <a href="javascript:void(0)" class="Plan-btn-1">Annually</a>
+                            <a href="javascript:void(0)" data-name="month" class="Plan-btn active">Monthly</a>
+                            <a href="javascript:void(0)" data-name="year" class="Plan-btn">Annually</a>
                         </div>
                     </div>
                     <div class="subscription-chart">
@@ -84,11 +85,14 @@
                 <div class="subscription-card">
                     <div class="subscription-content">
                         <h2 class="subscription-title">Total Subscription Payment received</h2>
-                        <p class="subscription-price">${{ number_format((float)$paymentReceived, 2, '.', '') }}</p>
+                        @foreach($plan as $key => $val)
+                        <p class="subscription-price {{ $key }} @if($key != 0) d-none @endif">${{ number_format((float)$val->total_amt, 2, '.', '') }}</p>
+                        @endforeach
                         <p class="subscription-text">{{ $subscribeUserCount ?? 0 }} Users Subscribed</p>
                         <div class="subscription-button">
-                            <a href="javascript:void(0)" class="Plan-btn">Plan B</a>
-                            <a href="javascript:void(0)" class="Plan-btn-1">Plan C</a>
+                            @foreach($plan as $key => $val)
+                            <a href="javascript:void(0)" data-name="{{ $key }}" class="Plan-btn @if($key == 0) active @endif">{{ $val->name ?? 'NA' }}</a>
+                            @endforeach
                         </div>
                     </div>
                 </div>
@@ -106,32 +110,15 @@
                             <div class="me-auto">
                                 <h4 class="heading-title">Earnings</h4>
                             </div>
-                            <div class="search-filter wd6">
+                            <div class="search-filter wd3">
                                 <div class="search-filter">
                                     <div class="row g-1">
-                                        <div class="col-md-3">
+                                        <div class="col-md-6">
                                             <div class="form-group">
-                                                <input readonly type="text" placeholder="MM-DD-YYYY" id="date" name="" class="form-control">
+                                                <input type="date" placeholder="MM-DD-YYYY" name="" class="form-control">
                                             </div>
                                         </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <select class="form-control">
-                                                    <option>Show All</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <select class="form-control">
-                                                    <option>Choose Plan</option>
-                                                    <option>Plan A</option>
-                                                    <option>Plan B</option>
-                                                    <option>Plan C</option>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
+                                        <div class="col-md-6">
                                             <div class="form-group">
                                                 <a href="javascript:void(0)" class="btn-bl">Download report</a>
                                             </div>
@@ -241,10 +228,217 @@
         </div>
     </div>
 </div>
+<input type="hidden" data-json="{{json_encode($data1Graph)}}" id="data1_graph">
+<input type="hidden" data-json="{{json_encode($plancGraph)}}" id="planc_graph">
+<input type="hidden" data-json="{{json_encode($planbGraph)}}" id="planb_graph">
 @endsection
 
 @push('js')
 <script type="text/javascript">
+    let data1 = [];
+    let planC = [];
+    let planB = [];
+    $(document).ready(function() {
+        let arrOver1 = $("#data1_graph").data('json');
+        arrOver1.map(ele => {
+            data1.push(ele.toFixed(2));
+        });
+
+        let arrPlanC = $("#planc_graph").data('json');
+        arrPlanC.map(ele => {
+            planC.push(ele.toFixed(2));
+        });
+        let arrPlanB = $("#planb_graph").data('json');
+        arrPlanB.map(ele => {
+            planB.push(ele.toFixed(2));
+        });
+    });
+
+    $(function() {
+        var options1 = {
+            chart: {
+                type: "line",
+                height: 240,
+                width: 250,
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                show: true,
+                curve: "smooth",
+                lineCap: "butt",
+                colors: ["#1079c0"],
+                width: 2,
+                dashArray: 0,
+            },
+
+            series: [{
+                name: "Payment received",
+                data: data1,
+            }, ],
+            yaxis: {
+                min: 0,
+                show: false,
+                axisBorder: {
+                    show: false,
+                },
+            },
+            xaxis: {
+                categories: [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+            tooltip: {
+                enabled: true,
+            },
+            colors: ["#1079c0"],
+        };
+        var chart = new ApexCharts(document.querySelector("#chartBar1"), options1);
+        chart.render();
+    });
+
+    $(function() {
+        var options2 = {
+            series: [
+                {
+                    name: "Plan B",
+                    data: planB,
+                },
+                {
+                    name: "Plan C",
+                    data: planC,
+                },
+            ],
+            chart: {
+                height: 350,
+                type: "line",
+                foreColor: "#000",
+
+                toolbar: {
+                    show: false,
+                },
+                zoom: {
+                    enabled: false,
+                },
+            },
+
+            stroke: {
+                curve: "smooth",
+                width: [2, 2, 2],
+                colors: ["#1079c0", "#EE9E00", "#505a61"],
+                lineCap: "round",
+            },
+            grid: {
+                borderColor: "#edeef1",
+                strokeDashArray: 2,
+            },
+
+            colors: ["#1079c0", "#EE9E00", "#505a61"],
+
+            dataLabels: {
+                enabled: false,
+            },
+            legend: {
+                markers: {
+                    fillColors: ["#1079c0", "#EE9E00", "#505a61"],
+                },
+            },
+            tooltip: {
+                marker: {
+                    fillColors: ["#1079c0", "#EE9E00", "#505a61"],
+                },
+            },
+
+            title: {
+                text: "Total Received Amount",
+                align: "left",
+            },
+
+            fill: {
+                colors: ["#1079c0", "#EE9E00", "#505a61"],
+            },
+
+            markers: {
+                colors: ["#1079c0", "#EE9E00", "#505a61"],
+            },
+
+            xaxis: {
+                categories: [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+
+            yaxis: {
+                tickAmount: 4,
+                floating: false,
+                labels: {
+                    style: {
+                        colors: "#000",
+                    },
+                    offsetY: -7,
+                    offsetX: 0,
+                },
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chartBar"), options2);
+        chart.render();
+    });
+
+    $(document).on('click', '.subscription-card1 .Plan-btn', function() {
+        $('.subscription-card1 .Plan-btn').removeClass('active');
+        $('.subscription-card1 .subscription-price').addClass('d-none');
+        $('.subscription-card1 .subscription-price' + '.' + $(this).data('name')).removeClass('d-none');
+        $(this).addClass('active');
+    });
+    $(document).on('click', '.subscription-card .Plan-btn', function() {
+        $('.subscription-card .Plan-btn').removeClass('active');
+        $('.subscription-card .subscription-price').addClass('d-none');
+        $('.subscription-card .subscription-price' + '.' + $(this).data('name')).removeClass('d-none');
+        $(this).addClass('active');
+    });
+
     $("#date").daterangepicker({
         singleDatePicker: true,
         autoUpdateInput: false,

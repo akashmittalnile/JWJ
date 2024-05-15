@@ -38,6 +38,6 @@ p.subscription-text {font-size: 14px; font-weight: 500; margin: 0; padding: 0; c
 
 .subscription-button {margin-top: 30px; display: flex; align-items: center; gap:10px; }
 a.Plan-btn {background: #e8f6ff; border: 1px solid var(--blue); padding: 6px 20px; display: inline-block; font-size: 12px; color: var(--blue); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
-a.Plan-btn-1 {background: var(--blue); border: 1px solid var(--white); padding: 6px 20px; display: inline-block; font-size: 12px; color: var(--white); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
+a.Plan-btn.active {background: var(--blue); border: 1px solid var(--white); padding: 6px 20px; display: inline-block; font-size: 12px; color: var(--white); border-radius: 5px; text-transform: uppercase; font-weight: bold; text-align: center; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
 
 .TotalRequestoverview {border-radius: 0.4rem; border: 1px solid var(--border); background-color: var(--white); box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); position: relative; width: 100%; padding: 6px; }

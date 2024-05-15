@@ -270,3 +270,23 @@ if (!function_exists('planData')) {
         }
     }
 }
+
+// Dev name : Dishant Gupta
+// This function is used to filter data for usage of graphs
+if (!function_exists('graphData')) {
+    function graphData($data)
+    {
+        $data_x = collect($data)->pluck('x')->toArray();
+        $data_y = collect($data)->pluck('y')->toArray();
+        $dataGraph = [];
+        for($i = 1; $i <= 12; $i++){
+            if(in_array( $i, $data_x )){
+                $indx = array_search($i, $data_x);
+                $dataGraph[$i-1] = $data_y[$indx];
+            }else{
+                $dataGraph[$i-1] = 0;
+            }
+        }
+        return $dataGraph;
+    }
+}

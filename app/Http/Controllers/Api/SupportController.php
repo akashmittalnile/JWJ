@@ -153,14 +153,14 @@ class SupportController extends Controller
                 if(isset($fire->id)){
                     $fire->last_msg = $request->msg;
                     $fire->unseen_msg_count = $fire->unseen_msg_count+1;
-                    $fire->updated_at = date('Y-m-d H:i:s');
+                    $fire->last_msg_datetime = date('Y-m-d H:i:s');
                     $fire->save();
                 } else {
                     $fire = new FirebaseChat;
                     $fire->user_id = auth()->user()->id;
                     $fire->last_msg = $request->msg;
                     $fire->unseen_msg_count = 1;
-                    $fire->updated_at = date('Y-m-d H:i:s');
+                    $fire->last_msg_datetime = date('Y-m-d H:i:s');
                     $fire->save();
                 }
                 return successMsg('Record updated successfully');

@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Community;
 use App\Models\CommunityFollower;
 use App\Models\PaymentDetail;
+use Illuminate\Support\Facades\DB;
+use App\Models\Plan;
 use App\Models\Rating;
 use App\Models\User;
 use App\Models\UserPlan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -20,9 +23,20 @@ class DashboardController extends Controller
             $userCount = User::where('role', 1)->whereIn('status', [1,2])->count();
             $communityCount = Community::whereIn('status', [1,2])->count();
             $communityFollowCount = CommunityFollower::count();
-            $paymentReceived = PaymentDetail::sum('amount');
+            $monthReceived = UserPlan::where('plan_timeperiod', 1)->sum('price');
+            $yearReceived = UserPlan::where('plan_timeperiod', 2)->sum('price');
             $subscribeUserCount = UserPlan::distinct('user_id')->count();
-            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'paymentReceived', 'subscribeUserCount'));
+            $plan = Plan::where('monthly_price', '!=', 0)->select(DB::raw("(SELECT SUM(price) FROM user_plans WHERE user_plans.plan_id = plan.id) as total_amt"), 'plan.name', 'plan.id')->get();
+
+            $data1 = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
+            $data1Graph = graphData($data1);
+            $planc = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->where('plan_id', 4)->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
+            $planb = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->where('plan_id', 5)->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
+            $plancGraph = graphData($planc);
+            $planbGraph = graphData($planb);
+            // dd($data1Graph);
+
+            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'subscribeUserCount', 'yearReceived', 'monthReceived', 'plan', 'data1Graph', 'plancGraph', 'planbGraph'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
