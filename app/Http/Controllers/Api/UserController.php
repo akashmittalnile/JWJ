@@ -19,6 +19,7 @@ use App\Models\SharingDetail;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use App\Models\UserMood;
+use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -117,7 +118,6 @@ class UserController extends Controller
                 $communitytemp['plan_price_currency'] = $planComm->currency ?? null;
                 $community[] = $communitytemp;
             }
-            $plan = Plan::where('monthly_price', '0')->first();
             $moodCalen = UserMood::whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->where('user_id', auth()->user()->id)->get();
             $calender = array();
             $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
@@ -180,7 +180,16 @@ class UserController extends Controller
                 $tempRate['review_on'] = date('d M, Y', strtotime($submitRating->created_at));
                 $reviewDetails[] = $tempRate;
             }
-            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
+
+            $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
+            $current_plan = [
+                'name' => $plan->name ?? 'NA',
+                'price' => $plan->price ?? '0',
+                'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
+                'plan_timeperiod' => isset($plan->plan_timeperiod) ? ($plan->plan_timeperiod == 1 ? 'Monthly' : 'Yearly') : null,
+            ];
+            
+            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name ?? 'NA', 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
             return successMsg('Home', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -370,7 +379,7 @@ class UserController extends Controller
                 $rating->description = $request->description;
                 $rating->status = 1;
                 $rating->save();
-                return successMsg('Rating submitted successfully.');
+                return successMsg('Your feedback is successfully submitted.');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

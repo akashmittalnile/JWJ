@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\MoodMaster;
 use App\Models\User;
 use App\Models\UserMood;
+use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -109,6 +110,7 @@ class AuthController extends Controller
                         $user->name = ucwords($request->name);
                         $user->user_name = strtolower($request->user_name);
                         $user->country_code = $request->country_code ?? null;
+                        $user->country_flag = $request->country_flag ?? null;
                         $user->mobile = $request->mobile ?? null;
                         $user->password = Hash::make($request->password);
                         $user->role = 1;
@@ -162,6 +164,7 @@ class AuthController extends Controller
                                 'user_name' => $user->user_name,
                                 'email' => $user->email,
                                 'country_code' => $user->country_code,
+                                'country_flag' => $user->country_flag ?? null,
                                 'mobile' => $user->mobile,
                                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                                 'role' => $user->role,
@@ -275,19 +278,30 @@ class AuthController extends Controller
             if(count($totalMood) > 0)
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
+
+            $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
+            $current_plan = [
+                'name' => $plan->name ?? 'NA',
+                'price' => $plan->price ?? '0',
+                'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
+                'plan_timeperiod' => isset($plan->plan_timeperiod) ? ($plan->plan_timeperiod == 1 ? 'Monthly' : 'Yearly') : null,
+            ];
+
             $response = [
                 'id' => $user->id,
                 'name' => $user->name,
                 'user_name' => $user->user_name,
                 'email' => $user->email,
                 'country_code' => $user->country_code ?? null,
+                'country_flag' => $user->country_flag ?? null,
                 'mobile' => $user->mobile ?? null,
                 'role' => $user->role,
                 'status' => $user->status,
                 'fcm_token' => $user->fcm_token,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
-                'average_mood_data' => $avgMood
+                'average_mood_data' => $avgMood,
+                'current_plan' => $current_plan
             ];
             return successMsg('Profile data.', $response);
         } catch (\Exception $e) {
@@ -321,6 +335,7 @@ class AuthController extends Controller
                     $user->name = ucwords($request->name);
                     $user->user_name = strtolower($request->user_name);
                     $user->country_code = $request->country_code;
+                    $user->country_flag = $request->country_flag;
                     $user->mobile = $request->mobile;
                     $user->updated_at = date('Y-m-d H:i:s');
                     $user->save();
