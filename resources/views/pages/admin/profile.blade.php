@@ -106,7 +106,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <h4>Profile Image</h4>
-                                        <input type="file" class="file-form-control" accept="image/png, image/jpg, image/jpeg" name="file">
+                                        <input type="file" class="form-control" accept="image/png, image/jpg, image/jpeg" name="file">
                                     </div>
                                 </div>
                                 <div class="col-md-12">

@@ -174,12 +174,12 @@ class AuthController extends Controller
                 $user = User::where("email", $request->email)->first();
                 if (isset($user->id)) {
                     if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-                        return response()->json(['status' => true, 'message' => 'Logged In Successfully.', 'route' => route("admin.dashboard")]);
+                        return response()->json(['status' => true, 'message' => 'Successfully loggedin.', 'route' => route("admin.dashboard")]);
                     } else {
                         return errorMsg('Invalid Email or Password');
                     }
                 } else {
-                    return errorMsg('Invalid Email or Password');
+                    return errorMsg('This email is not registered with us');
                 }
             }
         } catch (\Exception $e) {

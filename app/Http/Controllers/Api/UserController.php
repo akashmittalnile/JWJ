@@ -186,10 +186,11 @@ class UserController extends Controller
                 'name' => $plan->name ?? 'NA',
                 'price' => $plan->price ?? '0',
                 'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
+                'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? ($plan->plan_timeperiod == 1 ? 'Monthly' : 'Yearly') : null,
             ];
             
-            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $plan->name ?? 'NA', 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
+            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $current_plan, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
             return successMsg('Home', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
