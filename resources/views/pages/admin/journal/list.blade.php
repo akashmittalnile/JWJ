@@ -70,7 +70,7 @@
             success: function(result) {
                 if (result.status) {
                     toastr.success(result.message);
-                    window.location.reload();
+                    setInterval(() => {window.location.reload()}, 2000);
                 } else {
                     toastr.error(result.message);
                     return false;

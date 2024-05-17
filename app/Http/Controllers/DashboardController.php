@@ -34,9 +34,10 @@ class DashboardController extends Controller
             $planb = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->where('plan_id', 5)->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
             $plancGraph = graphData($planc);
             $planbGraph = graphData($planb);
-            // dd($data1Graph);
+            
+            $rating = Rating::select('rating.id', 'rating.userid', 'rating.rating', 'rating.description', 'rating.status', 'rating.created_at', 'users.name')->Join('users', 'users.id', 'rating.userid')->orderByDesc('id')->limit(5)->get();
 
-            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'subscribeUserCount', 'yearReceived', 'monthReceived', 'plan', 'data1Graph', 'plancGraph', 'planbGraph'));
+            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'subscribeUserCount', 'yearReceived', 'monthReceived', 'plan', 'data1Graph', 'plancGraph', 'planbGraph', 'rating'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -48,9 +49,7 @@ class DashboardController extends Controller
     {
         try {
             if ($request->ajax()) {
-                // $query = Rating::leftJoin('users', 'users.id', 'rating.userid');
                 $query = Rating::select('rating.id', 'rating.userid', 'rating.rating', 'rating.description', 'rating.status', 'rating.created_at', 'users.name')->Join('users', 'users.id', 'rating.userid');
-                // Apply search filters
                 if ($request->filled('search')) {
                     $searchTerm = $request->search;
                     $query->where(function ($subquery) use ($searchTerm) {
@@ -58,14 +57,11 @@ class DashboardController extends Controller
                             ->orWhere('name', 'like', '%' . $searchTerm . '%');
                     });
                 }
-                // Apply rating filter
                 if ($request->filled('rating')) {
                     $ratingTerm = $request->rating;
                     $query->where('rating', $ratingTerm);
                 }
-                // Paginate the results
                 $ratings = $query->paginate(config('constant.paginatePerPage'));
-                // Check if any ratings are found
                 if ($ratings->isEmpty())
                     return errorMsg("No ratings found");
                 $response = [
@@ -76,7 +72,6 @@ class DashboardController extends Controller
                 ];
                 return successMsg('Ratings list', $response);
             }
-            // If not an AJAX request, return the view
             return view('pages.admin.rating-reviews');
         } catch (\Exception $e) {
             return response()->json([

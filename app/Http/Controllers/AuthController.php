@@ -264,7 +264,7 @@ class AuthController extends Controller
                 if (Hash::check($request->current_password, $user->password)) {
                     $user->password = Hash::make($request->password);
                     $user->save();
-                    return successMsg("Password changed Successfully.");
+                    return successMsg("Password updated successfully");
                 } else {
                     return errorMsg('Please enter correct current password.');
                 }

@@ -241,7 +241,7 @@
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);
-                        window.location.reload();
+                        setInterval(() => {window.location.reload()}, 2000);
                         return false;
                     } else {
                         toastr.error(response.message);
@@ -323,7 +323,7 @@
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);
-                        window.location.reload();
+                        setInterval(() => {window.location.reload()}, 2000);
                         return false;
                     } else {
                         toastr.error(response.message);

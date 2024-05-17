@@ -255,7 +255,7 @@
                 success: function(result) {
                     if (result.status) {
                         toastr.success(result.message);
-                        window.location.reload();
+                        setInterval(() => {window.location.reload()}, 2000);
                     } else {
                         toastr.error(result.message);
                         return false;
@@ -341,7 +341,7 @@
                         success: function(response) {
                             if (response.status) {
                                 toastr.success(response.message);
-                                window.location.reload();
+                                setInterval(() => {window.location.reload()}, 2000);
                             } else {
                                 toastr.error(response.message);
                             }
