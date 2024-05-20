@@ -38,6 +38,6 @@ class Post extends Model
     }
 
     public function comments(){
-        return $this->hasMany(Comment::class, 'object_id', 'id')->where('object_type', 'post')->orderByDesc('id')->get();
+        return $this->hasMany(Comment::class, 'object_id', 'id')->whereNull('parent_id')->where('object_type', 'post')->orderByDesc('id')->get();
     }
 }

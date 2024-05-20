@@ -336,6 +336,14 @@ class CommunityController extends Controller
                 $data['message'] = auth()->user()->name . ' was created a new community "' .$request->title . '"';
                 $data['user_id'] = auth()->user()->id;
                 notifyAdmin($data);
+
+                $data['subject'] = 'Community Approval Request';
+                $data['site_title'] = 'Community Approval Request';
+                $data['view'] = 'pages.user.email.new-community';
+                $data['to_email'] = auth()->user()->email;
+                $data['customer_name'] = auth()->user()->name;
+                sendEmail($data);
+
                 Log::channel('community')->info($community);
                 return successMsg('New community created successfully.');
             }
