@@ -40,12 +40,11 @@ class AuthController extends Controller
                         $user->role = 1;
                         $user->status = -1;
                     }
-                    $data['subject'] = 'Email Verification OTP';
-                    $data['site_title'] = 'Journey with Journals - Email Verification Code';
+                    $data['subject'] = 'Verify Your Email on Journey with journals';
+                    $data['site_title'] = 'Verify Your Email on Journey with journals';
                     $data['view'] = 'pages.user.email.email-verify';
                     $data['to_email'] = $request->email;
                     $data['otp'] = $code;
-                    $data['user'] = 'User';
                     sendEmail($data);
                     $user->save();
                     return successMsg('OTP sended to your email address.', ['otp' => $code]);
@@ -121,8 +120,8 @@ class AuthController extends Controller
                             $user->fcm_token = $request->fcm_token;
                         }
                         $user->save();
-                        $data['subject'] = 'Registration Successful';
-                        $data['site_title'] = 'Journey with Journals - Registration';
+                        $data['subject'] = 'Welcome to Journey with journals';
+                        $data['site_title'] = 'Welcome to Journey with journals';
                         $data['view'] = 'pages.user.email.registration-successful';
                         $data['to_email'] = $request->email;
                         $data['customer_name'] = $user->name;
@@ -197,12 +196,11 @@ class AuthController extends Controller
                     $code = rand(1000,9999);
                     $user->otp = $code;
                     $user->updated_at = date('Y-m-d H:i:s');
-                    $data['subject'] = 'Forgot Password OTP';
-                    $data['site_title'] = 'Journey with Journals - Verification Code';
+                    $data['subject'] = 'Reset Your Journey with journals password';
+                    $data['site_title'] = 'Reset Your Journey with journals password';
                     $data['view'] = 'pages.user.email.send-otp';
                     $data['to_email'] = $request->email;
                     $data['otp'] = $code;
-                    $data['user'] = 'User';
                     $data['customer_name'] = $user->name;
                     sendEmail($data);
                     $user->save();

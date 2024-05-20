@@ -49,12 +49,11 @@ class AuthController extends Controller
                 $user = User::where('email', $request->email)->where('status', 1)->where('role', 2)->first();
                 if (isset($user->id)) {
                     $code = rand(1000, 9999);
-                    $data['subject'] = 'Admin Forgot Password OTP';
-                    $data['site_title'] = 'Journey with Journals - Verification Code';
+                    $data['subject'] = 'Reset Your Journey with journals password';
+                    $data['site_title'] = 'Reset Your Journey with journals password';
                     $data['view'] = 'pages.user.email.send-otp';
                     $data['to_email'] = $request->email;
                     $data['otp'] = $code;
-                    $data['user'] = 'Admin';
                     $data['customer_name'] = $user->name;
                     sendEmail($data);
                     User::where('email', $request->email)->where('status', 1)->where('role', 2)->update([

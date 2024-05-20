@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Journey with Journals - Registration Successful</title>
+    <title>Welcome to Journey with journals</title>
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@200;300;400;500;600&display=swap" rel="stylesheet" />
 </head>
 <body>
@@ -18,31 +18,23 @@
             </tr>
             <tr>
                 <td style=" padding: 10px;" bgcolor="#ffffff">
-                    <h1 style="color: #fc4a26;font-size: 20px;text-align: center;font-weight: normal; margin: 10px 0;">
-                        Congratulations, {{ $customer_name ?? 'user' }}!</h1>
+                    <h1 style="color: #fc4a26;font-size: 20px;text-align: center;font-weight: normal; margin: 10px 0;">Dear {{ $customer_name ?? 'user' }},</h1>
                 </td>
             </tr>
             <tr>
                 <td valign="top" style="padding: 0 10px;">
-                    <p style="font-size:16px;font-weight: 600; text-align:center;line-height: 24px;color: #767171;margin: 10px 0;">
-                    Thanks for registering on the journey with journals we have received your request to join the account. We will send you an email once your account will be approved usually the waiting time is around 24-48 hours thanks for your patience.</p>
+                    <p style="font-size:16px;font-weight: 600; text-align:center;line-height: 24px;color: #767171;margin: 10px 0;">Welcome to Journey with journals ! We’re thrilled to have you join our community and embark on this journey with us.</p>
                 </td>
             </tr>
-
             <tr>
                 <td valign="top" style="padding: 0 10px;">
-                    <p style="font-size: 14px;font-weight: normal;line-height: 24px;text-align:justify;color: #767171;">
-                        Please save this email address in your Contacts list and let us know if you have any
-                        questions. Our email is <a style="color: #0563C1" href="mailto:jwj@gmail.com">jwj@gmail.com</a>, or call
-                        us at 1-800-123-1212 if you need assistance.</p>
+                    <p style="font-size: 14px;font-weight: normal;line-height: 24px;text-align:justify;color: #767171;">If you have any questions along the way, don’t hesitate to reach out to our support team at <a style="color: #0563C1" href="mailto:JourneyWJournals@gmail.com">JourneyWJournals@gmail.com</a>.</p>
                 </td>
             </tr>
             <tr>
                 <td valign="top">
-                    <p style="font-size: 18px;font-weight: normal;line-height: 24px;text-align:left;color: #767171;">
-                        Thank you,</p>
-                    <p style="font-size: 18px;font-weight: normal;line-height: 24px;text-align:left;color: #767171;">
-                        Your Journey with Journals Team</p>
+                    <p style="font-size: 18px;font-weight: normal;line-height: 24px;text-align:left;color: #767171;">Best regards,</p>
+                    <p style="font-size: 18px;font-weight: normal;line-height: 24px;text-align:left;color: #767171;">Journey with journals</p>
                 </td>
             </tr>
 
