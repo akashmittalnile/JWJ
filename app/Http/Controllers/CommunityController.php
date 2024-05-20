@@ -199,6 +199,13 @@ class CommunityController extends Controller
                         $communityImage->save();
                     }
                 }
+
+                $data['type'] = 'COMMUNITY';
+                $data['title'] = 'New Community';
+                $data['message'] = 'Journey with journals administrator was created a new community "' .$request->title . '"';
+                $data['user_id'] = auth()->user()->id;
+                notifyUsers($data);
+
                 return successMsg('New community created successfully.');
             }
         } catch (\Exception $e) {
