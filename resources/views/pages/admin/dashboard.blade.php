@@ -168,10 +168,10 @@
                                 <div class="jwj-review-card">
                                     <div class="jwj-review-card-head">
                                         <div class="review-rating-user-avtar">
-                                            <span>J</span>
+                                            <img src="{{ isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : assets('assets/images/no-image.jpg') }}" alt="">
                                         </div>
                                         <div class="review-rating-user-text">
-                                            <h3>{{ $val->name ?? "NA" }}</h3>
+                                            <h3>{{ $val->user->name ?? "NA" }}</h3>
                                             <div class="review-rating">
                                                 <div class="review-rating-icon">
                                                     @for($i=1; $i<=5; $i++)

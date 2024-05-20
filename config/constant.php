@@ -5,6 +5,7 @@ return [
 	'paginatePerPage' => 10,
 	'apiPaginatePerPage' => 10,
 	'communityPerPage' => 6,
+	'postPerPage' => 5,
 	'role' => array(
 		'User' => 1,
 		'Admin' => 2,

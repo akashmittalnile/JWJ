@@ -35,7 +35,7 @@ class DashboardController extends Controller
             $plancGraph = graphData($planc);
             $planbGraph = graphData($planb);
             
-            $rating = Rating::select('rating.id', 'rating.userid', 'rating.rating', 'rating.description', 'rating.status', 'rating.created_at', 'users.name')->Join('users', 'users.id', 'rating.userid')->orderByDesc('id')->limit(5)->get();
+            $rating = Rating::select('rating.id', 'rating.userid', 'rating.rating', 'rating.description', 'rating.status', 'rating.created_at')->orderByDesc('id')->limit(5)->get();
 
             return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'subscribeUserCount', 'yearReceived', 'monthReceived', 'plan', 'data1Graph', 'plancGraph', 'planbGraph', 'rating'));
         } catch (\Exception $e) {

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Comment;
 use App\Models\Community;
 use App\Models\CommunityImage;
 use App\Models\Notify;
@@ -10,6 +11,7 @@ use App\Models\Post;
 use App\Models\PostImage;
 use App\Models\User;
 use App\Models\UserFollowedCommunity;
+use App\Models\UserLike;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -147,7 +149,6 @@ class CommunityController extends Controller
                                 </div>
                                 <p>$followcount Followers</p>
                             </div>
-                            $plan_html
                         </div>
                     </div>
                 </div>";
@@ -240,14 +241,105 @@ class CommunityController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to getting the data of particular community
-    public function communityManagementDetails($id)
+    public function communityManagementDetails($id, Request $request)
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
-            $imgs = CommunityImage::where('community_id', $id)->get();
-            $follow = UserFollowedCommunity::where('community_id', $id)->orderByDesc('id')->get();
-            return view('pages.admin.community.details')->with(compact('data', 'follow', 'imgs'));
+        
+            if($request->ajax()){
+                $post = Post::where('community_id', $id);
+                if($request->filled('search')){
+                    $post->whereRaw("(`title` LIKE '%" . $request->search . "%')");
+                }
+                $post = $post->orderByDesc('id')->paginate(config('constant.postPerPage'));
+                $html = '';
+                foreach($post as $val)
+                {
+                    $proImg = isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : assets('assets/images/no-image.jpg'); 
+
+                    $imgs = PostImage::where('post_id', $val->id)->get();
+                    $image_html = "";
+                    foreach($imgs as $name){
+                        $image_html .= "<div class='item'>
+                        <div class='community-media' style='height: 210px'>
+                                <img src='".assets("uploads/community/post/$name->name")."'>
+                            </div>
+                        </div>";
+                    }
+                    if($image_html == "") {
+                        $image_html = "<div class='item'>
+                        <div class='community-media' style='height: 210px'>
+                                <img src='".assets('assets/images/no-image.jpg')."'>
+                            </div>
+                        </div>";
+                    }
+
+                    $planName = isset($val->user->plan->name) ? $val->user->plan->name : 'Plan A Member';
+                    $planImg = isset($val->user->plan->image) ? assets('assets/images/'.$val->user->plan->image) : assets('assets/images/freeplan.svg');
+                    $planHtml = ($val->user->role == 2) ? "Administrator" : "<img src='$planImg'> $planName Member";
+
+                    $html .= "
+                        <div class='jwj-posts-posts-card'>
+                            <div class='jwj-posts-head'>
+                                <div class='post-member-item'>
+                                    <div class='post-member-image'>
+                                        <img src='$proImg'>
+                                    </div>
+                                    <div class='post-member-text'>
+                                        <h3>".$val->user->name."</h3>
+                                        <div class='post-member-plan'>$planHtml</div>
+                                    </div>
+                                </div>
+                                <div class='jwjcard-group-action d-flex'>
+                                    <div class='mx-2'>
+                                        <a class='managecommunity-btn' href='". route('admin.community-management.post.details', encrypt_decrypt('encrypt', $val->id)) ."'>View</a>
+                                    </div>
+                                    <div>
+                                        <a class='managecommunity-btn' data-postid='$val->id' id='delete-button' href='javacsript:void(0)'>Delete Post</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class='jwj-posts-body'>
+                                <div class='row g-1'>
+                                    <div class='col-md-5'>
+                                        <div id='communitycarouselpost1' class='communitycarouselpost1 owl-carousel owl-theme'>
+                                            $image_html
+                                        </div>
+                                    </div>
+                                    <div class='col-md-7'>
+                                        <div class='jwjcard-body'>
+                                            <div class='community-post-description'>
+                                                <h3>$val->title</h3>
+                                                <div class='post-date-info'>
+                                                    <img src='". assets('assets/images/calendar.svg') ."'> Submitted On: ".date('d M, Y h:iA', strtotime($val->created_at))."
+                                                </div>
+                                                <p>$val->post_description</p> 
+                                                <div class='community-post-action'>
+                                                    <a class='Like-btn'><img src='".assets('assets/images/like.svg')."'> ". $val->likeCount()." likes</a>
+                                                    <a class='Comment-btn'><img src='".assets('assets/images/comment.svg')."'> ". $val->commentCount() ." Comments</a>
+                                                </div>
+                                            </div>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>";
+                }
+                if($post->total() < 1) return errorMsg("No post found");
+                $response = array(
+                    'currentPage' => $post->currentPage(),
+                    'lastPage' => $post->lastPage(),
+                    'total' => $post->total(),
+                    'html' => $html,
+                );
+                return successMsg('Community post list', $response);
+            } else {
+                $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+                $imgs = CommunityImage::where('community_id', $id)->get();
+                $follow = UserFollowedCommunity::where('community_id', $id)->orderByDesc('id')->get();
+            }
+            $id = encrypt_decrypt('encrypt', $id);
+            return view('pages.admin.community.details')->with(compact('data', 'follow', 'imgs', 'id'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -428,8 +520,8 @@ class CommunityController extends Controller
         }
     }
 
-    // Dev name : Bodheesh vc
-    // This function is used ---
+    // Dev name : Dishant Gupta
+    // This function is used tp create post by admin
     public function createPost(Request $request)
     {
         try {
@@ -438,7 +530,6 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string',
                 'post_description' => 'required|string',
-                'subscription_plan' => 'required|string',
                 'images.*' => 'image|max:2048', // Validate each image uploaded
                 'community_id' => 'required|string',
             ]);
@@ -446,219 +537,118 @@ class CommunityController extends Controller
             if ($validator->fails()) {
                 return response()->json(['error' => $validator->errors()->first()], 400);
             } else {
-                // Retrieve plan ID from the plan table
-                $plan = Plan::where('name', $request->input('subscription_plan'))->first();
-                if (!$plan) {
-                    return response()->json(['error' => 'Invalid subscription plan'], 400);
-                }
-
-                // Handle file uploads if provided
-                $imagePaths = []; // Initialize array to store image paths
-                if ($request->hasFile('images')) {
-                    foreach ($request->file('images') as $image) {
-                        $imageName = "post_" . time() . '_' . $image->getClientOriginalName();
-                        $image->move(public_path('uploads/community/post'), $imageName);
-                        $imagePaths[] = 'uploads/community/post/' . $imageName;
-                    }
-                }
-
-                // Create new post instance
                 $post = new Post();
-                $post->plan_id = $plan->id;
+                $post->plan_id = null;
                 $post->community_id = encrypt_decrypt('decrypt', $request->community_id);
                 $post->title = $request->input('title');
                 $post->post_description = $request->input('post_description');
                 $post->created_by = auth()->user()->id ?? null;
                 $post->save();
-
-                // Save post images to post_images table
-                foreach ($imagePaths as $path) {
-                    $postImage = new PostImage();
-                    $postImage->post_id = $post->id;
-                    $postImage->name = $path;
-                    $postImage->type = 'image';
-                    $postImage->save();
+                
+                if ($request->hasFile("images")) {
+                    foreach ($request->file('images') as $value) {
+                        $name = fileUpload($value, "/uploads/community/post/");
+                        $postImage = new PostImage;
+                        $postImage->post_id = $post->id;
+                        $postImage->name = $name;
+                        $postImage->type = 'image';
+                        $postImage->save();
+                    }
                 }
-
-                return response()->json(['message' => 'Post created successfully'], 200);
+                return redirect()->back()->with('success', 'Post created successfully');
             }
         } catch (\Exception $e) {
             return response()->json(['error' => 'Exception => ' . $e->getMessage()], 500);
         }
     }
 
-    // Dev name : Bodheesh vc
-    // This function is used ---
-    public function communityPosts($id)
+    // Dev name : Dishant Gupta
+    // This function is used to delete a post
+    public function deletePost(Request $request)
     {
-        try {
-            $id = encrypt_decrypt('decrypt', $id);
-            $community = Community::findOrFail($id);
-            $posts = Post::where('community_id', $id)->get();
-            return view('pages.admin.community.details', compact('community', 'posts'));
+        try{
+            $validator = Validator::make($request->all(), [
+                'postId' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $post = Post::where('id', $request->postId)->first();
+                if(isset($post->id)){
+                    $postImg = PostImage::where('post_id', $request->postId)->get();
+                    foreach($postImg as $key => $val){
+                        fileRemove("/uploads/community/post/$val->name");
+                    }
+                    PostImage::where('post_id', $request->postId)->delete();
+                    $likes = UserLike::where('object_id', $request->postId)->where('object_type', 'post')->delete();
+                    $comment = Comment::where('object_id', $request->postId)->where('object_type', 'post')->delete();
+                    Post::where('id', $request->postId)->delete();
+                    if($request->filled('postDetail')) return redirect()->route('admin.community-management.details', encrypt_decrypt('encrypt', $post->community_id))->with('success', 'Post deleted successfully');
+                    return redirect()->back()->with('success', 'Post deleted successfully');
+                } else return redirect()->back()->with('error', 'Post not found');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
-    
-    // Dev name : Bodheesh vc
-    // This function is used ---
-    public function getCommunityPosts(Request $request)
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete a comment
+    public function deleteComment(Request $request)
     {
-        try {
-            // Decrypt the community ID
-            $communityId = encrypt_decrypt('decrypt', $request->id);
-
-            // Retrieve the community
-            $community = Community::findOrFail($communityId);
-
-            // Retrieve posts associated with the community along with the user's name and post images
-            $posts = Post::where('community_id', $communityId)
-                ->leftJoin('users', 'posts.created_by', '=', 'users.id')
-                ->leftJoin('post_images', 'posts.id', '=', 'post_images.post_id')
-                ->leftJoin('plan', 'posts.plan_id', '=', 'plan.id')
-                ->select('posts.id', 'posts.title', 'posts.post_description', 'posts.created_at', 'posts.updated_at', 'users.name as user_name', 'post_images.name as image_path', 'posts.plan_id', 'plan.name') // Include plan_id in the select statement
-                ->orderByDesc('posts.id'); // Ordering should be applied before pagination
-
-            // Apply search filters
-            if ($request->filled('search')) {
-                $searchTerm = $request->search;
-                $posts->where(function ($query) use ($searchTerm) {
-                    $query->where('posts.title', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('posts.post_description', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('users.name', 'like', '%' . $searchTerm . '%');
-                });
-            }
-
-            // Paginate the posts
-            $paginatePerPage = config('constant.paginatePerPage');
-            $posts = $posts->paginate($paginatePerPage);
-
-            // Format posts and their images
-            $formattedPosts = [];
-            foreach ($posts as $post) {
-                $postId = $post->id;
-                if (!isset ($formattedPosts[$postId])) {
-                    $formattedPosts[$postId] = [
-                        'id' => $postId,
-                        'title' => $post->title,
-                        'post_description' => $post->post_description,
-                        'user_name' => $post->user_name,
-                        'created_at' => $post->created_at,
-                        'updated_at' => $post->updated_at,
-                        'images' => [], // Initialize the images array
-                        'plan_id' => $post->plan_id,
-                        'subscription_plan' => $post->name
-                    ];
-                }
-                // Add the image to the post's images array
-                if (!empty ($post->image_path)) {
-                    $formattedPosts[$postId]['images'][] = $post->image_path;
-                }
-            }
-
-            // Return the JSON response with paginated posts data
-            $responseData = [
-                'status' => true,
-                'data' => [
-                    'community' => $community,
-                    'posts' => array_values($formattedPosts),
-                    'pagination' => [
-                        'current_page' => $posts->currentPage(),
-                        'last_page' => $posts->lastPage(),
-                        'total' => $posts->total(),
-                        'per_page' => $paginatePerPage
-                    ]
-                ]
-            ];
-
-            return response()->json($responseData);
-        } catch (\Exception $e) {
-            // Handle any exceptions and return an error message
-            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()]);
-        }
-    }
-
-    // Dev name : Bodheesh vc
-    // This function is used ---
-    public function deletePost(Request $request)
-    {
-        try {
-            if ($request->ajax()) {
-                // Check if post ID is present and not empty
-                if ($request->has('postId') && $request->postId !== '') {
-                    $postId = $request->postId;
-                    // Load the post by ID
-                    $post = Post::findOrFail($postId);
-                    // Delete the post
-                    $post->delete();
-                    // Return success response
-                    return response()->json([
-                        'status' => true,
-                        'message' => 'Post deleted successfully.'
-                    ]);
-                } else {
-                    // Return error if post ID is missing
-                    return response()->json([
-                        'status' => false,
-                        'error' => 'Post ID is missing in the request.',
-                    ]);
-                }
-            } else {
-                // Return error if not an AJAX request
-                return response()->json([
-                    'status' => false,
-                    'error' => 'This endpoint only accepts AJAX requests.',
-                ]);
-            }
-        } catch (\Exception $e) {
-            // Log the error for debugging purposes
-            \Log::error('Error deleting post: ' . $e->getMessage());
-            // Return error response
-            return response()->json([
-                'status' => false,
-                'error' => 'Error deleting post: ' . $e->getMessage(),
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
             ]);
-        }
-    }
-
-    // Dev name : Bodheesh vc
-    // This function is used ---
-    public function fetchSubscriptionPlans()
-    {
-        try {
-            // Retrieve all subscription plans
-            $plans = Plan::select('name')->get();
-
-            // Return the plans as JSON response
-            return response()->json(['status' => true, 'data' => ['plans' => $plans]], 200);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->id);
+                Comment::where('id', $id)->delete();
+                return redirect()->back()->with('success', 'Comment deleted successfully');
+            }
         } catch (\Exception $e) {
-            // Handle any exceptions and return an error message
-            return response()->json(['status' => false, 'message' => 'Exception => ' . $e->getMessage()], 500);
+            return errorMsg('Exception => ' . $e->getMessage());
         }
     }
 
-    // Dev name : Bodheesh vc
-    // This function is used ---
-    public function postDetails(Request $request)
+    // Dev name : Dishant Gupta
+    // This function is used to delete a comment
+    public function createComment(Request $request)
     {
-        try {
-            // Assuming 'postId' is the name of your input field
-            // $encryptedId = $request->input('postId');
-            // $id = encrypt_decrypt('decrypt', $encryptedId); // Make sure this function exists and works as expected
-            // Fetch the post using the decrypted ID
-            // Assuming you have a Post model and posts table
-            // $post = Post::find($id); // Make sure to use the correct model and adjust accordingly
-
-            // if (!$post) {
-            //     return errorMsg('Post not found'); // Make sure errorMsg is a valid method or change this to a proper error handling
-            // }
-
-            // If post is found, return the view with post details
-            return view('pages.admin.community.post-details');
-            // return view('pages.admin.community.details', compact('post'));
+        try{
+            $validator = Validator::make($request->all(), [
+                'comment' => 'required',
+                'post_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->post_id);
+                $comment = new Comment;
+                $comment->user_id = auth()->user()->id;
+                $comment->object_id = $id;
+                $comment->object_type = 'post';
+                $comment->comment = $request->comment ?? null;
+                $comment->status = 1;
+                $comment->save();
+                return successMsg('Comment posted successfully.');
+            }
         } catch (\Exception $e) {
-            return errorMsg('Exception => ' . $e->getMessage()); // Again, ensure errorMsg is correctly implemented
+            return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+
+    // Dev name : Dishant Gupta
+    // This function is used to get the details of post
+    public function postDetails($id)
+    {
+        try{
+            $id = encrypt_decrypt('decrypt', $id);
+            $post = Post::where('id', $id)->first();
+            return view('pages.admin.community.post-details')->with(compact('post'));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }   
 }
