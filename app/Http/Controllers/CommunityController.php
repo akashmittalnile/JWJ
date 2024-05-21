@@ -252,7 +252,7 @@ class CommunityController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-        
+            $postCount = Post::where('community_id', $id)->count();
             if($request->ajax()){
                 $post = Post::where('community_id', $id);
                 if($request->filled('search')){
@@ -346,7 +346,7 @@ class CommunityController extends Controller
                 $follow = UserFollowedCommunity::where('community_id', $id)->orderByDesc('id')->get();
             }
             $id = encrypt_decrypt('encrypt', $id);
-            return view('pages.admin.community.details')->with(compact('data', 'follow', 'imgs', 'id'));
+            return view('pages.admin.community.details')->with(compact('data', 'follow', 'imgs', 'id', 'postCount'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

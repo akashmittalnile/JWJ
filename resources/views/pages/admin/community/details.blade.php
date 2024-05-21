@@ -146,7 +146,7 @@
 
             <div class="col-md-8">
                 <div class="page-posts-title-section">
-                    <h4>Total Posts</h4>
+                    <h4>Total Posts ({{ $postCount ?? 0 }})</h4>
                     <div class="search-filter wd7">
                         <div class="row g-1">
                             <div class="col-md-7">
@@ -219,7 +219,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div class="jwj-modal-form">
-                    <h2>Post On Community</h2>
+                    <h2>Post on community</h2>
                     <form id="postForm" method="post" action="{{ route('admin.community-management.create-post') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
