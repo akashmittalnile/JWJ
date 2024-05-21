@@ -333,7 +333,7 @@ class CommunityController extends Controller
 
                 $data['type'] = 'COMMUNITY';
                 $data['title'] = 'New Community';
-                $data['message'] = auth()->user()->name . ' was created a new community "' .$request->title . '"';
+                $data['message'] = auth()->user()->name . ' has created a new community "' .$request->title . '"';
                 $data['user_id'] = auth()->user()->id;
                 notifyAdmin($data);
 

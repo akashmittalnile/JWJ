@@ -41,7 +41,7 @@ a.email-btn {background: var(--yellow); border: 1px solid var(--yellow); width: 
 
 
 .jwj-review-card {border: 1px solid var(--border); position: relative; padding: 1rem; border-radius: 10px; background: #FFF; box-shadow: 0px 8px 13px 0px rgba(0, 0, 0, 0.05); }
-.jwj-review-card:after {background: url(../images/quote.svg); content: ''; position: absolute; left: 25px; top: 80px; background-repeat: no-repeat; width: 100px; height: 100px; }
+.jwj-review-card:after {background: url(../images/quote.svg); content: ''; position: absolute; left: 25px; top: 80px; background-repeat: no-repeat; width: 100px; height: 100px; opacity: 0;}
 .review-rating-user-avtar {width: 40px; height: 40px; border-radius: 50%; position: relative; overflow: hidden; text-align: center; background: #e9f6ff; }
 .review-rating-user-avtar span {color: var(--blue); font-size: 13px; line-height: 40px; font-weight: 600; }
 .review-rating-user-avtar img{object-fit: cover; width: 100%; height: 100%;}

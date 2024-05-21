@@ -68,7 +68,7 @@
             <div class="col-md-6">
                 <div class="subscription-card1">
                     <div class="subscription-content">
-                        <h2 class="subscription-title">Total Subscription Payment received</h2>
+                        <h2 class="subscription-title">Total subscription payment received</h2>
                         <p class="subscription-price month">${{ number_format((float)$monthReceived, 2, '.', '') }}</p>
                         <p class="subscription-price year d-none">${{ number_format((float)$yearReceived, 2, '.', '') }}</p>
                         <div class="subscription-button">
@@ -84,11 +84,11 @@
             <div class="col-md-6">
                 <div class="subscription-card">
                     <div class="subscription-content">
-                        <h2 class="subscription-title">Total Subscription Payment received</h2>
+                        <h2 class="subscription-title">Total subscription payment received</h2>
                         @foreach($plan as $key => $val)
                         <p class="subscription-price {{ $key }} @if($key != 0) d-none @endif">${{ number_format((float)$val->total_amt, 2, '.', '') }}</p>
                         @endforeach
-                        <p class="subscription-text">{{ $subscribeUserCount ?? 0 }} Users Subscribed</p>
+                        <p class="subscription-text">{{ $subscribeUserCount ?? 0 }} Users subscribed</p>
                         <div class="subscription-button">
                             @foreach($plan as $key => $val)
                             <a href="javascript:void(0)" data-name="{{ $key }}" class="Plan-btn @if($key == 0) active @endif">{{ $val->name ?? 'NA' }}</a>
