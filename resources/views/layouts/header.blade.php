@@ -67,9 +67,11 @@
                         </div>
                     </a>
                     <div class="dropdown-menu">
+                        @if(!(Route::is('admin.profile*')))
                         <a href="{{ route('admin.profile') }}" class="dropdown-item">
                             <i class="las la-user"></i> Profile
                         </a>
+                        @endif
                         <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#openLogoutModal" class="dropdown-item">
                             <i class="las la-sign-out-alt"></i> Logout
                         </a>

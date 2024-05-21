@@ -83,7 +83,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div class="notification-modal-form">
-                    <h2>Push New app notification</h2>
+                    <h2>Push New App Notification</h2>
                     <div class="row">
                         <form action="{{ route('admin.notification.store') }}" method="post" id="notify-form" >@csrf
                             <div class="col-md-12">
@@ -105,7 +105,7 @@
     
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <textarea type="text" name="message" class="form-control" placeholder="Type Your Reply Message Here.."></textarea>
+                                    <textarea type="text" name="message" class="form-control" placeholder="Type Your Message Here.."></textarea>
                                 </div>
                             </div>
     
@@ -128,6 +128,7 @@
 <script type="text/javascript">
     $('#CreateNotification').on('hidden.bs.modal', function(e) {
         $(this).find('form').trigger('reset');
+        $(".form-control").removeClass("is-invalid");
     });
 
     $(document).ready(function() {

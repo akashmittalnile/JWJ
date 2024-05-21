@@ -159,7 +159,7 @@
                             </div>
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <a data-bs-toggle="modal" data-bs-target="#PostOnCommunity" class="btn-bl">Post On Community</a>
+                                    <a data-bs-toggle="modal" data-bs-target="#PostOnCommunity" href="javascript:void(0)" class="btn-bl">Post On Community</a>
                                 </div>
                             </div>
                         </div>
@@ -236,13 +236,13 @@
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <textarea name="post_description" class="form-control" placeholder="Type Your Reply Message Here.."></textarea>
+                                    <textarea name="post_description" class="form-control" placeholder="Type your message here"></textarea>
                                 </div>
                             </div>
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Discard</button>
-                                    <button type="submit" class="save-btn">Save</button>
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="save-btn">Post</button>
                                 </div>
                             </div>
                         </div>

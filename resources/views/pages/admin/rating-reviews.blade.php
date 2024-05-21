@@ -14,11 +14,6 @@
                             <a href="{{ route('admin.rating-review.download.report') }}" class="btn-bl"><img
                                     src="{{ assets('assets/images/download.svg') }}"> Download report</a>
                         </div>
-                        {{-- <div class="form-group">
-                            <a href="javascript:void(0)" class="btn-bl"><img
-                                    src="{{ assets('assets/images/download.svg') }}">
-                                Download report</a>
-                        </div> --}}
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
