@@ -25,7 +25,7 @@ class RoutineController extends Controller
     public function routineCategory(Request $request)
     {
         try {
-            $category = RoutineCategory::orderByDesc('id')->get();
+            $category = RoutineCategory::where('status', 1)->orderByDesc('id')->get();
             $response = array();
             foreach ($category as $val) {
                 $categoryCount = Routine::where('category_id', $val->id)->where('created_by', auth()->user()->id)->count();
@@ -35,7 +35,7 @@ class RoutineController extends Controller
                 $temp['code'] = $val->code;
                 $temp['status'] = $val->status;
                 $temp['percentage'] = (($allRoutine < 1) || ($categoryCount < 1)) ? 0 : number_format((float)(($categoryCount / $allRoutine) * 100), 2, '.', '');
-                $temp['logo'] = assets('assets/images/' . $val->logo);
+                $temp['logo'] = assets('uploads/routine/' . $val->logo);
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $response[] = $temp;
             }
