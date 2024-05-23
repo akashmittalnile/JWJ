@@ -256,6 +256,11 @@
 
 @push('js')
     <script>
+        $('#PostOnCommunity').on('hidden.bs.modal', function(e) {
+            $(this).find('form').trigger('reset');
+            $(".form-control").removeClass("is-invalid");
+        });
+
         $(document).on('change', '.toggle__input', function(e) {
             let status = ($(this).is(":checked")) ? 1 : 2;
             let id = $(this).data('id');

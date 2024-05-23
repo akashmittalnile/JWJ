@@ -632,11 +632,11 @@ class RoutineController extends Controller
     {
         try {
             if ($request->frequency == 'T') {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required'];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required', 'images.*' => 'image|mimes:jpeg,png,jpg',];
             } elseif ($request->frequency == 'C') {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array'];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg',];
             } else {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array'];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg',];
             }
             $validator = Validator::make($request->all(), $validRequest);
             if ($validator->fails()) {
@@ -645,9 +645,6 @@ class RoutineController extends Controller
                 $task = Routine::where('id', $request->id)->where('type', 'T')->first();
                 if (isset($task->id)) {
                     if ($task->created_by == auth()->user()->id) {
-                        if ($request->hasFile("images"))
-                            if (isInvalidExtension($request->images)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                         $task->type = 'T';
                         $task->name = $request->name;
                         $task->subtitle = $request->subtitle ?? null;

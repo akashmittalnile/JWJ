@@ -186,6 +186,10 @@
         return /^(?=.*[a-z])/.test(value);
     }, 'At least 1 lower character is required.');
 
+    $.validator.addMethod("phoneValidate", function(value) {
+        return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(value);
+    }, 'Please enter valid phone number.');
+
     $('#profile-form').validate({
         rules: {
             name: {
@@ -193,6 +197,7 @@
             },
             mobile: {
                 required: true,
+                phoneValidate: true
             },
             address: {
                 required: true,

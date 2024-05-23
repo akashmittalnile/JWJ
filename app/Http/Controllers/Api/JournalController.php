@@ -191,13 +191,11 @@ class JournalController extends Controller
                 'file' => 'required|array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
+                'file.*' => 'image|mimes:jpeg,png,jpg'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                if ($request->hasFile("file")) 
-                    if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                 $newCriteriaArr = array();
                 if(isset($request->new_criteria) && count($request->new_criteria)){
                     foreach($request->new_criteria as $vaal){
@@ -265,6 +263,7 @@ class JournalController extends Controller
                 'content' => 'required',
                 'mood_id' => 'required',
                 'file' => 'array',
+                'file.*' => 'image|mimes:jpeg,png,jpg',
                 'deletefile' => 'array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
@@ -273,9 +272,6 @@ class JournalController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                if ($request->hasFile("file")) 
-                    if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                 $journal = Journal::where('created_by', auth()->user()->id)->where('id', $request->id)->first();
                 $journal->title = $request->title;
                 $journal->content = $request->content;

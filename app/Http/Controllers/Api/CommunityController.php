@@ -304,14 +304,12 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required|array',
+                'file.*' => 'image|mimes:jpeg,png,jpg',
                 'description' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                if ($request->hasFile("file")) 
-                    if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                 $community = new Community;
                 $community->name = $request->title;
                 $community->plan_id = $request->plan_id ?? null;
@@ -360,6 +358,7 @@ class CommunityController extends Controller
                 'id' => 'required',
                 'title' => 'required',
                 'file' => 'array',
+                'file.*' => 'image|mimes:jpeg,png,jpg',
                 'deletefile' => 'array',
                 'description' => 'required',
             ]);
@@ -369,9 +368,6 @@ class CommunityController extends Controller
                 $community = Community::where('id', $request->id)->first();
                 if(isset($community->id)){
                     if($community->created_by == auth()->user()->id){
-                        if ($request->hasFile("file")) 
-                            if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                         $community->name = $request->title;
                         $community->plan_id = $request->plan_id ?? null;
                         $community->description = $request->description;
@@ -489,6 +485,7 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'required|array',
+                'file.*' => 'image|mimes:jpeg,png,jpg'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -496,9 +493,6 @@ class CommunityController extends Controller
                 $ufc = UserFollowedCommunity::where('community_id', $request->community_id)->where('userid', auth()->user()->id)->first();
                 $data = Community::where('id', $request->community_id)->first();
                 if(isset($ufc->id) || (isset($data->id) && ($data->created_by == auth()->user()->id))){
-                    if ($request->hasFile("file")) 
-                        if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                     $post = new Post;
                     $post->community_id = $request->community_id;
                     $post->title = $request->title;
@@ -534,6 +528,7 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'array',
+                'file.*' => 'image|mimes:jpeg,png,jpg',
                 'deletefile' => 'array',
             ]);
             if ($validator->fails()) {
@@ -542,9 +537,6 @@ class CommunityController extends Controller
                 $post = Post::where('id', $request->id)->first();
                 if(isset($post->id)){
                     if($post->created_by == auth()->user()->id){
-                        if ($request->hasFile("file")) 
-                            if(isInvalidExtension($request->file)) return errorMsg('Only JPG, JPEG & PNG format are allowed');
-
                         $post->title = $request->title;
                         $post->post_description = $request->description;
                         $post->updated_at = date('Y-m-d H:i:s');
