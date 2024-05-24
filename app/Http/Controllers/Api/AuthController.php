@@ -40,12 +40,12 @@ class AuthController extends Controller
                         $user->role = 1;
                         $user->status = -1;
                     }
-                    // $data['subject'] = 'Verify Your Email on Journey with journals';
-                    // $data['site_title'] = 'Verify Your Email on Journey with journals';
-                    // $data['view'] = 'pages.user.email.email-verify';
-                    // $data['to_email'] = $request->email;
-                    // $data['otp'] = $code;
-                    // sendEmail($data);
+                    $data['subject'] = 'Verify Your Email on Journey with journals';
+                    $data['site_title'] = 'Verify Your Email on Journey with journals';
+                    $data['view'] = 'pages.user.email.email-verify';
+                    $data['to_email'] = $request->email;
+                    $data['otp'] = $code;
+                    sendEmail($data);
                     $user->save();
                     return successMsg('OTP sended to your email address.', ['otp' => $code]);
                 } else return errorMsg('This email is already exist!');
@@ -120,12 +120,12 @@ class AuthController extends Controller
                             $user->fcm_token = $request->fcm_token;
                         }
                         $user->save();
-                        // $data['subject'] = 'Welcome to Journey with journals';
-                        // $data['site_title'] = 'Welcome to Journey with journals';
-                        // $data['view'] = 'pages.user.email.registration-successful';
-                        // $data['to_email'] = $request->email;
-                        // $data['customer_name'] = $user->name;
-                        // sendEmail($data);
+                        $data['subject'] = 'Welcome to Journey with journals';
+                        $data['site_title'] = 'Welcome to Journey with journals';
+                        $data['view'] = 'pages.user.email.registration-successful';
+                        $data['to_email'] = $request->email;
+                        $data['customer_name'] = $user->name;
+                        sendEmail($data);
                         $token = $user->createToken("journey_with_journals")->plainTextToken;
                         return successMsg('Registered successfully.', ['access_token' => $token]);
                     } else return errorMsg('Email is not verified!');
@@ -196,13 +196,13 @@ class AuthController extends Controller
                     $code = rand(1000,9999);
                     $user->otp = $code;
                     $user->updated_at = date('Y-m-d H:i:s');
-                    // $data['subject'] = 'Reset Your Journey with journals password';
-                    // $data['site_title'] = 'Reset Your Journey with journals password';
-                    // $data['view'] = 'pages.user.email.send-otp';
-                    // $data['to_email'] = $request->email;
-                    // $data['otp'] = $code;
-                    // $data['customer_name'] = $user->name;
-                    // sendEmail($data);
+                    $data['subject'] = 'Reset Your Journey with journals password';
+                    $data['site_title'] = 'Reset Your Journey with journals password';
+                    $data['view'] = 'pages.user.email.send-otp';
+                    $data['to_email'] = $request->email;
+                    $data['otp'] = $code;
+                    $data['customer_name'] = $user->name;
+                    sendEmail($data);
                     $user->save();
                     return successMsg('OTP sent to your email address', ['otp' => $code]);
                 } else return errorMsg('Email is not registered with us');
