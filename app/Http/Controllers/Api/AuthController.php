@@ -317,7 +317,7 @@ class AuthController extends Controller
                 'user_name' => 'required',
                 'mobile' => 'required',
                 'country_code' => 'required',
-                'file' => 'mimes:jpeg,png,jpg|image',
+                'file' => 'mimes:jpeg,png,jpg,heic|image',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());

@@ -632,11 +632,11 @@ class RoutineController extends Controller
     {
         try {
             if ($request->frequency == 'T') {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required', 'images.*' => 'image|mimes:jpeg,png,jpg',];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required', 'images.*' => 'image|mimes:jpeg,png,jpg,heic',];
             } elseif ($request->frequency == 'C') {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg',];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg,heic',];
             } else {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg',];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg,heic',];
             }
             $validator = Validator::make($request->all(), $validRequest);
             if ($validator->fails()) {

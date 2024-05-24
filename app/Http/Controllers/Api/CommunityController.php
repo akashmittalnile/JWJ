@@ -304,7 +304,7 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required|array',
-                'file.*' => 'image|mimes:jpeg,png,jpg',
+                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'description' => 'required',
             ]);
             if ($validator->fails()) {
@@ -358,7 +358,7 @@ class CommunityController extends Controller
                 'id' => 'required',
                 'title' => 'required',
                 'file' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg',
+                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'deletefile' => 'array',
                 'description' => 'required',
             ]);
@@ -485,7 +485,7 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'required|array',
-                'file.*' => 'image|mimes:jpeg,png,jpg'
+                'file.*' => 'image|mimes:jpeg,png,jpg,heic'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -528,7 +528,7 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg',
+                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'deletefile' => 'array',
             ]);
             if ($validator->fails()) {

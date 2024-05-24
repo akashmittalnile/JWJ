@@ -191,7 +191,7 @@ class JournalController extends Controller
                 'file' => 'required|array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg'
+                'file.*' => 'image|mimes:jpeg,png,jpg,heic'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -263,7 +263,7 @@ class JournalController extends Controller
                 'content' => 'required',
                 'mood_id' => 'required',
                 'file' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg',
+                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'deletefile' => 'array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',

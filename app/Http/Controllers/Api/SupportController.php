@@ -175,7 +175,7 @@ class SupportController extends Controller
     public function chatImage(Request $request){
         try {
             $validator = Validator::make($request->all(), [
-                'image' => 'required|mimes:jpeg,png,jpg|image',
+                'image' => 'required|mimes:jpeg,png,jpg,heic|image',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
