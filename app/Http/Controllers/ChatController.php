@@ -17,7 +17,7 @@ class ChatController extends Controller
             if($request->ajax()){
                 $data = User::leftJoin('firebase_chats as fc', 'fc.user_id', '=', 'users.id')->where('users.status', 1)->where('users.role', 1);
                 if($request->filled('search')){
-                    $data->whereRaw("(`name` LIKE '%" . $request->search . "%') or `email` LIKE '%" . $request->search . "%'");
+                    $data->whereRaw("(`users`.`name` LIKE '%" . $request->search . "%') or `users`.`email` LIKE '%" . $request->search . "%'")->where('users.status', 1)->where('users.role', 1);
                 }
                 $data = $data->select('users.id', 'users.name', 'users.email', 'users.profile', 'fc.updated_at', 'fc.unseen_msg_count', 'fc.last_msg', 'last_msg_datetime')->orderByDesc('fc.last_msg_datetime')->distinct('users.id')->get();
                 // dd($data);

@@ -584,7 +584,7 @@ class CommunityController extends Controller
                 if(isset($post->id)){
                     $postImg = PostImage::where('post_id', $request->postId)->get();
                     foreach($postImg as $key => $val){
-                        fileRemove("/uploads/community/post/$val->name");
+                        // fileRemove("/uploads/community/post/$val->name");
                     }
                     PostImage::where('post_id', $request->postId)->delete();
                     $likes = UserLike::where('object_id', $request->postId)->where('object_type', 'post')->delete();

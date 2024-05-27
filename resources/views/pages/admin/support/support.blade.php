@@ -104,25 +104,6 @@
                                 <div class="jwj-review-card">
                                     <div class="jwj-review-card-head">
                                         <div class="review-rating-user-avtar">
-                                            <img src="{{ assets('assets/images/no-image.jpg') }}" id="modal2Img" alt="">
-                                        </div>
-                                        <div class="review-rating-user-text">
-                                            <h3 id="modal2Name"></h3>
-                                        </div>
-                                    </div>
-                                    <div class="jwj-review-card-body">
-                                        <span class="review-quotes-shape"></span>
-                                        <div class="review-desc" id="modal2Msg"></div>
-                                        <div class="review-date" id="modal2Time"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="form-group">
-                                <div class="jwj-review-card">
-                                    <div class="jwj-review-card-head">
-                                        <div class="review-rating-user-avtar">
                                             <img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}" alt="">
                                         </div>
                                         <div class="review-rating-user-text">
@@ -138,7 +119,25 @@
                                 </div>
                             </div>
                         </div>
-
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div class="jwj-review-card">
+                                    <div class="jwj-review-card-head">
+                                        <div class="review-rating-user-avtar">
+                                            <img src="{{ assets('assets/images/no-image.jpg') }}" id="modal2Img" alt="">
+                                        </div>
+                                        <div class="review-rating-user-text">
+                                            <h3 id="modal2Name"></h3>
+                                        </div>
+                                    </div>
+                                    <div class="jwj-review-card-body">
+                                        <span class="review-quotes-shape"></span>
+                                        <div class="review-desc" id="modal2Msg"></div>
+                                        <div class="review-date" id="modal2Time"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

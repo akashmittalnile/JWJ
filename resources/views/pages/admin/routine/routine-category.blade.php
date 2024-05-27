@@ -268,6 +268,12 @@
                     dataType: 'json',
                     contentType: false,
                     processData: false,
+                    beforeSend: function() {
+                        $("#preloader").show()
+                    },
+                    complete: function() {
+                        $("#preloader").hide()
+                    },
                     success: function(response) {
                         if (response.status) {
                             toastr.success(response.message);
@@ -330,6 +336,12 @@
                     dataType: 'json',
                     contentType: false,
                     processData: false,
+                    beforeSend: function() {
+                        $("#preloader").show()
+                    },
+                    complete: function() {
+                        $("#preloader").hide()
+                    },
                     success: function(response) {
                         if (response.status) {
                             toastr.success(response.message);

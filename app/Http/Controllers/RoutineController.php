@@ -128,7 +128,7 @@ class RoutineController extends Controller
                 if ($request->hasFile("file")) {
                     $name = fileUpload($request->file, "/uploads/routine/");
                     if(isset($category->logo)){
-                        fileRemove("/uploads/routine/$category->logo");
+                        // fileRemove("/uploads/routine/$category->logo");
                     }
                     $category->logo = $name;
                 }

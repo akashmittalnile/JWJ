@@ -657,7 +657,7 @@ class RoutineController extends Controller
                         if (isset($request->deletefile) && count($request->deletefile) > 0) {
                             foreach ($request->deletefile as $val) {
                                 $taskImage = Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->first();
-                                fileRemove("/uploads/task/$taskImage->name");
+                                // fileRemove("/uploads/task/$taskImage->name");
                                 Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->delete();
                             }
                         }
@@ -756,7 +756,7 @@ class RoutineController extends Controller
                         UserHideTask::where('task_id', $task->id)->delete();
                         $attach = Attachment::where('routine_id', $task->id)->where('routine_type', 'T')->get();
                         foreach ($attach as $val) {
-                            fileRemove("/uploads/task/$val->file");
+                            // fileRemove("/uploads/task/$val->file");
                         }
                         Attachment::where('routine_id', $task->id)->where('routine_type', 'T')->delete();
                         Routine::where('id', $request->id)->delete();

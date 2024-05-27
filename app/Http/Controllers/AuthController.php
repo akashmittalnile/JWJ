@@ -216,7 +216,7 @@ class AuthController extends Controller
                 if ($request->hasFile("file")) {
                     $name = fileUpload($request->file, "/uploads/profile/");
                     if(isset($user->profile)){
-                        fileRemove("/uploads/profile/" . $user->profile);
+                        // fileRemove("/uploads/profile/" . $user->profile);
                     }
                     $user->profile = $name;
                 }
