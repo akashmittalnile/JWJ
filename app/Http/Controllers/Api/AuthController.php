@@ -317,14 +317,13 @@ class AuthController extends Controller
                 'user_name' => 'required',
                 'mobile' => 'required',
                 'country_code' => 'required',
-                'file' => 'mimes:jpeg,png,jpg,heic|image',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
                 $user = User::where('id', auth()->user()->id)->first();
                 if(isset($user->id)) {
-                    if ($request->hasFile("file")) {
+                    if ($request->file) {
                         if(isset($user->profile)){
                             fileRemove("/uploads/profile/" . $user->profile);
                         }

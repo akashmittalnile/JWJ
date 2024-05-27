@@ -191,7 +191,6 @@ class JournalController extends Controller
                 'file' => 'required|array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg,heic'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -226,9 +225,9 @@ class JournalController extends Controller
                 $journal->created_by = auth()->user()->id;
                 $journal->save();
 
-                if ($request->hasFile("file")) {
-                    foreach ($request->file('file') as $value) {
-                        $name = fileUpload($value, "/uploads/journal/");
+                if (count($request->file) > 0) {
+                    foreach ($request->file as $key => $value) {
+                        $name = fileUpload($request->file[$key], "/uploads/journal/");
                         $journalImage = new JournalImage;
                         $journalImage->journal_id = $journal->id;
                         $journalImage->name = $name;
@@ -263,7 +262,6 @@ class JournalController extends Controller
                 'content' => 'required',
                 'mood_id' => 'required',
                 'file' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'deletefile' => 'array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
@@ -288,9 +286,9 @@ class JournalController extends Controller
                         JournalImage::where('id', $val)->where('journal_id', $journal->id)->delete();
                     }
                 }
-                if ($request->hasFile("file")) {
-                    foreach ($request->file('file') as $value) {
-                        $name = fileUpload($value, "/uploads/journal/");
+                if (count($request->file) > 0) {
+                    foreach ($request->file as $key => $value) {
+                        $name = fileUpload($request->file[$key], "/uploads/journal/");
                         $journalImage = new JournalImage;
                         $journalImage->journal_id = $journal->id;
                         $journalImage->name = $name;

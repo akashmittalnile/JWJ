@@ -492,12 +492,12 @@ class RoutineController extends Controller
                 $task->status = 1;
                 $task->save();
 
-                if ($request->hasfile('images')) {
-                    foreach ($request->file('images') as $key => $file) {
+                if (count($request->images) > 0) {
+                    foreach ($request->images as $key => $file) {
                         $attachement = new Attachment;
                         $attachement->routine_id = $task->id;
                         $attachement->routine_type = 'T';
-                        $name = fileUpload($file, "/uploads/task/");
+                        $name = fileUpload($request->images[$key], "/uploads/task/");
                         $attachement->file = $name;
                         $attachement->status = 1;
                         $attachement->save();
@@ -632,11 +632,11 @@ class RoutineController extends Controller
     {
         try {
             if ($request->frequency == 'T') {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required', 'images.*' => 'image|mimes:jpeg,png,jpg,heic',];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required'];
             } elseif ($request->frequency == 'C') {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg,heic',];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'custom' => 'required|array'];
             } else {
-                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'images.*' => 'image|mimes:jpeg,png,jpg,heic',];
+                $validRequest = ['id' => 'required', 'name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array'];
             }
             $validator = Validator::make($request->all(), $validRequest);
             if ($validator->fails()) {
@@ -661,12 +661,12 @@ class RoutineController extends Controller
                                 Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->delete();
                             }
                         }
-                        if ($request->hasfile('images')) {
-                            foreach ($request->file('images') as $key => $file) {
+                        if (count($request->images)>0) {
+                            foreach ($request->images as $key => $file) {
                                 $attachement = new Attachment;
                                 $attachement->routine_id = $task->id;
                                 $attachement->routine_type = 'T';
-                                $name = fileUpload($file, "/uploads/task/");
+                                $name = fileUpload($request->images[$key], "/uploads/task/");
                                 $attachement->file = $name;
                                 $attachement->status = 1;
                                 $attachement->save();

@@ -93,6 +93,10 @@ class CommunityController extends Controller
                 $data->where('communities.status', $request->status);
             }else $data->where('communities.status', 1);
             $data = $data->orderByDesc('communities.id')->paginate(config('constant.apiPaginatePerPage'));
+            $rejectCount = Community::where('created_by', auth()->user()->id)->where('communities.status', 3)->count();
+            $inactiveCount = Community::where('created_by', auth()->user()->id)->where('communities.status', 2)->count();
+            $activeCount = Community::where('created_by', auth()->user()->id)->where('communities.status', 1)->count();
+            $pendingCount = Community::where('created_by', auth()->user()->id)->where('communities.status', 0)->count();
             $response = [];
             foreach($data as $val){
                 $ufc = UserFollowedCommunity::where('community_id', $val->id)->where('userid', auth()->user()->id)->first();
@@ -139,7 +143,7 @@ class CommunityController extends Controller
             );
             $totalFollow = UserFollowedCommunity::where('userid', auth()->user()->id)->distinct('community_id')->count();
             Log::channel('community')->info($data);
-            return successMsg('Community list', ['data' => $response, 'totalFollow' => $totalFollow ?? 0, 'pagination' => $pagination]);
+            return successMsg('Community list', ['data' => $response, 'rejectCount' => $rejectCount ?? 0, 'inactiveCount' => $inactiveCount ?? 0, 'activeCount' => $activeCount ?? 0, 'pendingCount' => $pendingCount ?? 0, 'totalFollow' => $totalFollow ?? 0, 'pagination' => $pagination]);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -284,8 +288,8 @@ class CommunityController extends Controller
                         'plan_price_currency' => $plan->currency ?? null,
                         'post_count' => $postCount ?? 0,
                         'posts' => $post,
-                        'posted_by' => $val->user->name ?? 'NA',
-                        'posted_by_image' => isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null,
+                        'posted_by' => $data->user->name ?? 'NA',
+                        'posted_by_image' => isset($data->user->profile) ? assets('uploads/profile/'.$data->user->profile) : null,
                     ];
                     Log::channel('community')->info($data);
                     Log::channel('post')->info($posts);
@@ -304,7 +308,6 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required|array',
-                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'description' => 'required',
             ]);
             if ($validator->fails()) {
@@ -318,9 +321,9 @@ class CommunityController extends Controller
                 $community->created_by = auth()->user()->id ?? null;
                 $community->save();
 
-                if ($request->hasFile("file")) {
-                    foreach ($request->file('file') as $value) {
-                        $name = fileUpload($value, "/uploads/community/");
+                if (count($request->file) > 0) {
+                    foreach ($request->file as $key => $value) {
+                        $name = fileUpload($request->file[$key], "/uploads/community/");
                         $communityImage = new CommunityImage;
                         $communityImage->community_id = $community->id;
                         $communityImage->name = $name;
@@ -358,7 +361,6 @@ class CommunityController extends Controller
                 'id' => 'required',
                 'title' => 'required',
                 'file' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'deletefile' => 'array',
                 'description' => 'required',
             ]);
@@ -381,9 +383,9 @@ class CommunityController extends Controller
                                 CommunityImage::where('id', $val)->where('community_id', $community->id)->delete();
                             }
                         }
-                        if ($request->hasFile("file")) {
-                            foreach ($request->file('file') as $value) {
-                                $name = fileUpload($value, "/uploads/community/");
+                        if (count($request->file) > 0) {
+                            foreach ($request->file as $key => $value) {
+                                $name = fileUpload($request->file[$key], "/uploads/community/");
                                 $communityImage = new CommunityImage;
                                 $communityImage->community_id = $community->id;
                                 $communityImage->name = $name;
@@ -485,7 +487,6 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'required|array',
-                'file.*' => 'image|mimes:jpeg,png,jpg,heic'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -500,9 +501,9 @@ class CommunityController extends Controller
                     $post->created_by = auth()->user()->id;
                     $post->save();
 
-                    if ($request->hasFile("file")) {
-                        foreach ($request->file('file') as $value) {
-                            $name = fileUpload($value, "/uploads/community/post/");
+                    if (count($request->file) > 0) {
+                        foreach ($request->file as $key => $value) {
+                            $name = fileUpload($request->file[$key], "/uploads/community/post/");
                             $postImage = new PostImage;
                             $postImage->post_id = $post->id;
                             $postImage->name = $name;
@@ -528,7 +529,6 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'array',
-                'file.*' => 'image|mimes:jpeg,png,jpg,heic',
                 'deletefile' => 'array',
             ]);
             if ($validator->fails()) {
@@ -549,9 +549,9 @@ class CommunityController extends Controller
                                 PostImage::where('id', $val)->where('post_id', $post->id)->delete();
                             }
                         }
-                        if ($request->hasFile("file")) {
-                            foreach ($request->file('file') as $value) {
-                                $name = fileUpload($value, "/uploads/community/post/");
+                        if (count($request->file) > 0) {
+                            foreach ($request->file as $key => $value) {
+                                $name = fileUpload($request->file[$key], "/uploads/community/post/");
                                 $postImage = new PostImage;
                                 $postImage->post_id = $post->id;
                                 $postImage->name = $name;
