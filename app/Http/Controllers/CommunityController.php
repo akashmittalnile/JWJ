@@ -339,7 +339,7 @@ class CommunityController extends Controller
                     'total' => $post->total(),
                     'html' => $html,
                 );
-                return successMsg('Community post list', $response);
+                return successMsg('Post created successfully', $response);
             } else {
                 $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->select('communities.*', 'u.role', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
                 $imgs = CommunityImage::where('community_id', $id)->get();

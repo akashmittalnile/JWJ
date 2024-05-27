@@ -372,7 +372,7 @@
                             let html = result.data.html;
                             $("#post-card-lists").html(result.data.html);
                             $('.communitycarouselpost1').owlCarousel({
-                                loop: false,
+                                loop: true,
                                 margin: 10,
                                 nav: false,
                                 dots: false,

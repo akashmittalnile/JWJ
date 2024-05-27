@@ -223,6 +223,18 @@
     });
 
     $(document).ready(function() {
+        $('.communitycarousel1').owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: false,
+            dots: false,
+            responsive: {
+                1000: {
+                    items: 1
+                }
+            }
+        });
+                            
         let len = $(".block").length;
         $(".block").slice(4, len).hide();
         if ($(".block:hidden").length != 0) {
