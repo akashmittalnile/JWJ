@@ -281,7 +281,7 @@ class CommunityController extends Controller
                         </div>";
                     }
 
-                    $planName = isset($val->user->plan->name) ? $val->user->plan->name : 'Plan A Member';
+                    $planName = isset($val->user->plan->name) ? $val->user->plan->name : 'Plan A';
                     $planImg = isset($val->user->plan->image) ? assets('assets/images/'.$val->user->plan->image) : assets('assets/images/freeplan.svg');
                     $planHtml = ($val->user->role == 2) ? "Administrator" : "<img src='$planImg'> $planName Member";
 
@@ -537,7 +537,7 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string',
                 'post_description' => 'required|string',
-                'images.*' => 'image|max:2048', // Validate each image uploaded
+                'images.*' => 'image', // Validate each image uploaded
                 'community_id' => 'required|string',
             ]);
 

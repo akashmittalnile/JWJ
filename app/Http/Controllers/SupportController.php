@@ -63,7 +63,7 @@ class SupportController extends Controller
                                         <img src='".$userProfileImage."'>
                                     </div>
                                     <div class='jwjcard-user-text'>
-                                        <h4> $val->name </h4>
+                                        <h4>". ucwords($val->name) ."</h4>
                                     </div>
                                 </div>
                                 <div class='jwjcard-user-action'>
