@@ -162,7 +162,7 @@
                     </div>
 
                     <div class="card-body">
-                        <div id="reviewrating" class="owl-carousel owl-theme">
+                        <div id="reviewRating" class="owl-carousel owl-theme">
                             @foreach($rating as $val)
                             <div class="item">
                                 <div class="jwj-review-card">
@@ -469,5 +469,25 @@
     }).on('apply.daterangepicker', function(ev, picker) {
         $(this).val(picker.startDate.format('MM-DD-YYYY'));
     });
+
+    $(document).ready(function() {
+        $("#reviewRating").owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: false,
+            dots: false,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                500: {
+                    items: 2
+                },
+                1000: {
+                    items: 3
+                },
+            }
+        });
+    })
 </script>
 @endpush

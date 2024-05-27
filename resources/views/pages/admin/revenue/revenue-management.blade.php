@@ -52,7 +52,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <div class="search-form-group">
-                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by name, amount & transaction ID">
+                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name">
                                 <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
                             </div>
                         </div>
