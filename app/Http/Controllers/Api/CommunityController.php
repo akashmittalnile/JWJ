@@ -619,7 +619,7 @@ class CommunityController extends Controller
                 $commentCount = Comment::where('object_id', $id)->where('object_type', 'post')->count();
                 $comment = Comment::where('object_id', $id)->where('object_type', 'post')->where('parent_id', null)->orderByDesc('id')->get();
                 $commentArr = array();
-                foreach($comment as $key => $value){
+                foreach($post->comment as $key => $value){
                     $reply = Comment::where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->get();
                     $replyArr = array();
                     foreach($reply as $key1 => $value1){

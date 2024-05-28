@@ -204,7 +204,32 @@
             processData: false,
             success: function(response) {
                 if (response.status) {
-                    // console.log(response.message);
+                    $.ajax({
+                        type: 'get',
+                        url: "{{ route('admin.chats') }}",
+                        data: {
+                            search: $("#searchInput").val()
+                        },
+                        dataType: 'json',
+                        success: function(result) {
+                            if (result.status) {
+                                let userData = result.data.html.data;
+                                let html = result.data.html;
+                                $("#appendData").html(result.data.html);
+                            } else {
+                                let html = `<div class="d-flex justify-content-center align-items-center flex-column">
+                                            <div>
+                                                <img width="250" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                                            </div>
+                                        </div>`;
+                                $("#appendData").html(html);
+                            }
+                        },
+                        error: function(data, textStatus, errorThrown) {
+                            jsonValue = jQuery.parseJSON(data.responseText);
+                            console.error(jsonValue.message);
+                        },
+                    });
                     return false;
                 } else {
                     console.error(response.message);
@@ -215,7 +240,9 @@
                 jsonValue = jQuery.parseJSON(data.responseText);
                 console.error(jsonValue.message);
             },
-        })
+        });
+
+       
     }
 
 
