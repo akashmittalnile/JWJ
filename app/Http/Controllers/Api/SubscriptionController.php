@@ -175,7 +175,10 @@ class SubscriptionController extends Controller
                             $userPlanExists->status = 2;
                             $userPlanExists->save();
                             $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
-                            $msg = "Subscription has been updated successfully.";
+                            if ($userPlanExists->price > $request->price) 
+                                $msg = "Plan downgraded successfully";
+                            else 
+                                $msg = "Plan upgraded successfully";
                         }
 
                         $userPlan = new UserPlan;

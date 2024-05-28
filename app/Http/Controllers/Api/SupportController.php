@@ -130,6 +130,17 @@ class SupportController extends Controller
 
     // Dev name : Dishant Gupta
     // This function is used to getting the list of all the notifications
+    public function clearNotifications(Request $request) {
+        try{
+            Notify::where('receiver_id', auth()->user()->id)->delete();
+            return successMsg('All notifications cleared.');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to getting the list of all the notifications
     public function notificationSeen(Request $request) {
         try{
             Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->update(['is_seen', 2]);

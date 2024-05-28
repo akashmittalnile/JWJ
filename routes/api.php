@@ -37,6 +37,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
 
     Route::get('notifications', [SupportController::class, 'notifications']);
+    Route::post('clear-notifications', [SupportController::class, 'clearNotifications']);
     Route::post('notification-seen', [SupportController::class, 'notificationSeen']);
 
     Route::get('plans', [SubscriptionController::class, 'plans']);
