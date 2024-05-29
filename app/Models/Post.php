@@ -38,6 +38,6 @@ class Post extends Model
     }
 
     public function comments(){
-        return $this->hasMany(Comment::class, 'object_id', 'id')->join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->whereNull('parent_id')->where('object_type', 'post')->orderByDesc('comments.id')->get();
+        return $this->hasMany(Comment::class, 'object_id', 'id')->join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->whereNull('parent_id')->where('object_type', 'post')->select('comments.*')->orderByDesc('comments.id')->get();
     }
 }

@@ -49,7 +49,7 @@ class CommunityController extends Controller
                     $images[] = $tem;
                 }
                 $plan = Plan::where('id', $val->plan_id)->first();
-                $post = Post::where('community_id', $val->id)->count();
+                $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
@@ -116,7 +116,7 @@ class CommunityController extends Controller
                 }
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
                 $plan = Plan::where('id', $val->plan_id)->first();
-                $post = Post::where('community_id', $val->id)->count();
+                $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
@@ -176,7 +176,7 @@ class CommunityController extends Controller
                 }
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
                 $plan = Plan::where('id', $val->plan_id)->first();
-                $post = Post::where('community_id', $val->id)->count();
+                $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
@@ -216,12 +216,12 @@ class CommunityController extends Controller
             if(isset($data->id)){
                 $ufc = UserFollowedCommunity::where('community_id', $data->id)->where('userid', auth()->user()->id)->first();
                 if(isset($ufc->id) || ($data->created_by == auth()->user()->id)){
-                    $posts = Post::where('community_id', $data->id)->select(DB::raw("(select COUNT(object_id) from user_likes where user_likes.object_id = posts.id and user_likes.object_type = 'post') as likesCount, (select COUNT(object_id) from comments where comments.object_id = posts.id and comments.object_type = 'post') as commentCount, posts.*"));
-                    if($request->filled('post_latest')) $posts->orderByDesc('id');
+                    $posts = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('posts.community_id', $data->id)->select(DB::raw("(select COUNT(object_id) from user_likes where user_likes.object_id = posts.id and user_likes.object_type = 'post') as likesCount, (select COUNT(object_id) from comments where comments.object_id = posts.id and comments.object_type = 'post') as commentCount, posts.*"));
+                    if($request->filled('post_latest')) $posts->orderByDesc('posts.id');
                     elseif($request->filled('post_like')) $posts->orderByDesc('likesCount');
                     elseif($request->filled('post_comment')) $posts->orderByDesc('commentCount');
                     $posts = $posts->get();
-                    $postCount = Post::where('community_id', $data->id)->count();
+                    $postCount = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $data->id)->count();
                     $followCount = UserFollowedCommunity::where('community_id', $data->id)->count();
                     $follow = UserFollowedCommunity::where('community_id', $data->id)->orderByDesc('id')->limit(3)->get();
                     $memberImage = array();
@@ -248,13 +248,21 @@ class CommunityController extends Controller
                             $image[] = $tem;
                         }
                         $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $item->id)->where('object_type', 'post')->first();
+
+                        $commentCount = 0;
+                        foreach($item->comments() as $key => $value){
+                            $reply = Comment::join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->where('object_id', $item->id)->where('object_type', 'post')->where('parent_id', $value->id)->count();
+                            $commentCount++;
+                            $commentCount+=$reply;
+                        };
+
                         $temp['id'] = $item->id;
                         $temp['title'] = $item->title;
                         $temp['description'] = $item->post_description;
                         $temp['image'] = $image;
                         $temp['is_liked'] = (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0;
-                        $temp['likes_count'] = $item->likesCount ?? 0;
-                        $temp['comment_count'] = $item->commentCount ?? 0;
+                        $temp['likes_count'] = $item->likeCount() ?? 0;
+                        $temp['comment_count'] = $commentCount ?? 0;
                         $temp['my_post'] = ($item->created_by == auth()->user()->id) ? true : false;
                         $temp['posted_by_name'] = $user->name ?? null;
                         $temp['posted_by_user_name'] = $user->user_name ?? null;
@@ -615,14 +623,15 @@ class CommunityController extends Controller
                     $image[] = $tem;
                 }
                 $isLiked = UserLike::where('user_id', auth()->user()->id)->where('object_id', $id)->where('object_type', 'post')->first();
-                $likesCount = UserLike::where('object_id', $id)->where('object_type', 'post')->count();
-                $commentCount = Comment::where('object_id', $id)->where('object_type', 'post')->count();
-                $comment = Comment::where('object_id', $id)->where('object_type', 'post')->where('parent_id', null)->orderByDesc('id')->get();
+                $likesCount = UserLike::join('users as u', 'u.id', '=', 'user_likes.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->count();
+                $commentCount = 0;
                 $commentArr = array();
-                foreach($post->comment as $key => $value){
-                    $reply = Comment::where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->get();
+                foreach($post->comments() as $key => $value){
+                    $reply = Comment::join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->select('comments.*')->get();
                     $replyArr = array();
+                    $commentCount++;
                     foreach($reply as $key1 => $value1){
+                        $commentCount++;
                         $temp1['reply_id'] = $value1->id;
                         $temp1['reply_comment'] = $value1->comment;
                         $temp1['reply_posted_date'] = date('d M, Y h:i A', strtotime($value1->created_at));
