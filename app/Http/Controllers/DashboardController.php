@@ -91,7 +91,6 @@ class DashboardController extends Controller
                         </td>
                         <td>
                             <a class='trash-btn' data-id='$val->id' id='delete-button' href='javacsript:void(0)'><img src='". assets('assets/images/trash.svg') ."'></a>
-                            <a class='reply-btn' href=''><img src='". assets('assets/images/reply.svg') ."'></a>
                         </td>
                     </tr>";
                 }

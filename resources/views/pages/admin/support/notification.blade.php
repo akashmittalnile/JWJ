@@ -112,7 +112,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
-                                    <button type="submit" class="save-btn">Push App Notification</button>
+                                    <button type="submit" class="save-btn">Push Notification</button>
                                 </div>
                             </div>
                         </form>
