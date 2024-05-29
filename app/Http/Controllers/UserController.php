@@ -101,8 +101,9 @@ class UserController extends Controller
         try {
             $id = encrypt_decrypt('decrypt', $id);
             $user = User::where('id', $id)->first();
-            $plan = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name')->first();
-            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id')->get();
+            $plan = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $id)->where('user_plans.status', 1)->select('plan.name', 'user_plans.price', 'user_plans.plan_timeperiod', 'plan.image')->first();
+            $totalSum = UserPlan::where('user_plans.user_id', $id)->sum('price');
+            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'user_plans.price')->get();
             $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
             $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
             foreach($totalMood as $val){
@@ -118,7 +119,8 @@ class UserController extends Controller
             $totalCommunity = Community::where('created_by', $id)->count();
             $totalRoutine = Routine::where('created_by', $id)->count();
             $totalJournal = Journal::where('created_by', $id)->count();
-            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood', 'totalCommunity', 'totalRoutine', 'totalJournal'));
+            
+            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood', 'totalCommunity', 'totalRoutine', 'totalJournal', 'totalSum'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

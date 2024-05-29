@@ -106,7 +106,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div> 
+                        </div>
                     </a>
                 </div>
                 <div class="col flex-fill">
@@ -152,47 +152,36 @@
                     <div class="plan-card">
                         <div class="plan-content">
                             <div class="plan-content-text">
-                                <p>Total Subscription Payment:</p>
-                                @if(isset($plan->amount))
-                                <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }} / Monthly</h2>
-                                <!-- <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }} / Monthly <span>$0 / day</span></h2> -->
+                                <p>Current Subscription Plan:</p>
+                                @if(isset($plan->price))
+                                <h2>${{ number_format((float)$plan->price ?? 0, 2, '.', '') }} / {{ $plan->plan_timeperiod==1 ? 'Monthly' : 'Yearly' }}</h2>
                                 @else
-                                <h2>$0 / Monthly</h2>
+                                <h2>$0</h2>
                                 @endif
                             </div>
                             <div class="plan-content-icon">
-                                @if(isset($plan->name))
-                                @if($plan->name == 'Plan B')
-                                <img src="{{ assets('assets/images/goldplan.svg') }}">
-                                @elseif($plan->name == 'Plan A')
+                                @if(isset($plan->image))
+                                <img src="{{ assets('assets/images/'.$plan->image) }}">
+                                @else
                                 <img src="{{ assets('assets/images/freeplan.svg') }}">
-                                @elseif($plan->name == 'Plan C')
-                                <img src="{{ assets('assets/images/platinumplan.svg') }}">
-                                @else
-                                <img src="{{ assets('assets/images/goldplan.svg') }}">
-                                @endif
-                                @else
-                                <img src="{{ assets('assets/images/goldplan.svg') }}">
                                 @endif
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6">
-                    <div class="overview-card">
-                        <div class="overview-card-body">
-                            <div class="overview-content">
-                                <div class="overview-content-text">
-                                    <p>Total Subscription Payment:</p>
-                                    @if(isset($plan->amount))
-                                    <h2>${{ number_format((float)$plan->amount ?? 0, 2, '.', '') }}</h2>
-                                    @else
-                                    <h2>$0</h2>
-                                    @endif
-                                </div>
-                                <div class="overview-content-icon">
-                                    <img src="{{ assets('assets/images/dollar-circle.svg') }}" height="50">
-                                </div>
+                    <div class="plan-card">
+                        <div class="plan-content">
+                            <div class="plan-content-text">
+                                <p>Total Subscription Payment:</p>
+                                @if(isset($totalSum))
+                                <h2>${{ number_format((float)$totalSum ?? 0, 2, '.', '') }}</h2>
+                                @else
+                                <h2>$0</h2>
+                                @endif
+                            </div>
+                            <div class="plan-content-icon">
+                                <img src="{{ assets('assets/images/dollar-circle.svg') }}" height="50">
                             </div>
                         </div>
                     </div>
@@ -297,7 +286,7 @@
                                             <div class="sno">{{ $key+1 }}</div>
                                         </td>
                                         <td>{{ $val->name }}</td>
-                                        <td>${{ number_format((float)$val->amount, 2, '.', '') }}</td>
+                                        <td>${{ number_format((float)$val->price, 2, '.', '') }}</td>
                                         <td>Montly</td>
                                         <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->renewal_date)) }}</td>
@@ -371,7 +360,9 @@
             success: function(result) {
                 if (result.status) {
                     toastr.success(result.message);
-                    setInterval(() => {window.location.reload()}, 2000);
+                    setInterval(() => {
+                        window.location.reload()
+                    }, 2000);
                 } else {
                     toastr.error(result.message);
                     return false;
