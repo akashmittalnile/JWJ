@@ -294,7 +294,7 @@
                                     </tr>
                                     @empty
                                     <tr class="text-center">
-                                        <td colspan="7">No record found</td>
+                                        <td colspan="7"><img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data"></td>
                                     </tr>
                                     @endforelse
                                 </tbody>

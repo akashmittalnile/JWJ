@@ -138,7 +138,7 @@
                             @empty
                             <div class="sidebar-member-item" style="border: none;">
                                 <div class="mx-auto">
-                                    No followers
+                                    No shared users found
                                 </div>
                             </div>
                             @endforelse

@@ -132,7 +132,7 @@
                         }
                     } else {
                         let html = `<tr class="text-center">
-                                            <td colspan="8">No record found</td>
+                                            <td colspan="8"><img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data"></td>
                                         </tr>`;
                         $("#appendData").html(html);
                         $("#appendPagination").html('');
