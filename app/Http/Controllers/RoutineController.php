@@ -54,6 +54,8 @@ class RoutineController extends Controller
                             </a>
                             <div class='dropdown-menu'>
                                 <a class='dropdown-item view-btn' data-id='".encrypt_decrypt('encrypt', $val->id)."' data-name='$val->name' data-description='$val->description' data-img='$image' data-status='$val->status' id='editComm' href='javascript:void(0)'><i class='las la-edit'></i> &nbsp; Edit</a>
+
+                                <a class='dropdown-item view-btn' data-id='".encrypt_decrypt('encrypt', $val->id)."' id='deleteComm' href='javascript:void(0)'><i class='las la-trash'></i> &nbsp; Delete</a>
                             </div>
                         </div>
                     </td>

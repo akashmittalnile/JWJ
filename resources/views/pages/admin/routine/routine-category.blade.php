@@ -88,7 +88,7 @@
             <div class="modal-body">
                 <div class="jwj-modal-form text-center">
                     <h2>Are You Sure?</h2>
-                    <p>You want to Delete!</p>
+                    <p>You want to delete this routine category!</p>
                     <form action="{{ route('admin.routine.category.delete') }}" method="post">
                         @csrf
                         <input type="hidden" id="deleteId" name="id">
