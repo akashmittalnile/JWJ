@@ -219,7 +219,7 @@ class RevenueController extends Controller
                     $plan->routines = $request->routine;
                     $plan->updated_at = date('Y-m-d H:i:s');
                     $plan->save();
-                    return successMsg('Plan update successfully.');
+                    return successMsg('Plan updated successfully.');
                 } else return errorMsg('Plan not found');
             }
         } catch (\Exception $e) {

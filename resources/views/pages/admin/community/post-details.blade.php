@@ -88,7 +88,7 @@
                             <div class="jwj-comment-box-head">
                                 <h1>Comments({{ $post->commentCount() ?? 0 }})</h1>
                                 <div class="jwj-comment-head-action">
-                                    <a class="addcomment-btn" data-bs-toggle="modal" data-bs-target="#addcomment"><i class="las la-plus"></i> Add comment</a>
+                                    <a href="javascript:void(0)" class="addcomment-btn" data-bs-toggle="modal" data-bs-target="#addcomment"><i class="las la-plus"></i> Add comment</a>
                                 </div>
                             </div>
 
@@ -220,6 +220,11 @@
         e.preventDefault();
         $('#communityCommentId').val($(this).data('commentid'));
         $('#deleteCommentModal').modal('show');
+    });
+
+    $('#addcomment').on('hidden.bs.modal', function(e) {
+        $(this).find('form').trigger('reset');
+        $("#addcomment .form-control").removeClass("is-invalid");
     });
 
     $(document).ready(function() {

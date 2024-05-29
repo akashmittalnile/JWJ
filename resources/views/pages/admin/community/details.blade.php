@@ -117,7 +117,7 @@
             <div class="col-md-4">
                 <div class="sidebar-member-info">
                     <div class="sidebar-member-head">
-                        <h2>Member List</h2>
+                        <h2>Member List ({{isset($follow)?count($follow):0}})</h2>
                     </div>
                     <div class="sidebar-member-body">
                         <div class="sidebar-member-list-card" style="min-height: 37px; max-height: 520px; overflow-y: auto; overflow-x: hidden;">
