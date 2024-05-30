@@ -45,7 +45,9 @@ class CommunityController extends Controller
                     foreach($imgs as $name){
                         $image_html .= "<div class='item'>
                         <div class='community-media'>
-                                <img src='".assets("uploads/community/$name->name")."'>
+                                <a data-fancybox='' href='".assets("uploads/community/$name->name")."'>
+                                    <img src='".assets("uploads/community/$name->name")."'>
+                                </a>
                             </div>
                         </div>";
                     }
@@ -269,7 +271,9 @@ class CommunityController extends Controller
                     foreach($imgs as $name){
                         $image_html .= "<div class='item'>
                         <div class='community-media' style='height: 210px'>
-                                <img src='".assets("uploads/community/post/$name->name")."'>
+                                <a data-fancybox='' href='".assets("uploads/community/post/$name->name")."'>
+                                    <img src='".assets("uploads/community/post/$name->name")."'>
+                                </a>
                             </div>
                         </div>";
                     }
@@ -376,7 +380,9 @@ class CommunityController extends Controller
                     foreach($imgs as $name){
                         $image_html .= "<div class='item'>
                         <div class='community-approval-media'>
-                                <img src='".assets("uploads/community/$name->name")."'>
+                                <a data-fancybox='' href='".assets("uploads/community/$name->name")."'>
+                                    <img src='".assets("uploads/community/$name->name")."'>
+                                </a>
                             </div>
                         </div>";
                     }
@@ -468,7 +474,9 @@ class CommunityController extends Controller
                     foreach($imgs as $name){
                         $image_html .= "<div class='item'>
                         <div class='community-approval-media'>
-                                <img src='".assets("uploads/community/$name->name")."'>
+                                <a data-fancybox='' href='".assets("uploads/community/$name->name")."'>
+                                    <img src='".assets("uploads/community/$name->name")."'>
+                                </a>
                             </div>
                         </div>";
                     }

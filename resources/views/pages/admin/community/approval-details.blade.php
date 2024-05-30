@@ -52,7 +52,9 @@
                                         @forelse($imgs as $item)
                                         <div class="item">
                                             <div class="community-posts-media">
-                                                <img src="{{ assets('uploads/community/'.$item->name) }}">
+                                                <a data-fancybox="" href="{{ assets('uploads/community/'.$item->name) }}">
+                                                    <img src="{{ assets('uploads/community/'.$item->name) }}">
+                                                </a>
                                             </div>
                                         </div>
                                         @empty
