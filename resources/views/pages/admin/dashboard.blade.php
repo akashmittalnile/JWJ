@@ -77,7 +77,8 @@
                         </div>
                     </div>
                     <div class="subscription-chart">
-                        <div id="chartBar1"></div>
+                        <div id="chartBar1" class="chart month"></div>
+                        <div id="chartBar2" class="chart year d-none"></div>
                     </div>
                 </div>
             </div>
@@ -87,8 +88,8 @@
                         <h2 class="subscription-title">Total subscription payment received</h2>
                         @foreach($plan as $key => $val)
                         <p class="subscription-price {{ $key }} @if($key != 0) d-none @endif">${{ number_format((float)$val->total_amt, 2, '.', '') }}</p>
+                        <p class="subscription-text {{ $key }} @if($key != 0) d-none @endif">{{ $val->total_count ?? 0 }} Users subscribed</p>
                         @endforeach
-                        <p class="subscription-text">{{ $subscribeUserCount ?? 0 }} Users subscribed</p>
                         <div class="subscription-button">
                             @foreach($plan as $key => $val)
                             <a href="javascript:void(0)" data-name="{{ $key }}" class="Plan-btn @if($key == 0) active @endif">{{ $val->name ?? 'NA' }}</a>
@@ -249,6 +250,7 @@
     </div>
 </div>
 <input type="hidden" data-json="{{json_encode($data1Graph)}}" id="data1_graph">
+<input type="hidden" data-json="{{json_encode($data2Graph)}}" id="data2_graph">
 <input type="hidden" data-json="{{json_encode($plancGraph)}}" id="planc_graph">
 <input type="hidden" data-json="{{json_encode($planbGraph)}}" id="planb_graph">
 @endsection
@@ -256,12 +258,17 @@
 @push('js')
 <script type="text/javascript">
     let data1 = [];
+    let data2 = [];
     let planC = [];
     let planB = [];
     $(document).ready(function() {
         let arrOver1 = $("#data1_graph").data('json');
         arrOver1.map(ele => {
             data1.push(ele.toFixed(2));
+        });
+        let arrOver2 = $("#data2_graph").data('json');
+        arrOver2.map(ele => {
+            data2.push(ele.toFixed(2));
         });
 
         let arrPlanC = $("#planc_graph").data('json');
@@ -332,6 +339,67 @@
             colors: ["#1079c0"],
         };
         var chart = new ApexCharts(document.querySelector("#chartBar1"), options1);
+        chart.render();
+    });
+
+    $(function() {
+        var options3 = {
+            chart: {
+                type: "line",
+                height: 240,
+                width: 250,
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                show: true,
+                curve: "smooth",
+                lineCap: "butt",
+                colors: ["#1079c0"],
+                width: 2,
+                dashArray: 0,
+            },
+
+            series: [{
+                name: "Payment received",
+                data: data2,
+            }, ],
+            yaxis: {
+                min: 0,
+                show: false,
+                axisBorder: {
+                    show: false,
+                },
+            },
+            xaxis: {
+                categories: [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+            tooltip: {
+                enabled: true,
+            },
+            colors: ["#1079c0"],
+        };
+        var chart = new ApexCharts(document.querySelector("#chartBar2"), options3);
         chart.render();
     });
 
@@ -448,13 +516,17 @@
     $(document).on('click', '.subscription-card1 .Plan-btn', function() {
         $('.subscription-card1 .Plan-btn').removeClass('active');
         $('.subscription-card1 .subscription-price').addClass('d-none');
+        $('.subscription-card1 .chart').addClass('d-none');
         $('.subscription-card1 .subscription-price' + '.' + $(this).data('name')).removeClass('d-none');
+        $('.subscription-card1 .chart' + '.' + $(this).data('name')).removeClass('d-none');
         $(this).addClass('active');
     });
     $(document).on('click', '.subscription-card .Plan-btn', function() {
         $('.subscription-card .Plan-btn').removeClass('active');
         $('.subscription-card .subscription-price').addClass('d-none');
+        $('.subscription-card .subscription-text').addClass('d-none');
         $('.subscription-card .subscription-price' + '.' + $(this).data('name')).removeClass('d-none');
+        $('.subscription-card .subscription-text' + '.' + $(this).data('name')).removeClass('d-none');
         $(this).addClass('active');
     });
 

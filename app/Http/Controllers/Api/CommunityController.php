@@ -177,6 +177,7 @@ class CommunityController extends Controller
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
                 $plan = Plan::where('id', $val->plan_id)->first();
                 $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
+                $user = User::where('id', $val->created_by)->first();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
@@ -186,8 +187,8 @@ class CommunityController extends Controller
                 $temp['follow'] = true;
                 $temp['member_follow_count'] = $followCount ?? 0;
                 $temp['post_count'] = $post ?? 0;
-                $temp['posted_by'] = $val->user->name ?? 'NA';
-                $temp['posted_by_image'] =  isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : null;
+                $temp['posted_by'] = $user->name ?? 'NA';
+                $temp['posted_by_image'] =  isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null;
                 $temp['member_image'] = $memberImage;
                 $temp['plan_name'] = $plan->plan_name ?? null;
                 $temp['plan_monthly_price'] = $plan->monthly_price ?? null;

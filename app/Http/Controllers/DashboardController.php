@@ -26,11 +26,18 @@ class DashboardController extends Controller
             $communityFollowCount = CommunityFollower::count();
             $monthReceived = UserPlan::where('plan_timeperiod', 1)->sum('price');
             $yearReceived = UserPlan::where('plan_timeperiod', 2)->sum('price');
-            $subscribeUserCount = UserPlan::distinct('user_id')->count();
-            $plan = Plan::where('monthly_price', '!=', 0)->select(DB::raw("(SELECT SUM(price) FROM user_plans WHERE user_plans.plan_id = plan.id) as total_amt"), 'plan.name', 'plan.id')->get();
+            // $subscribeUserCount = UserPlan::distinct('user_id')->count();
+            // $plans = Plan::where('monthly_price', '!=', 0)->select(DB::raw("(SELECT SUM(price) FROM user_plans WHERE user_plans.plan_id = plan.id) as total_amt"), 'plan.name', 'plan.id')->get();
 
-            $data1 = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
+            $plan = Plan::where('monthly_price', '!=', 0)->select(DB::raw("(SELECT SUM(price) FROM user_plans WHERE user_plans.plan_id = plan.id) as total_amt, (SELECT COUNT(DISTINCT user_id) FROM user_plans WHERE user_plans.plan_id = plan.id) as total_count"), 'plan.name', 'plan.id')->get();
+
+            $data1 = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->whereYear('created_at', date('Y'))->where('plan_timeperiod', 1)->groupBy('x')->orderByDesc('x')->get()->toArray();
             $data1Graph = graphData($data1);
+
+            $data2 = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->whereYear('created_at', date('Y'))->where('plan_timeperiod', 2)->groupBy('x')->orderByDesc('x')->get()->toArray();
+            $data2Graph = graphData($data2);
+            // dd($data2Graph);
+
             $planc = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->where('plan_id', 4)->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
             $planb = UserPlan::select(DB::raw('sum(price) as y'), DB::raw("DATE_FORMAT(created_at,'%m') as x"))->where('plan_id', 5)->whereYear('created_at', date('Y'))->groupBy('x')->orderByDesc('x')->get()->toArray();
             $plancGraph = graphData($planc);
@@ -38,7 +45,7 @@ class DashboardController extends Controller
 
             $rating = Rating::select('rating.id', 'rating.userid', 'rating.rating', 'rating.description', 'rating.status', 'rating.created_at')->orderByDesc('id')->limit(5)->get();
 
-            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'subscribeUserCount', 'yearReceived', 'monthReceived', 'plan', 'data1Graph', 'plancGraph', 'planbGraph', 'rating'));
+            return view('pages.admin.dashboard')->with(compact('userCount', 'communityCount', 'communityFollowCount', 'yearReceived', 'monthReceived', 'plan', 'data1Graph', 'data2Graph', 'plancGraph', 'planbGraph', 'rating'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
