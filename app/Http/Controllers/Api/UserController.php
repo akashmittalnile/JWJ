@@ -139,36 +139,7 @@ class UserController extends Controller
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($moodCalen), 2, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($moodCalen), 2, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($moodCalen), 2, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($moodCalen), 2, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
 
-            $routines = Routine::where('created_by', auth()->user()->id)->whereDate('created_at', $now)->limit(5)->orderByDesc('id')->get();
-            $routineArr = array();
-            foreach ($routines as $key => $myroutine) {
-                $interval = array();
-                foreach ($myroutine->schedule->interval as $key => $val) {
-                    $temp['id'] = $val->id;
-                    $temp['interval_weak_name'] = isset($val->interval_weak) ? config('constant.days')[$val->interval_weak] : null;
-                    $temp['interval_weak'] = isset($val->interval_weak) ? $val->interval_weak : null;
-                    $temp['interval_time'] = $val->interval_time;
-                    $interval[] = $temp;
-                }
-                $tempRoutine['routineid'] = $myroutine->id;
-                $tempRoutine['routinename'] = $myroutine->name;
-                $tempRoutine['routinesubtitle'] = $myroutine->subtitle;
-                $tempRoutine['description'] = $myroutine->description;
-                $tempRoutine['created_by'] = $myroutine->created_by;
-                $tempRoutine['routinetype'] = ($myroutine->privacy == 'P') ? 'Public Routine' : 'Private Routine';
-                $tempRoutine['date'] = $myroutine->created_at;
-                $tempRoutine['category_name'] = $myroutine->category->name;
-                $tempRoutine['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
-                $tempRoutine['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
-                $tempRoutine['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
-                $tempRoutine['schedule_frequency_name'] = config('constant.frequency')[$myroutine->schedule->frequency] ?? null;
-                $tempRoutine['schedule_frequency'] = $myroutine->schedule->frequency ?? null;
-                $tempRoutine['schedule_date'] = $myroutine->schedule->schedule_time ?? null;
-                $tempRoutine['schedule_start_date'] = $myroutine->schedule->schedule_startdate ?? null;
-                $tempRoutine['schedule_end_date'] = $myroutine->schedule->schedule_enddate ?? null;
-                $tempRoutine['interval'] = $interval ?? null;
-                $routineArr[] = $tempRoutine;
-            }
+            $routines = $this->todayRoutines();
 
             $submitRating = Rating::where('userid', auth()->user()->id)->first();
             $isSubmit = isset($submitRating->id) ? true : false;
@@ -190,8 +161,96 @@ class UserController extends Controller
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? ($plan->plan_timeperiod == 1 ? 'Monthly' : 'Yearly') : null,
             ];
             
-            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $current_plan, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routineArr, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
+            $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $current_plan, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routines, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
             return successMsg('Home', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function todayRoutines()
+    {
+        try {
+            $now = Carbon::now();
+            $arr = array();
+            $admin = User::where('role', 2)->where('status', 1)->first();
+            $task = Routine::join('schedule', 'schedule.routines_id', '=', 'routines.id')
+                ->join('schedule_interval', 'schedule_interval.schedule_id', '=', 'schedule.id')
+                ->join('users', 'users.id', '=', 'routines.created_by')
+                ->join('routines_category as rc', 'rc.id', '=', 'routines.category_id')
+                ->where('routines.type', 'R')
+                ->select('schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'routines.id as routineId', 'users.fcm_token', 'users.name as full_name', 'rc.logo as category_logo', 'rc.name as category_name')
+                ->orderby('routines.id', 'desc')
+                ->get();
+            foreach ($task as $key => $alltask) {
+                if ($alltask->frequency == 'D') {
+                    $temp['routineid'] = $alltask->routineId;
+                    $temp['routinename'] = $alltask->name;
+                    $temp['routinesubtitle'] = $alltask->subtitle;
+                    $temp['description'] = $alltask->description;
+                    $temp['category_name'] = $alltask->category_name;
+                    $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
+                    $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                } elseif ($alltask->frequency == 'T') {
+                    if ($alltask->schedule_time == date('Y-m-d')) {
+                        $temp['routineid'] = $alltask->routineId;
+                        $temp['routinename'] = $alltask->name;
+                        $temp['routinesubtitle'] = $alltask->subtitle;
+                        $temp['description'] = $alltask->description;
+                        $temp['category_name'] = $alltask->category_name;
+                        $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
+                        $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                    } else {
+                        continue;
+                    }
+                } elseif ($alltask->frequency == 'O') {
+                    $getdate = date('Y-m-d', strtotime($alltask->created_date));
+                    $todaydate = date('Y-m-d');
+                    if ($getdate == $todaydate) {
+                        $temp['routineid'] = $alltask->routineId;
+                        $temp['routinename'] = $alltask->name;
+                        $temp['routinesubtitle'] = $alltask->subtitle;
+                        $temp['description'] = $alltask->description;
+                        $temp['category_name'] = $alltask->category_name;
+                        $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
+                        $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                    } else {
+                        continue;
+                    }
+                } elseif ($alltask->frequency == 'C') {
+                    $todayday = Carbon::createFromFormat('Y-m-d', date('Y-m-d'))->format('l');
+                    $presentday = '';
+                    if ($todayday == 'Wednesday') {
+                        $presentday = 'W';
+                    } elseif ($todayday == 'Thursday') {
+                        $presentday = 'TH';
+                    } elseif ($todayday == 'Friday') {
+                        $presentday = 'F';
+                    } elseif ($todayday == 'Saturday') {
+                        $presentday = 'SA';
+                    } elseif ($todayday == 'Sunday') {
+                        $presentday = 'S';
+                    } elseif ($todayday == 'Monday') {
+                        $presentday = 'M';
+                    } elseif ($todayday == 'Tuesday') {
+                        $presentday = 'T';
+                    }
+                    if (($presentday == $alltask->interval) && ($alltask->schedule_startdate <= $now && $alltask->schedule_enddate >= $now)) {
+                        $temp['routineid'] = $alltask->routineId;
+                        $temp['routinename'] = $alltask->name;
+                        $temp['routinesubtitle'] = $alltask->subtitle;
+                        $temp['description'] = $alltask->description;
+                        $temp['category_name'] = $alltask->category_name;
+                        $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
+                        $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                        $temp['day'] = $todayday;
+                    } else {
+                        continue;
+                    }
+                }
+                $arr[] = $temp;
+            }
+            return $arr;
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

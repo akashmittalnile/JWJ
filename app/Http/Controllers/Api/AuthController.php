@@ -285,6 +285,7 @@ class AuthController extends Controller
                 'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? ($plan->plan_timeperiod == 1 ? 'Monthly' : 'Yearly') : null,
             ];
+            $admin = User::where('role', 2)->where('status', 1)->first();
 
             $response = [
                 'id' => $user->id,
@@ -300,7 +301,11 @@ class AuthController extends Controller
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
                 'average_mood_data' => $avgMood,
-                'current_plan' => $current_plan
+                'current_plan' => $current_plan,
+                'admin' => array(
+                    'profile' => isset($admin->profile) ? assets('uploads/profile/'.$admin->profile) : assets('assets/images/no-image.jpg'),
+                    'naame' => $admin->name ?? 'NA'
+                )
             ];
             return successMsg('Profile data.', $response);
         } catch (\Exception $e) {

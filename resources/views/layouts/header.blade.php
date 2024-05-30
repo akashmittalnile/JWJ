@@ -3,7 +3,7 @@
         <div class="navbar-menu-wrapper">
             <ul class="navbar-nav f-navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link nav-toggler" data-toggle="minimize">
+                    <a class="nav-link nav-toggler toggle-sidebar" href="javascript:void(0)">
                         <img src="{{ assets('assets/images/menu-icon.svg') }}">
                     </a>
                 </li>

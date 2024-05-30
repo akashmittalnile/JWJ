@@ -108,7 +108,11 @@ a.addcomment-btn {background: var(--blue); border: 1px solid var(--blue); paddin
 .jwj-comment-descr,
 .jwj-comment-descr p {margin: 0;font-weight: normal;font-size: 14px;letter-spacing: -0.01em;color: #455A64;line-height: 22px;}
 a.delete-btn1 {background: var(--red); padding: 3px 10px; border-radius: 5px; color: #fff; display: inline-block; position: relative; vertical-align: middle; font-size: 14px; font-weight: 500; }
+a.Reply-btn {background: var(--blue); padding: 3px 10px; border-radius: 5px; color: #fff; display: inline-block; position: relative; vertical-align: middle; font-size: 14px; font-weight: 500; }
+a.edit-btn1 {background: var(--gray); padding: 3px 10px; border-radius: 5px; color: #fff; display: inline-block; position: relative; vertical-align: middle; font-size: 14px; font-weight: 500; }
+.jwj-comment-item.sub-comment {width: 92%; margin-left: auto; }
 
+ 
 
 .jwj-modal-form h2 {font-size: 16px; font-weight: 600; margin: 0 0 1rem 0; padding: 0; }
 .jwj-modal-form .form-group{margin-bottom: 10px;}
