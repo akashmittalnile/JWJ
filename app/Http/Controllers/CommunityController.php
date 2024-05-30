@@ -151,6 +151,15 @@ class CommunityController extends Controller
                                 </div>
                                 <p>$followcount Followers</p>
                             </div>
+                            <div class='service-shift-card'>
+                                <div class='service-shift-card-image'>
+                                    <img src='".assets('assets/images/calendar.svg')."' height='14px'>
+                                </div>
+                                <div class='service-shift-card-text'>
+                                    <h2>Created On </h2>
+                                    <p>".date('d M, Y h:iA', strtotime($val->created_at))."</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>";

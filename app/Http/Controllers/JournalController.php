@@ -34,7 +34,9 @@ class JournalController extends Controller
                     foreach($imgs as $name){
                         $image_html .= "<div class='item'>
                         <div class='community-media'>
-                                <img src='".assets("uploads/journal/$name->name")."'>
+                                <a data-fancybox='' href='".assets("uploads/journal/$name->name")."'>
+                                    <img src='".assets("uploads/journal/$name->name")."'>
+                                </a>
                             </div>
                         </div>";
                     }
@@ -101,7 +103,7 @@ class JournalController extends Controller
                                         </div>
                                         <div class='service-shift-card-text'>
                                             <h2>Submitted On </h2>
-                                            <p>".date('d M, Y h:i a', strtotime($val->created_at))."</p>
+                                            <p>".date('d M, Y h:iA', strtotime($val->created_at))."</p>
                                         </div>
                                     </div>
                                 </div>

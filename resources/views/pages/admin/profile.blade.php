@@ -16,7 +16,11 @@
             <div class="col-md-4">
                 <div class="user-side-profile">
                     <div class="side-profile-item">
-                        <div class="side-profile-media"><img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}"></div>
+                        <div class="side-profile-media">
+                            <a data-fancybox="" href="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}">
+                                <img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}">
+                            </a>
+                        </div>
                         <div class="side-profile-text">
                             <h2>{{ auth()->user()->name ?? 'NA' }}</h2>
                             <p>Administrator</p>

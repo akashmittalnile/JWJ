@@ -176,7 +176,7 @@
             success: function(result) {
                 if (result.status) {
                     toastr.success(result.message);
-                    window.location.href = "{{ route('admin.community-management.list') }}";
+                    window.location.href = "{{ route('admin.community-management.approval') }}";
                 } else {
                     toastr.error(result.message);
                     return false;
@@ -213,7 +213,7 @@
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);
-                        window.location.href = "{{ route('admin.community-management.list') }}";
+                        window.location.href = "{{ route('admin.community-management.approval') }}";
                         return false;
                     } else {
                         toastr.error(response.message);
