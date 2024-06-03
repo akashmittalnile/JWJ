@@ -106,10 +106,30 @@
                                     </div>
                                     <div class="jwj-comment-descr mb-2">{{ $item->comment ?? 'NA' }}</div>
                                     <div class="jwj-comment-action">
+                                        <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
+                                        <a class="edit-btn1" href="#"><img src="{{ assets('assets/images/editwh.svg') }}"> Edit</a>
+                                        <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item->id) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
+                                    </div>
+                                </div> 
+                            </div>
+
+                            <div class="jwj-comment-item block sub-comment"> 
+                                <div class="jwj-comment-profile">
+                                    <img src="{{ isset($item->user->profile) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                </div>
+                                <div class="jwj-comment-content">
+                                    <div class="jwj-comment-head">
+                                        <h2 style="font-weight: 500; font-size: 15px">{{ $item->user->name ?? 'NA' }}</h2>
+                                        <div class="jwj-date"><i class="las la-calendar"></i>{{ date('d M, Y h:iA', strtotime($item->created_at)) }}</div>
+                                    </div>
+                                    <div class="jwj-comment-descr mb-2">{{ $item->comment ?? 'NA' }}</div>
+                                    <div class="jwj-comment-action">
+                                        <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
                                         <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item->id) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
                                     </div>
                                 </div>
                             </div>
+
                             @empty
                             <div class="d-flex justify-content-center align-items-center flex-column">
                                 <div>
@@ -214,6 +234,40 @@
         </div>
     </div>
 </div>
+
+
+<!-- add Reply -->
+<div class="modal lm-modal fade" id="addReply" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="jwj-modal-form">
+                    <h2>Add Reply</h2>
+                    <form action="" method="post" id="commentForm">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <textarea type="text" class="form-control" name="comment" placeholder="Enter comment"></textarea>
+                                    <input type="hidden" value="{{ encrypt_decrypt('encrypt', $post->id) }}" name="post_id">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="save-btn">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 @endsection
 
 @push('js')
