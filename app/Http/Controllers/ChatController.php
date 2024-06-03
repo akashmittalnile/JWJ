@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FirebaseChat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class ChatController extends Controller
@@ -47,7 +48,7 @@ class ChatController extends Controller
                     
                     $lastMsg = $val->last_msg ?? 'No messages';
                     $unseenCout = (isset($val->unseen_msg_count) && ($val->unseen_msg_count!=0)) ? "<span class='badge bg-danger rounded-pill float-end  unseen-count-$val->id'>$val->unseen_msg_count</span>" : "";
-                    $userProfileImage = isset($val->profile) ? assets("uploads/profile/".$val->profile) : assets("assets/images/avatar.png");
+                    $userProfileImage = (isset($val->profile) && File::exists(public_path("uploads/profile/".$val->profile)) ) ? assets("uploads/profile/".$val->profile) : assets("assets/images/avatar.png");
                     $html .= "<li class='p-2 border-bottom user-info' data-id='$val->id' data-name='$val->name' data-img='$userProfileImage'>
                         <a href='javascript:void(0)' class='d-flex justify-content-between'>
                             <div class='d-flex flex-row'>

@@ -384,7 +384,7 @@
                     ${(message !== '' && message !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${message}</p>` : ''}
                     <p class="small me-3 mb-3 rounded-3 text-muted">${time}</p>
                 </div>
-                <img src="{{ (auth()->user()->profile=='' || auth()->user()->profile == null) ? assets('assets/images/user.svg') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
+                <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
             </div>`;
         $('.messages-card').append(msg);
         $(".body-chat-message-user").stop().animate({
@@ -394,7 +394,7 @@
 
 
     function admin(row) {
-        let userProImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/user.svg') }}" : $("#ajax-chat-url-img").val();
+        let userProImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/avatar.png') }}" : $("#ajax-chat-url-img").val();
         let html = '';
         var formattedDate = moment.unix(row.createdAt.seconds).format('MMM DD, YYYY HH:mm A');
         if (row.sendto == 1) {
@@ -414,7 +414,7 @@
                     ${(row.text !== '' && row.text !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${row.text}</p>` : '' }
                     <p class="small ms-3 mb-3 rounded-3 text-muted">${formattedDate}</p>
                 </div>
-                <img src="{{ (auth()->user()->profile=='' || auth()->user()->profile == null) ? assets('assets/images/user.svg') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
+                <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
             </div>`;
         }
         return html;
