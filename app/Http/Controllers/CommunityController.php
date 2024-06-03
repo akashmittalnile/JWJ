@@ -213,7 +213,7 @@ class CommunityController extends Controller
 
                 $data['type'] = 'COMMUNITY';
                 $data['title'] = 'New Community';
-                $data['message'] = 'Journey with journals administrator was created a new community "' .$request->title . '"';
+                $data['message'] = 'Journey with journals administrator has created a new community "' .$request->title . '"';
                 $data['user_id'] = auth()->user()->id;
                 notifyUsers($data);
 
