@@ -29,7 +29,7 @@
                         <div class="jwj-posts-head">
                             <div class="post-member-item">
                                 <div class="post-member-image">
-                                    <img src="{{ isset($data->category->logo) ? assets('uploads/routine/'.$data->category->logo) : assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ (isset($data->category->logo) && file_exists(public_path('uploads/routine/'.$data->category->logo)) ) ? assets('uploads/routine/'.$data->category->logo) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="post-member-text">
                                     <h3 style="margin: 0px 0px -3px 0px;">{{ $data->category->name ?? 'NA' }}</h3>
@@ -128,7 +128,7 @@
                             @forelse($share as $item)
                             <div class="sidebar-member-item">
                                 <div class="sidebar-member-item-image">
-                                    <img src="{{ isset($item->user->profile) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ (isset($item->user->profile) && file_exists(public_path('uploads/profile/'.$item->user->profile)) ) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="sidebar-member-item-text">
                                     <h2>{{ $item->user->user_name ?? 'NA' }}</h2>

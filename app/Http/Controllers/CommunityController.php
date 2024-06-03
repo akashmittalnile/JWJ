@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Models\UserFollowedCommunity;
 use App\Models\UserLike;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class CommunityController extends Controller
@@ -76,7 +77,7 @@ class CommunityController extends Controller
                         $count = 1;
                         foreach($follow as $items){
                             $followedUser = User::where('id', $items->userid)->first();
-                            $asset = isset($followedUser->profile) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg');
+                            $asset = (isset($followedUser->profile) && File::exists(public_path("uploads/profile/$followedUser->profile"))) ? assets("uploads/profile/$followedUser->profile") : assets('assets/images/no-image.jpg');
                             $mem_html .= "<span class='jwjcard-member-image image$count'>
                                 <img src='".$asset."'>
                             </span>";
@@ -273,7 +274,7 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($post as $val)
                 {
-                    $proImg = isset($val->user->profile) ? assets('uploads/profile/'.$val->user->profile) : assets('assets/images/no-image.jpg'); 
+                    $proImg = (isset($val->user->profile) && File::exists(public_path('uploads/profile/'.$val->user->profile)) ) ? assets('uploads/profile/'.$val->user->profile) : assets('assets/images/no-image.jpg'); 
 
                     $imgs = PostImage::where('post_id', $val->id)->get();
                     $image_html = "";
@@ -383,7 +384,7 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
-                    $userProfileImage = isset($val->user_image) ? assets("uploads/profile/$val->user_image") : assets("assets/images/no-image.jpg");
+                    $userProfileImage = (isset($val->user_image) && File::exists(public_path('uploads/profile/'.$val->user->profile)) ) ? assets("uploads/profile/$val->user_image") : assets("assets/images/no-image.jpg");
                     $imgs = CommunityImage::where('community_id', $val->id)->get();
                     $image_html = "";
                     foreach($imgs as $name){
@@ -496,7 +497,7 @@ class CommunityController extends Controller
                             </div>
                         </div>";
                     }
-                    $userProfileImage = isset($val->user_image) ? assets("uploads/profile/$val->user_image") : assets("assets/images/no-image.jpg");
+                    $userProfileImage = (isset($val->user_image) && File::exists(public_path('uploads/profile/'.$val->user->profile)) ) ? assets("uploads/profile/$val->user_image") : assets("assets/images/no-image.jpg");
                     $role = ($val->role==2) ? 'Admin' : 'User';
                     $checked = ($val->status==1) ? 'checked' : '';
                     $plan_type = (($val->plan_name=='Plan A') ? 'freeplan.svg' : ($val->plan_name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));

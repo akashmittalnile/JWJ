@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Journal;
 use App\Models\Notify;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class JournalController extends Controller
@@ -27,7 +28,7 @@ class JournalController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
-                    $userProfileImage = isset($val->user->profile) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
+                    $userProfileImage = (isset($val->user->profile) && File::exists(public_path('uploads/profile/'.$val->user->profile)) ) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
                     $imgs = $val->images;
                     $image = $val->images->first();
                     $image_html = "";
@@ -55,7 +56,7 @@ class JournalController extends Controller
                     }
 
                     $checked = ($val->status==1) ? 'checked' : '';
-                    $journalImg = isset($image->name) ? assets("uploads/journal/".$image->name) : assets("assets/images/no-image.jpg");
+                    $journalImg = (isset($image->name) && File::exists(public_path("uploads/journal/".$image->name)) ) ? assets("uploads/journal/".$image->name) : assets("assets/images/no-image.jpg");
                     $html .= "<div class='col-md-6'>
                     <div class='jwj-community-card'>
                         <div class='jwjcard-head'>

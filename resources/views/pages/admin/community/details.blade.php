@@ -43,7 +43,7 @@
                                         @if($count > 3) @break @endif
                                         @php $user = $item->user; @endphp
                                         <span class="jwjcard-member-image image{{$count}}">
-                                            <img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}">
+                                            <img src="{{ (isset($user->profile) && file_exists(public_path('uploads/profile/'.$user->profile))) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}">
                                         </span>
                                         @php $count++; @endphp
                                         @empty
@@ -127,7 +127,7 @@
                             @forelse($follow as $item)
                             @php $user = $item->user; @endphp
                             <div class="sidebar-member-item">
-                                <div class="sidebar-member-item-image"><img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
+                                <div class="sidebar-member-item-image"><img src="{{ (isset($user->profile) && file_exists(public_path('uploads/profile/'.$user->profile)) ) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
                                 <div class="sidebar-member-item-text">
                                     <h2>{{ $user->name ?? "NA" }}</h2>
                                     <div class="sidebar-member-plan"><img src="{{ isset($user->plan->image) ? assets('assets/images/'.$user->plan->image) : assets('assets/images/freeplan.svg') }}">{{ $user->plan->name ?? 'Plan A' }} Member</div>

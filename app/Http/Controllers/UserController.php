@@ -15,6 +15,7 @@ use App\Models\UserPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 class UserController extends Controller
 {
@@ -41,7 +42,7 @@ class UserController extends Controller
                     $pageNum = $data->currentPage();
                     $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
                     $phone = isset($val->mobile) ? $val->country_code .' '. $val->mobile : 'NA';
-                    $userProfileImage = isset($val->profile) ? assets("uploads/profile/$val->profile") : assets("assets/images/no-image.jpg");
+                    $userProfileImage = (isset($val->profile) && File::exists(public_path('uploads/profile/'.$val->profile)) ) ? assets("uploads/profile/$val->profile") : assets("assets/images/no-image.jpg");
                     $status = ($val->status == 1) ? 'Active' : 'Inactive';
                     $userName = (isset($val->user_name) && $val->user_name != '' && $val->user_name != 'undefined') ? $val->user_name : 'NA';
                     $html .= "<tr>

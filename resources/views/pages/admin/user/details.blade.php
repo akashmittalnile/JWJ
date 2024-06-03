@@ -25,7 +25,7 @@
             <div class="row g-1 align-items-center">
                 <div class="col-md-2">
                     <div class="side-profile-item">
-                        <div class="side-profile-media"><img src="{{ isset($user->profile) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
+                        <div class="side-profile-media"><img src="{{ (isset($user->profile) && file_exists(public_path('uploads/profile/'.$user->profile)) ) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/no-image.jpg') }}"></div>
                         <div class="side-profile-text">
                             <h2>{{ $user->name ?? 'NA' }}</h2>
                         </div>

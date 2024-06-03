@@ -17,8 +17,8 @@
                 <div class="user-side-profile">
                     <div class="side-profile-item">
                         <div class="side-profile-media">
-                            <a data-fancybox="" href="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}">
-                                <img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}">
+                            <a data-fancybox="" href="{{ (isset(auth()->user()->profile) && file_exists(public_path('uploads/profile/'.auth()->user()->profile)) ) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}">
+                                <img src="{{ (isset(auth()->user()->profile) && file_exists(public_path('uploads/profile/'.auth()->user()->profile)) ) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}">
                             </a>
                         </div>
                         <div class="side-profile-text">

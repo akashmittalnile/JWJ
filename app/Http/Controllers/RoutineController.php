@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\RoutineCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class RoutineController extends Controller
@@ -29,7 +30,7 @@ class RoutineController extends Controller
                 {
                     $pageNum = $data->currentPage();
                     $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
-                    $image = isset($val->logo) ? assets("uploads/routine/$val->logo") : assets("assets/images/no-image.jpg");
+                    $image = (isset($val->logo) && File::exists(public_path("uploads/routine/$val->logo")) ) ? assets("uploads/routine/$val->logo") : assets("assets/images/no-image.jpg");
                     $status = ($val->status == 1) ? 'Active' : 'Inactive';
                     $html .= "<tr>
                     <td>

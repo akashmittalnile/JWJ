@@ -8,6 +8,7 @@ use App\Models\Notify;
 use App\Models\Plan;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 
 class SupportController extends Controller
@@ -38,7 +39,7 @@ class SupportController extends Controller
                 foreach($data as $key => $val)
                 {
                     $pageNum = $data->currentPage();
-                    $userProfileImage = isset($val->user->profile) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
+                    $userProfileImage = (isset($val->user->profile) && File::exists(public_path("uploads/profile/".$val->user->profile)) ) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
 
                     $adminReply = '';
                     if(isset($val->past_response) && $val->past_response != ''){
@@ -224,7 +225,7 @@ class SupportController extends Controller
                 foreach($data as $key => $val)
                 {
                     $pageNum = $data->currentPage();
-                    $userProfileImage = isset($val->user->profile) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
+                    $userProfileImage = (isset($val->user->profile) && File::exists(public_path("uploads/profile/".$val->user->profile))) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
 
                     
 

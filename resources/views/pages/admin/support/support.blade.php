@@ -104,7 +104,7 @@
                                 <div class="jwj-review-card">
                                     <div class="jwj-review-card-head">
                                         <div class="review-rating-user-avtar">
-                                            <img src="{{ isset(auth()->user()->profile) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}" alt="">
+                                            <img src="{{ (isset(auth()->user()->profile) && file_exists(public_path('uploads/profile/'.auth()->user()->profile)) ) ? assets('uploads/profile/'.auth()->user()->profile) : assets('assets/images/no-image.jpg') }}" alt="">
                                         </div>
                                         <div class="review-rating-user-text">
                                             <h3>{{ auth()->user()->name ?? 'NA' }}</h3>

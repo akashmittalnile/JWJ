@@ -28,7 +28,7 @@
                         <div class="jwj-posts-head">
                             <div class="post-member-item">
                                 <div class="post-member-image">
-                                    <img src="{{ isset($post->user->profile) ? assets('uploads/profile/'.$post->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ (isset($post->user->profile) && file_exists(public_path('uploads/profile/'.$post->user->profile)) ) ? assets('uploads/profile/'.$post->user->profile) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="post-member-text">
                                     <h3>{{ $post->user->name ?? 'NA' }}</h3>
@@ -97,7 +97,7 @@
                             @forelse($post->comments() as $item)
                             <div class="jwj-comment-item block">
                                 <div class="jwj-comment-profile">
-                                    <img src="{{ isset($item->user->profile) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ (isset($item->user->profile) && file_exists(public_path('uploads/profile/'.$item->user->profile)) ) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="jwj-comment-content">
                                     <div class="jwj-comment-head">
@@ -115,7 +115,7 @@
 
                             <div class="jwj-comment-item block sub-comment"> 
                                 <div class="jwj-comment-profile">
-                                    <img src="{{ isset($item->user->profile) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ (isset($item->user->profile) && file_exists(public_path('uploads/profile/'.$item->user->profile)) ) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="jwj-comment-content">
                                     <div class="jwj-comment-head">
