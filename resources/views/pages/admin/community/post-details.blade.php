@@ -75,7 +75,7 @@
                                             </div>
                                             <p>{{ $post->post_description ?? 'NA' }}</p>
                                             <div class="community-post-action">
-                                                <a class="Like-btn"><img src="{{ assets('assets/images/like.svg') }}"> {{ $likesCount ?? 0 }} likes</a>
+                                                <a class="Like-btn"><img id="likeme" data-isliked="{{ $isLiked }}" data-likecount="{{ $likesCount ?? 0 }}" data-postid="{{ encrypt_decrypt('encrypt', $post->id) }}" src="{{ $isLiked ? assets('assets/images/like1.svg') : assets('assets/images/like.svg') }}"> <span id="likesCounting">{{ $likesCount ?? 0 }}</span> likes</a>
                                             </div>
                                         </div>
                                     </div>
@@ -307,6 +307,42 @@
     $(document).on('click', ".Reply-btn", function() {
         $('#reply_comment_id').val($(this).data('commentid'));
         $('#addReply').modal('show');
+    });
+
+    $(document).on("click", "#likeme", function() {
+        let isLiked = $(this).data('isliked');
+        if(!isLiked){
+            $("#likesCounting").text(parseInt($(this).data('likecount')) + 1);
+            $(this).attr("src", "{{ assets('assets/images/like1.svg') }}");
+        } else {
+            $("#likesCounting").text(parseInt($(this).data('likecount')) - 1);
+            $(this).attr("src", "{{ assets('assets/images/like.svg') }}");
+        }
+        let formData = new FormData();
+        formData.append('id', $(this).data('postid'))
+        formData.append('_token', "{{ csrf_token() }}")
+        $.ajax({
+            type: 'post',
+            url: "{{ route('admin.community-management.post.like.unlike') }}",
+            data: formData,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.status) {
+                    toastr.success(response.message);
+                    setInterval(() => {window.location.reload()}, 2000);
+                    return false;
+                } else {
+                    toastr.error(response.message);
+                    return false;
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
+        })
     });
 
     $(document).on('click', ".edit-btn1", function() {

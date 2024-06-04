@@ -832,7 +832,7 @@ class RoutineController extends Controller
                     }
                     // dd($alltask->schedule_time);
                 } elseif ($alltask->frequency == 'O') {
-                    $getdate = date('Y-m-d', strtotime($alltask->created_date));
+                    $getdate = date('Y-m-d', strtotime($alltask->created_at));
                     $todaydate = date('Y-m-d');
                     if ($getdate == $todaydate) {
                         $time = date('H:i', strtotime($alltask->interval_time));
@@ -877,7 +877,7 @@ class RoutineController extends Controller
                         $presentday = 'T';
                     }
                     if (($presentday == $alltask->interval) && ($alltask->schedule_startdate <= $now && $alltask->schedule_enddate >= $now)) {
-                        $time =  date('H:i', strtotime($alltask->interval_time));
+                        $time = date('H:i', strtotime($alltask->interval_time));
                         $currenttime = date('H:i');
                         if ($time == $currenttime) {
                             $fullname = $alltask->full_name;

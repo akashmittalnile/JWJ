@@ -286,7 +286,7 @@ class JournalController extends Controller
                         JournalImage::where('id', $val)->where('journal_id', $journal->id)->delete();
                     }
                 }
-                if (count($request->file) > 0) {
+                if (isset($request->file) && count($request->file) > 0) {
                     foreach ($request->file as $key => $value) {
                         $name = fileUpload($request->file[$key], "/uploads/journal/");
                         $journalImage = new JournalImage;

@@ -179,10 +179,13 @@ class UserController extends Controller
                 ->join('users', 'users.id', '=', 'routines.created_by')
                 ->join('routines_category as rc', 'rc.id', '=', 'routines.category_id')
                 ->where('routines.type', 'R')
+                ->where('routines.created_by', auth()->user()->id)
                 ->select('schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'routines.id as routineId', 'users.fcm_token', 'users.name as full_name', 'rc.logo as category_logo', 'rc.name as category_name')
                 ->orderby('routines.id', 'desc')
                 ->get();
             foreach ($task as $key => $alltask) {
+                $time = date('H:i', strtotime($alltask->interval_time));
+                $currenttime = date('H:i');
                 if ($alltask->frequency == 'D') {
                     $temp['routineid'] = $alltask->routineId;
                     $temp['routinename'] = $alltask->name;
@@ -191,6 +194,7 @@ class UserController extends Controller
                     $temp['category_name'] = $alltask->category_name;
                     $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                     $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                    $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
                 } elseif ($alltask->frequency == 'T') {
                     if ($alltask->schedule_time == date('Y-m-d')) {
                         $temp['routineid'] = $alltask->routineId;
@@ -200,11 +204,12 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                        $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
                     } else {
                         continue;
                     }
                 } elseif ($alltask->frequency == 'O') {
-                    $getdate = date('Y-m-d', strtotime($alltask->created_date));
+                    $getdate = date('Y-m-d', strtotime($alltask->created_at));
                     $todaydate = date('Y-m-d');
                     if ($getdate == $todaydate) {
                         $temp['routineid'] = $alltask->routineId;
@@ -214,6 +219,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                        $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
                     } else {
                         continue;
                     }
@@ -243,6 +249,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
+                        $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
                         $temp['day'] = $todayday;
                     } else {
                         continue;

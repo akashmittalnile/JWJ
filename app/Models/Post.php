@@ -30,7 +30,7 @@ class Post extends Model
     }
 
     public function likeCount(){
-        return $this->hasMany(UserLike::class, 'object_id', 'id')->join('users as u', 'u.id', '=', 'user_likes.user_id')->where('u.status', 1)->where('object_type', 'post')->count();
+        return $this->hasMany(UserLike::class, 'object_id', 'id')->join('users as u', 'u.id', '=', 'user_likes.user_id')->where('u.status', 1)->where('object_type', 'post')->where('user_likes.status', 1)->count();
     }
 
     public function commentCount(){

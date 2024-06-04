@@ -276,6 +276,9 @@ class CommunityController extends Controller
                 {
                     $proImg = (isset($val->user->profile) && File::exists(public_path('uploads/profile/'.$val->user->profile)) ) ? assets('uploads/profile/'.$val->user->profile) : assets('assets/images/no-image.jpg'); 
 
+                    $isLiked = UserLike::where('user_id', auth()->user()->id)->where('status', 1)->where('object_id', $val->id)->where('object_type', 'post')->count();
+                    $likeImg = $isLiked ? assets('assets/images/like1.svg') : assets('assets/images/like.svg');
+
                     $imgs = PostImage::where('post_id', $val->id)->get();
                     $image_html = "";
                     foreach($imgs as $name){
@@ -343,7 +346,7 @@ class CommunityController extends Controller
                                                 </div>
                                                 <p>$val->post_description</p> 
                                                 <div class='community-post-action'>
-                                                    <a class='Like-btn'><img src='".assets('assets/images/like.svg')."'> ". $val->likeCount()." likes</a>
+                                                    <a class='Like-btn'><img src='".$likeImg."'> ". $val->likeCount()." likes</a>
                                                     <a class='Comment-btn'><img src='".assets('assets/images/comment.svg')."'> ". $commentCount ." Comments</a>
                                                 </div>
                                             </div>
@@ -699,6 +702,43 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to edit a comment
+    public function postLikeUnlike(Request $request)
+    {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->id);
+                $post = Post::where('id', $id)->first();
+                if(isset($post->id)){
+                    $like = UserLike::where('user_id', auth()->user()->id)->where('object_id', $id)->where('object_type', 'post')->first();
+                        if(isset($like->id)){
+                            $like->status = ($like->status == 0) ? 1 : 0;
+                            $like->updated_at = date('Y-m-d H:i:s');
+                            $like->save();
+                            $msg = ($like->status == 1) ? "You have liked the post" : "You have unliked the post";
+                            return successMsg($msg);
+                        } else {
+                            $like = new UserLike;
+                            $like->object_id = $id;
+                            $like->object_type = 'post';
+                            $like->user_id = auth()->user()->id;
+                            $like->status = 1;
+                            $like->save();
+                            return successMsg("You have liked the post");
+                        }
+                } else return errorMsg('Post not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to get the details of post
     public function postDetails($id)
     {
@@ -706,7 +746,8 @@ class CommunityController extends Controller
             $id = encrypt_decrypt('decrypt', $id);
             $post = Post::where('id', $id)->first();
             $commentArr = array();
-            $likesCount = UserLike::join('users as u', 'u.id', '=', 'user_likes.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->count();
+            $likesCount = UserLike::join('users as u', 'u.id', '=', 'user_likes.user_id')->where('u.status', 1)->where('user_likes.status', 1)->where('object_id', $id)->where('object_type', 'post')->count();
+            $isLiked = UserLike::where('user_id', auth()->user()->id)->where('status', 1)->where('object_id', $id)->where('object_type', 'post')->count();
             $commentCount = 0;
             foreach($post->comments() as $key => $value){
                 $reply = Comment::join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->select('comments.*')->get();
@@ -734,7 +775,7 @@ class CommunityController extends Controller
                 $commentArr[] = $temp;
             };
             // dd($commentArr);
-            return view('pages.admin.community.post-details')->with(compact('post', 'commentArr', 'commentCount', 'likesCount'));
+            return view('pages.admin.community.post-details')->with(compact('post', 'commentArr', 'commentCount', 'likesCount', 'isLiked'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
