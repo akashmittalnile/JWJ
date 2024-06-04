@@ -88,48 +88,48 @@
                     <div class="jwj-comment-section">
                         <div class="jwj-comment-list">
                             <div class="jwj-comment-box-head">
-                                <h1>Comments({{ $post->commentCount() ?? 0 }})</h1>
+                                <h1>Comments({{ $commentCount ?? 0 }})</h1>
                                 <div class="jwj-comment-head-action">
                                     <a href="javascript:void(0)" class="addcomment-btn" data-bs-toggle="modal" data-bs-target="#addcomment"><i class="las la-plus"></i> Add comment</a>
                                 </div>
                             </div>
 
-                            @forelse($post->comments() as $item)
-                            <div class="jwj-comment-item block">
+                            @forelse($commentArr as $item)
+                            <div class="jwj-comment-item bloc">
                                 <div class="jwj-comment-profile">
-                                    <img src="{{ (isset($item->user->profile) && file_exists(public_path('uploads/profile/'.$item->user->profile)) ) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
+                                    <img src="{{ (isset($item['posted_by_profile_image']) && file_exists(public_path('uploads/profile/'.$item['posted_by_profile_image'])) ) ? assets('uploads/profile/'.$item['posted_by_profile_image']) : assets('assets/images/no-image.jpg') }}">
                                 </div>
                                 <div class="jwj-comment-content">
                                     <div class="jwj-comment-head">
-                                        <h2 style="font-weight: 500; font-size: 15px">{{ $item->user->name ?? 'NA' }}</h2>
-                                        <div class="jwj-date"><i class="las la-calendar"></i>{{ date('d M, Y h:iA', strtotime($item->created_at)) }}</div>
+                                        <h2 style="font-weight: 500; font-size: 15px">{{ $item['posted_by'] ?? 'NA' }}</h2>
+                                        <div class="jwj-date"><i class="las la-calendar"></i>{{ $item['posted_date'] }}</div>
                                     </div>
-                                    <div class="jwj-comment-descr mb-2">{{ $item->comment ?? 'NA' }}</div>
+                                    <div class="jwj-comment-descr mb-2">{{ $item['comment'] ?? 'NA' }}</div>
                                     <div class="jwj-comment-action">
                                         <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
                                         <a class="edit-btn1" href="#"><img src="{{ assets('assets/images/editwh.svg') }}"> Edit</a>
-                                        <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item->id) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
+                                        <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item['comment_id']) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
                                     </div>
                                 </div> 
                             </div>
-
-                            <div class="jwj-comment-item block sub-comment"> 
-                                <div class="jwj-comment-profile">
-                                    <img src="{{ (isset($item->user->profile) && file_exists(public_path('uploads/profile/'.$item->user->profile)) ) ? assets('uploads/profile/'.$item->user->profile) : assets('assets/images/no-image.jpg') }}">
-                                </div>
-                                <div class="jwj-comment-content">
-                                    <div class="jwj-comment-head">
-                                        <h2 style="font-weight: 500; font-size: 15px">{{ $item->user->name ?? 'NA' }}</h2>
-                                        <div class="jwj-date"><i class="las la-calendar"></i>{{ date('d M, Y h:iA', strtotime($item->created_at)) }}</div>
+                                @foreach($item['reply'] as $val)
+                                <div class="jwj-comment-item block sub-comment"> 
+                                    <div class="jwj-comment-profile">
+                                        <img src="{{ (isset($val['reply_posted_by_profile_image']) && file_exists(public_path('uploads/profile/'.$val['reply_posted_by_profile_image'])) ) ? assets('uploads/profile/'.$val['reply_posted_by_profile_image']) : assets('assets/images/no-image.jpg') }}">
                                     </div>
-                                    <div class="jwj-comment-descr mb-2">{{ $item->comment ?? 'NA' }}</div>
-                                    <div class="jwj-comment-action">
-                                        <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
-                                        <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item->id) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
+                                    <div class="jwj-comment-content">
+                                        <div class="jwj-comment-head">
+                                            <h2 style="font-weight: 500; font-size: 15px">{{ $val['reply_posted_by'] ?? 'NA' }}</h2>
+                                            <div class="jwj-date"><i class="las la-calendar"></i>{{ $val['reply_posted_date'] ?? 'NA' }}</div>
+                                        </div>
+                                        <div class="jwj-comment-descr mb-2">{{ $val['reply_comment'] ?? 'NA' }}</div>
+                                        <div class="jwj-comment-action">
+                                            <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
+                                            <a class="delete-btn1" id="delete-button" data-commentid="" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
+                                @endforeach
                             @empty
                             <div class="d-flex justify-content-center align-items-center flex-column">
                                 <div>

@@ -313,10 +313,10 @@ class CommunityController extends Controller
                                 </div>
                                 <div class='jwjcard-group-action d-flex'>
                                     <div class='mx-2'>
-                                        <a class='managecommunity-btn' href='". route('admin.community-management.post.details', encrypt_decrypt('encrypt', $val->id)) ."'>View</a>
+                                        <a class='Reply-btn' href='". route('admin.community-management.post.details', encrypt_decrypt('encrypt', $val->id)) ."'> <i class='las la-eye'></i> View</a>
                                     </div>
                                     <div>
-                                        <a class='managecommunity-btn' data-postid='$val->id' id='delete-button' href='javacsript:void(0)'>Delete Post</a>
+                                        <a class='delete-btn1' data-postid='$val->id' id='delete-button' href='javacsript:void(0)'> <img src='". assets('assets/images/trash.svg') ."'> Delete Post</a>
                                     </div>
                                 </div>
                             </div>
@@ -671,7 +671,35 @@ class CommunityController extends Controller
         try{
             $id = encrypt_decrypt('decrypt', $id);
             $post = Post::where('id', $id)->first();
-            return view('pages.admin.community.post-details')->with(compact('post'));
+            $commentArr = array();
+            $commentCount = 0;
+            foreach($post->comments() as $key => $value){
+                $reply = Comment::join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->select('comments.*')->get();
+                $replyArr = array();
+                $commentCount++;
+                foreach($reply as $key1 => $value1){
+                    $commentCount++;
+                    $temp1['reply_id'] = $value1->id;
+                    $temp1['reply_comment'] = $value1->comment;
+                    $temp1['reply_posted_date'] = date('d M, Y h:i A', strtotime($value1->created_at));
+                    $temp1['reply_posted_by'] = $value1->user->name ?? 'NA';
+                    $temp1['reply_my_comment'] = $value1->user_id == auth()->user()->id ? true : false;
+                    $temp1['reply_posted_by_user_name'] = $value1->user->user_name ?? 'NA';
+                    $temp1['reply_posted_by_profile_image'] = isset($value1->user->profile) ? assets('uploads/profile/'.$value1->user->profile) : null;
+                    $replyArr[] = $temp1;
+                }
+                $temp['comment_id'] = $value->id;
+                $temp['comment'] = $value->comment;
+                $temp['reply'] = $replyArr;
+                $temp['my_comment'] = $value->user_id == auth()->user()->id ? true : false;
+                $temp['posted_date'] = date('d M, Y h:i A', strtotime($value->created_at));
+                $temp['posted_by'] = $value->user->name ?? 'NA';
+                $temp['posted_by_user_name'] = $value->user->user_name ?? 'NA';
+                $temp['posted_by_profile_image'] = isset($value->user->profile) ? assets('uploads/profile/'.$value->user->profile) : null;
+                $commentArr[] = $temp;
+            };
+            // dd($commentArr);
+            return view('pages.admin.community.post-details')->with(compact('post', 'commentArr', 'commentCount'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
