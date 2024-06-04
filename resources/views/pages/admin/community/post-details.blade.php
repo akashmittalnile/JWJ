@@ -48,7 +48,7 @@
                         <div class="jwj-posts-body">
                             <div class="row g-1">
                                 <div class="col-md-4">
-                                    <div id="communitycarousel1" class=" communitycarousel1 owl-carousel owl-theme">
+                                    <div id="communityCarousel1" class=" communitycarousel1 owl-carousel owl-theme">
                                         @forelse($post->images as $item)
                                         <div class="item">
                                             <div class="community-posts-media">
@@ -362,18 +362,18 @@
         $(".form-control").removeClass("is-invalid");
     });
 
-    $(document).ready(function() {
-        $('.communitycarousel1').owlCarousel({
-            loop: true,
-            margin: 10,
-            nav: false,
-            dots: false,
-            responsive: {
-                1000: {
-                    items: 1
-                }
+    $('#communityCarousel1').owlCarousel({
+        loop: true,
+        margin: 10,
+        nav: true,
+        dots: false,
+        responsive: {
+            1000: {
+                items: 1
             }
-        });
+        }
+    });
+    $(document).ready(function() {
                         
 
         $('#replyForm').validate({

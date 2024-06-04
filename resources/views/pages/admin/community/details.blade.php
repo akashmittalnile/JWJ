@@ -388,7 +388,7 @@
                             $('.communitycarouselpost1').owlCarousel({
                                 loop: true,
                                 margin: 10,
-                                nav: false,
+                                nav: true,
                                 dots: false,
                                 responsive: {
                                     1000: {
