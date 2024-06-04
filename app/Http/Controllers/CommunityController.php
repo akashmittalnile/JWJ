@@ -299,6 +299,13 @@ class CommunityController extends Controller
                     $planImg = isset($val->user->plan->image) ? assets('assets/images/'.$val->user->plan->image) : assets('assets/images/freeplan.svg');
                     $planHtml = ($val->user->role == 2) ? "Administrator" : "<img src='$planImg'> $planName Member";
 
+                    $commentCount = 0;
+                    foreach($val->comments() as $key => $value){
+                        $reply = Comment::join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->where('object_id', $val->id)->where('object_type', 'post')->where('parent_id', $value->id)->count();
+                        $commentCount++;
+                        $commentCount+=$reply;
+                    };
+
                     $html .= "
                         <div class='jwj-posts-posts-card'>
                             <div class='jwj-posts-head'>
@@ -337,7 +344,7 @@ class CommunityController extends Controller
                                                 <p>$val->post_description</p> 
                                                 <div class='community-post-action'>
                                                     <a class='Like-btn'><img src='".assets('assets/images/like.svg')."'> ". $val->likeCount()." likes</a>
-                                                    <a class='Comment-btn'><img src='".assets('assets/images/comment.svg')."'> ". $val->commentCount() ." Comments</a>
+                                                    <a class='Comment-btn'><img src='".assets('assets/images/comment.svg')."'> ". $commentCount ." Comments</a>
                                                 </div>
                                             </div>
                                         </div> 
@@ -638,7 +645,7 @@ class CommunityController extends Controller
     }
 
     // Dev name : Dishant Gupta
-    // This function is used to delete a comment
+    // This function is used to create a new comment
     public function createComment(Request $request)
     {
         try{
@@ -653,11 +660,38 @@ class CommunityController extends Controller
                 $comment = new Comment;
                 $comment->user_id = auth()->user()->id;
                 $comment->object_id = $id;
+                $comment->parent_id = isset($request->comment_id) ? encrypt_decrypt('decrypt', $request->comment_id) : null;
                 $comment->object_type = 'post';
                 $comment->comment = $request->comment ?? null;
                 $comment->status = 1;
                 $comment->save();
+                if(isset($request->comment_id)) return successMsg('Replied successfully.');
                 return successMsg('Comment posted successfully.');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to edit a comment
+    public function editComment(Request $request)
+    {
+        try{
+            $validator = Validator::make($request->all(), [
+                'comment' => 'required',
+                'comment_id' => 'required',
+                'post_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->post_id);
+                $commentId = encrypt_decrypt('decrypt', $request->comment_id);
+                $comment = Comment::where('id', $commentId)->where('object_id', $id)->where('object_type', 'post')->first();
+                $comment->comment = $request->comment ?? null;
+                $comment->save();
+                return successMsg('Comment updated successfully.');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -672,6 +706,7 @@ class CommunityController extends Controller
             $id = encrypt_decrypt('decrypt', $id);
             $post = Post::where('id', $id)->first();
             $commentArr = array();
+            $likesCount = UserLike::join('users as u', 'u.id', '=', 'user_likes.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->count();
             $commentCount = 0;
             foreach($post->comments() as $key => $value){
                 $reply = Comment::join('users as u', 'u.id', '=', 'comments.user_id')->where('u.status', 1)->where('object_id', $id)->where('object_type', 'post')->where('parent_id', $value->id)->select('comments.*')->get();
@@ -699,7 +734,7 @@ class CommunityController extends Controller
                 $commentArr[] = $temp;
             };
             // dd($commentArr);
-            return view('pages.admin.community.post-details')->with(compact('post', 'commentArr', 'commentCount'));
+            return view('pages.admin.community.post-details')->with(compact('post', 'commentArr', 'commentCount', 'likesCount'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -84,6 +84,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/community/post/details/{id}', [CommunityController::class, 'postDetails'])->name('community-management.post.details');
         Route::post('/community/post/comment/delete', [CommunityController::class, 'deleteComment'])->name('community-management.post.comment.delete');
         Route::post('/community/post/create-comment', [CommunityController::class, 'createComment'])->name('community-management.post.create.comment');
+        Route::post('/community/post/edit-comment', [CommunityController::class, 'editComment'])->name('community-management.post.edit.comment');
 
         // journals
         Route::get('/journals', [JournalController::class, 'journalList'])->name('journal.list');

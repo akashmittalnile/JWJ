@@ -42,7 +42,7 @@
                                 </div>
                             </div>
                             <div class="jwjcard-group-action">
-                                <a class="managecommunity-btn" data-bs-toggle="modal" data-bs-target="#deletePostModal" href="javascript:void(0)">Delete Post</a>
+                                <a class="delete-btn1" data-bs-toggle="modal" data-bs-target="#deletePostModal" href="javascript:void(0)"> <img src="{{ assets('assets/images/trash.svg') }}"> Delete Post</a>
                             </div>
                         </div>
                         <div class="jwj-posts-body">
@@ -75,7 +75,7 @@
                                             </div>
                                             <p>{{ $post->post_description ?? 'NA' }}</p>
                                             <div class="community-post-action">
-                                                <a class="Like-btn"><img src="{{ assets('assets/images/like.svg') }}"> {{ $post->likeCount() ?? 0 }} likes</a>
+                                                <a class="Like-btn"><img src="{{ assets('assets/images/like.svg') }}"> {{ $likesCount ?? 0 }} likes</a>
                                             </div>
                                         </div>
                                     </div>
@@ -95,7 +95,7 @@
                             </div>
 
                             @forelse($commentArr as $item)
-                            <div class="jwj-comment-item bloc">
+                            <div class="jwj-comment-item">
                                 <div class="jwj-comment-profile">
                                     <img src="{{ (isset($item['posted_by_profile_image']) && file_exists(public_path('uploads/profile/'.$item['posted_by_profile_image'])) ) ? assets('uploads/profile/'.$item['posted_by_profile_image']) : assets('assets/images/no-image.jpg') }}">
                                 </div>
@@ -106,14 +106,16 @@
                                     </div>
                                     <div class="jwj-comment-descr mb-2">{{ $item['comment'] ?? 'NA' }}</div>
                                     <div class="jwj-comment-action">
-                                        <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
-                                        <a class="edit-btn1" href="#"><img src="{{ assets('assets/images/editwh.svg') }}"> Edit</a>
-                                        <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item['comment_id']) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
+                                        <a class="Reply-btn"  href="javascript:void(0)" data-commentid="{{ encrypt_decrypt('encrypt', $item['comment_id']) }}" ><i class="las la-reply"></i> Reply</a>
+                                        @if($item['my_comment'])
+                                        <a class="edit-btn1" data-comment="{{ $item['comment'] ?? '' }}" data-commentid="{{ encrypt_decrypt('encrypt', $item['comment_id']) }}" href="javacript:void(0)"><img src="{{ assets('assets/images/editwh.svg') }}"> Edit</a>
+                                        @endif
+                                        <a class="delete-btn1" id="delete-button" data-commentid="{{ encrypt_decrypt('encrypt', $item['comment_id']) }}" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}"> Delete </a>
                                     </div>
                                 </div> 
                             </div>
                                 @foreach($item['reply'] as $val)
-                                <div class="jwj-comment-item block sub-comment"> 
+                                <div class="jwj-comment-item sub-comment"> 
                                     <div class="jwj-comment-profile">
                                         <img src="{{ (isset($val['reply_posted_by_profile_image']) && file_exists(public_path('uploads/profile/'.$val['reply_posted_by_profile_image'])) ) ? assets('uploads/profile/'.$val['reply_posted_by_profile_image']) : assets('assets/images/no-image.jpg') }}">
                                     </div>
@@ -124,8 +126,11 @@
                                         </div>
                                         <div class="jwj-comment-descr mb-2">{{ $val['reply_comment'] ?? 'NA' }}</div>
                                         <div class="jwj-comment-action">
-                                            <a class="Reply-btn"  href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#addReply"><i class="las la-reply"></i> Reply</a>
-                                            <a class="delete-btn1" id="delete-button" data-commentid="" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}">Delete</a>
+                                            <a class="Reply-btn" data-commentid="{{ encrypt_decrypt('encrypt', $item['comment_id']) }}"  href="javascript:void(0)"><i class="las la-reply"></i> Reply</a>
+                                            @if($val['reply_my_comment'])
+                                            <a class="edit-btn1" data-comment="{{ $val['reply_comment'] ?? '' }}" data-commentid="{{ encrypt_decrypt('encrypt', $val['reply_id']) }}" href="javacript:void(0)"><img src="{{ assets('assets/images/editwh.svg') }}"> Edit</a>
+                                            @endif
+                                            <a class="delete-btn1" data-commentid="{{ encrypt_decrypt('encrypt', $val['reply_id']) }}" id="delete-button" data-commentid="" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}"> Delete </a>
                                         </div>
                                     </div>
                                 </div>
@@ -138,12 +143,6 @@
                             </div>
                             @endforelse
 
-                            @if($post->commentCount() > 4 )
-                            <div class="text-center mt-4">
-                                <a style="width: 12%;" href="javascript:void(0)" id="loadMore" class="addcomment-btn">Load More</a>
-                                <a style="width: 12%;" href="javascript:void(0)" class="d-none addcomment-btn" id="showLess">Show Less</a>
-                            </div>
-                            @endif
 
                         </div>
                     </div>
@@ -235,6 +234,38 @@
     </div>
 </div>
 
+<!-- edit comment -->
+<div class="modal lm-modal fade" id="editComment" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="jwj-modal-form">
+                    <h2>Edit Comment</h2>
+                    <form action="{{ route('admin.community-management.post.edit.comment') }}" method="post" id="editCommentForm">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <textarea type="text" class="form-control" name="comment" id="old_comment" placeholder="Enter comment"></textarea>
+                                    <input type="hidden" value="{{ encrypt_decrypt('encrypt', $post->id) }}" name="post_id">
+                                    <input type="hidden" value="" id="edit_comment_id" name="comment_id">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="save-btn">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- add Reply -->
 <div class="modal lm-modal fade" id="addReply" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -243,12 +274,13 @@
             <div class="modal-body">
                 <div class="jwj-modal-form">
                     <h2>Add Reply</h2>
-                    <form action="" method="post" id="commentForm">
+                    <form action="{{ route('admin.community-management.post.create.comment') }}" method="post" id="replyForm">
                         @csrf
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <textarea type="text" class="form-control" name="comment" placeholder="Enter comment"></textarea>
+                                    <textarea type="text" class="form-control" name="comment" placeholder="Enter reply"></textarea>
+                                    <input type="hidden" value="" name="comment_id" id="reply_comment_id">
                                     <input type="hidden" value="{{ encrypt_decrypt('encrypt', $post->id) }}" name="post_id">
                                 </div>
                             </div>
@@ -272,15 +304,26 @@
 
 @push('js')
 <script>
+    $(document).on('click', ".Reply-btn", function() {
+        $('#reply_comment_id').val($(this).data('commentid'));
+        $('#addReply').modal('show');
+    });
+
+    $(document).on('click', ".edit-btn1", function() {
+        $('#edit_comment_id').val($(this).data('commentid'));
+        $('#old_comment').val($(this).data('comment'));
+        $('#editComment').modal('show');
+    });
+
     $(document).on('click', '#delete-button', function(e) {
         e.preventDefault();
         $('#communityCommentId').val($(this).data('commentid'));
         $('#deleteCommentModal').modal('show');
     });
 
-    $('#addcomment').on('hidden.bs.modal', function(e) {
+    $('#addcomment, #addReply').on('hidden.bs.modal', function(e) {
         $(this).find('form').trigger('reset');
-        $("#addcomment .form-control").removeClass("is-invalid");
+        $(".form-control").removeClass("is-invalid");
     });
 
     $(document).ready(function() {
@@ -295,24 +338,106 @@
                 }
             }
         });
-                            
-        let len = $(".block").length;
-        $(".block").slice(4, len).hide();
-        if ($(".block:hidden").length != 0) {
-            $("#loadMore").show();
-        }
-        $("#loadMore").on("click", function(e) {
-            e.preventDefault();
-            let hidelen = $(".block:hidden").length
-            $(".block:hidden").slice(0, hidelen).slideDown();
-            $("#showLess").removeClass('d-none');
-            $(this).addClass('d-none');
+                        
+
+        $('#replyForm').validate({
+            rules: {
+                comment: {
+                    required: true,
+                },
+            },
+            messages: {
+                comment: {
+                    required: 'Please enter reply',
+                },
+            },
+            submitHandler: function(form, e) {
+                e.preventDefault();
+                let formData = new FormData(form);
+                $.ajax({
+                    type: 'post',
+                    url: form.action,
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status) {
+                            toastr.success(response.message);
+                            setInterval(() => {window.location.reload()}, 2000);
+                            return false;
+                        } else {
+                            toastr.error(response.message);
+                            return false;
+                        }
+                    },
+                    error: function(data, textStatus, errorThrown) {
+                        jsonValue = jQuery.parseJSON(data.responseText);
+                        console.error(jsonValue.message);
+                    },
+                })
+            },
+            errorElement: "span",
+            errorPlacement: function(error, element) {
+                error.addClass("invalid-feedback");
+                element.closest(".form-group").append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass("is-invalid");
+            },
         });
-        $("#showLess").on("click", function(e) {
-            e.preventDefault();
-            $(".block").slice(4, len).slideUp();
-            $("#loadMore").removeClass('d-none');
-            $(this).addClass('d-none');
+
+        $('#editCommentForm').validate({
+            rules: {
+                comment: {
+                    required: true,
+                },
+            },
+            messages: {
+                comment: {
+                    required: 'Please enter comment',
+                },
+            },
+            submitHandler: function(form, e) {
+                e.preventDefault();
+                let formData = new FormData(form);
+                $.ajax({
+                    type: 'post',
+                    url: form.action,
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function(response) {
+                        if (response.status) {
+                            toastr.success(response.message);
+                            setInterval(() => {window.location.reload()}, 2000);
+                            return false;
+                        } else {
+                            toastr.error(response.message);
+                            return false;
+                        }
+                    },
+                    error: function(data, textStatus, errorThrown) {
+                        jsonValue = jQuery.parseJSON(data.responseText);
+                        console.error(jsonValue.message);
+                    },
+                })
+            },
+            errorElement: "span",
+            errorPlacement: function(error, element) {
+                error.addClass("invalid-feedback");
+                element.closest(".form-group").append(error);
+            },
+            highlight: function(element, errorClass, validClass) {
+                $(element).addClass("is-invalid");
+            },
+            unhighlight: function(element, errorClass, validClass) {
+                $(element).removeClass("is-invalid");
+            },
         });
 
         $('#commentForm').validate({

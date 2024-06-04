@@ -126,3 +126,9 @@ a.edit-btn1 {background: var(--gray); padding: 3px 10px; border-radius: 5px; col
 
 .cancel-btn{text-align: center;border: none; padding: 8px 30px; color: #fff; font-size: 13px; font-weight: 500; display: inline-block; background:var(--gray); box-shadow: 0px 4px 18px rgb(74 149 207 / 11%); border-radius: 5px; }
 .save-btn{text-align: center;border: none; padding: 8px 30px; color: #fff; font-size: 13px; font-weight: 500; display: inline-block; background:var(--blue); box-shadow: 0px 4px 18px rgb(74 149 207 / 11%); border-radius: 5px; }
+
+
+.communitycarousel52 button.owl-prev {left: 0; position: absolute; top: 40%; }
+.communitycarousel52 button.owl-next {right: 0; position: absolute; top: 40%; }
+.communitycarousel52 button.owl-next span,
+.communitycarousel52 button.owl-prev span {width: 40px; height: 40px; background: rgb(16 121 192 / 22%); color: #1079c0; font-size: 30px; display: inline-block; line-height: 36px; border-radius: 50%; }
