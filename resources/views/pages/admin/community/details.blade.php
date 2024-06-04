@@ -56,7 +56,7 @@
                         <div class="jwj-posts-body">
                             <div class="row g-1">
                                 <div class="col-md-4">
-                                    <div id="communitycarousel1" class=" communitycarousel1 owl-carousel owl-theme">
+                                    <div id="communitycarousel12" class="communitycarousel52 owl-carousel owl-theme">
                                         @forelse($imgs as $item)
                                         <div class="item">
                                             <div class="community-posts-media">
@@ -294,6 +294,18 @@
 
 
         $(document).ready(function() {
+            $('#communitycarousel12').owlCarousel({
+                loop: true,
+                margin: 10,
+                nav: true,
+                dots: false,
+                responsive: {
+                    1000: {
+                        items: 1
+                    }
+                }
+            });
+                            
             $('#postForm').validate({
                 rules: {
                     title: {
