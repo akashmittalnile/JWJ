@@ -135,7 +135,7 @@ class SupportController extends Controller
                 $support->past_response = $request->message ?? null;
                 $support->updated_at = date('Y-m-d H:i:s');
                 $support->save();
-                return successMsg('Message sended successfully');
+                return successMsg('Message sent successfully');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -300,7 +300,7 @@ class SupportController extends Controller
                         sendNotification($val->fcm_token, $data);
                     }
                 }
-                return successMsg('Notification sended successfully');
+                return successMsg('Notification sent successfully');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
