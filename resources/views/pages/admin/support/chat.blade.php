@@ -9,89 +9,71 @@
 <meta name="_token" content="{{csrf_token()}}" />
 <div class="body-main-content">
     <div class="message-section">
-        <section style="background-color: #e6e6e6; border-radius: 30px;">
-            <div class="container p-4">
 
-                <div class="row">
-                    <div class="col-md-12">
-
-                        <div class="card" id="chat3" style="border-radius: 15px;">
-                            <div class="card-body">
-
-                                <div class="row">
-                                    <div class="col-md-6 col-lg-5 col-xl-4 mb-4 mb-md-0">
-
-                                        <div class="p-3">
-
-                                            <!-- <div class="input-group rounded mb-3">
-                                                <input type="text" class="form-control rounded border me-2" placeholder="Search" aria-label="Search" aria-describedby="search-addon" id="myinput" />
-                                                <span class="input-group-text border-0" id="search-addon" style="background: #1079c0;">
-                                                    <i class="las la-search"></i>
-                                                </span>
-                                            </div> -->
-
-                                            <div class="search-filter wd9 mb-3">
-                                                <div class="row g-1">
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <div class="search-form-group">
-                                                                <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name & email address">
-                                                                <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            <div data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px; overflow-y: scroll;">
-                                                <ul class="list-unstyled mb-0" id="appendData">
-
-                                                    
-
-                                                </ul>
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div class="col-md-6 col-lg-7 col-xl-8 body-chat-message-user d-none">
-
-                                        <div class="pt-3 pe-3 messages-card" data-mdb-perfect-scrollbar="true" style="position: relative; height: 400px; overflow-y: scroll;">
-
-
-
-                                        </div>
-
-                                        <div class="text-muted d-flex justify-content-start align-items-center pe-3 pt-3 mt-2">
-                                            <div>
-                                                <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="{{ assets('assets/images/user.svg') }}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60" id="userAvatar">
-                                            </div>
-
-                                            <input type="text" class="form-control-input form-control-lg border ms-3" id="message-input" placeholder="Type message">
-
-                                            <a class="fs-24 ms-3 text-muted" id="image-attach" href="javascript:void(0)"><i class="las la-paperclip"></i></a>
-
-                                            <input type="file" hidden accept="image/png, image/jpg, image/jpeg" id="upload-file" name="image-attachment">
-
-                                            <!-- <a class="fs-24 ms-3 text-muted" href="javascript:void(0)"><i class="las la-smile"></i></a> -->
-                                            <a class="fs-24 ms-3" href="javascript:void(0)"><i class="las la-paper-plane btnSend"></i></a>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                        <input type="hidden" id="ajax-chat-url" value="">
-                        <input type="hidden" id="ajax-chat-url-name" value="">
-                        <input type="hidden" id="ajax-chat-url-img" value="">
+        <div class="chat-section">
+            <div class="chat-userlist-sidebar">
+                <div class="chat-userlist-sidebar-head">
+                    <div class="chat-panel-sidebar-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <path d="M17 9C17 12.87 13.64 16 9.5 16L8.57001 17.12L8.02 17.78C7.55 18.34 6.65 18.22 6.34 17.55L5 14.6C3.18 13.32 2 11.29 2 9C2 5.13 5.36 2 9.5 2C12.52 2 15.13 3.67001 16.3 6.07001C16.75 6.96001 17 7.95 17 9Z" stroke="#4F5168" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M22 12.86C22 15.15 20.82 17.18 19 18.46L17.66 21.41C17.35 22.08 16.45 22.21 15.98 21.64L14.5 19.86C12.08 19.86 9.92001 18.79 8.57001 17.12L9.5 16C13.64 16 17 12.87 17 9C17 7.95 16.75 6.96001 16.3 6.07001C19.57 6.82001 22 9.57999 22 12.86Z" stroke="#4F5168" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M7 9H12" stroke="#7BC043" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </svg> 
+                    </div>
+                    <h2>Chat</h2>
+                </div>
+                <div class="chat-userlist-sidebar-body">
+                    <div class="chat-userlist-filter">
+                        <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name & email address">
+                        <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
+                    </div>
+                    <div class="chat-userlist-info" id="appendData">
                     </div>
                 </div>
-
             </div>
-        </section>
-    </div>
+            <div class="chat-panel-section">
+                <div class="chat-panel-chat-header">
+                    <div class="chat-panel-user-item">
+                        <div class="chat-panel-user-item-image"><img src="images/user-default.png"></div>
+                        <div class="chat-panel-user-item-text">
+                            <h4>Mark Jane</h4>
+                            <p>Platinum Member</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-panel-chat-body body-chat-message-user" tabindex="1" style="overflow: auto; outline: none;">
+                    <div class="chat-panel-chat-content">
+                        <div class="messages-list messages-card">
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-panel-chat-footer">
+                    <div class="row g-1">
+                        <div class="col-md-1">
+                            <div class="userAvatar-group">
+                               <img  src="{{ assets('assets/images/user.svg') }}" alt="avatar" id="userAvatar">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                               <input type="text" class="form-control" id="message-input" placeholder="Type message">
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <a class="attachment-btn" id="image-attach" href="javascript:void(0)"><i class="las la-paperclip"></i></a> 
+                                <input type="file" hidden accept="image/png, image/jpg, image/jpeg" id="upload-file" name="image-attachment"> 
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button class="btn-send btnSend" title="" type="button">
+                                 Send
+                            </button>
+                        </div>
+                    </div>
+                    <input type="hidden" id="ajax-chat-url" value="">
+                    <input type="hidden" id="ajax-chat-url-name" value="">
+                    <input type="hidden" id="ajax-chat-url-img" value="">
+                </div>
+            </div>
+        </div>
+    <div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script>
@@ -365,7 +347,7 @@
     });
 
     function showAllMessages(list, ajax_call = false) {
-        $('.messages-card').html('<div style="margin-top: 25%; font-size: 1rem;" class="d-flex align-items-center justify-content-center">No messages found</div>');
+        $('.messages-card').html('<div class="no-datafound-content">No messages found</div>');
         if (list.length == 0) return false;
         let html = `${list.map(row => admin(row,ajax_call)).join('')}`;
         $('.messages-card').html(html);
@@ -378,14 +360,20 @@
 
     function showMessage(message, time, userName, image) {
         // alert(1);
-        let msg = `<div class="d-flex flex-row justify-content-end">
-                <div>
-                    ${(image !== undefined && image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
+        let msg = ` <div class="message-item  outgoing-message">
+                         <div class="message-item-chat-card">
+                            <div class="message-item-user">
+                                <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" >
+                            </div>
+                            <div class="message-item-chat-content">
+                                <div class="message-content">
+                                    ${(image !== undefined && image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${image}" alt="avatar"  width="100"/>` : ''}
                     ${(message !== '' && message !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${message}</p>` : ''}
-                    <p class="small me-3 mb-3 rounded-3 text-muted">${time}</p>
-                </div>
-                <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
-            </div>`;
+                                </div>
+                                <div class="time">${time}</div>
+                            </div>
+                        </div>
+                    </div>`;
         $('.messages-card').append(msg);
         $(".body-chat-message-user").stop().animate({
             scrollTop: $(".body-chat-message-user")[0].scrollHeight
@@ -399,23 +387,36 @@
         var formattedDate = moment.unix(row.createdAt.seconds).format('MMM DD, YYYY HH:mm A');
         if (row.sendto == 1) {
 
-            html = `<div class="d-flex flex-row justify-content-start">
-                    <img style="border-radius: 50%; object-fit: cover; object-position: center;" src="${userProImg}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60">
-                    <div>
-                        ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
-                        ${(row.text !== '' && row.text !== undefined) ? `<p style="background: #9fc9e6;" class="small p-2 ms-3 mb-1 rounded-3" style="background-color: #f5f6f7;">${row.text}</p>` : '' }
-                        <p class="small ms-3 mb-3 rounded-3 text-muted float-end">${formattedDate}</p>
+            html = `<div class="message-item ">
+                         <div class="message-item-chat-card">
+                            <div class="message-item-user">
+                                <img src="${userProImg}" alt="avatar" class="d-flex align-self-center me-3" width="60" height="60">
+                            </div>
+                            <div class="message-item-chat-content">
+                                <div class="message-content">
+                                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" width="100"/>` : ''}
+                                    ${(row.text !== '' && row.text !== undefined) ? `<p>${row.text}</p>` : '' }
+                                </div>
+                                <div class="time">${formattedDate}</div>
+                            </div>
+                        </div>
                     </div>
-                </div>`;
+                    `;
         } else {
-            html = `<div class="d-flex flex-row justify-content-end">
-                <div>
-                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar" class="d-flex align-self-center m-3" width="100"/>` : ''}
-                    ${(row.text !== '' && row.text !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${row.text}</p>` : '' }
-                    <p class="small ms-3 mb-3 rounded-3 text-muted">${formattedDate}</p>
-                </div>
-                <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" style="width: 45px; height: 45px; border-radius: 50%; object-fit: cover; object-position: center;">
-            </div>`;
+            html = `<div class="message-item  outgoing-message">
+                         <div class="message-item-chat-card">
+                            <div class="message-item-user">
+                                <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1">
+                            </div>
+                            <div class="message-item-chat-content">
+                                <div class="message-content">
+                                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar"  width="100"/>` : ''}
+                                    ${(row.text !== '' && row.text !== undefined) ? `<p >${row.text}</p>` : '' }
+                                </div>
+                                <div class="time">${formattedDate}</div>
+                            </div>
+                        </div>
+                    </div>`;
         }
         return html;
     }

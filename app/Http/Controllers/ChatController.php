@@ -49,24 +49,22 @@ class ChatController extends Controller
                     $lastMsg = $val->last_msg ?? 'No messages';
                     $unseenCout = (isset($val->unseen_msg_count) && ($val->unseen_msg_count!=0)) ? "<span class='badge bg-danger rounded-pill float-end  unseen-count-$val->id'>$val->unseen_msg_count</span>" : "";
                     $userProfileImage = (isset($val->profile) && File::exists(public_path("uploads/profile/".$val->profile)) ) ? assets("uploads/profile/".$val->profile) : assets("assets/images/avatar.png");
-                    $html .= "<li class='p-2 border-bottom user-info' data-id='$val->id' data-name='$val->name' data-img='$userProfileImage'>
-                        <a href='javascript:void(0)' class='d-flex justify-content-between'>
-                            <div class='d-flex flex-row'>
-                                <div>
-                                    <img style='border-radius: 50%; object-fit: cover; object-position: center;' src='$userProfileImage' alt='avatar' class='d-flex align-self-center me-3' width='60' height='60'>
-                                    <span class='badge bg-success badge-dot'></span>
+                    $html .= "<div class='chat-userlist-item user-info' data-id='$val->id' data-name='$val->name' data-img='$userProfileImage'>
+                                <div class='chat-userlist-item-inner'>
+                                    <div class='chat-userlist-item-image'>
+                                        <img src='$userProfileImage' alt='avatar'>
+                                        <span class='user-status'></span>
+                                    </div>
+                                    <div class='chat-userlist-item-content'>
+                                        <h4>$val->name</h4>
+                                        <p class='text-muted last-message-$val->id'>$lastMsg</p>
+                                    </div>
+                                </div
+                                <div class='chat-userlist-item-date'>
+                                    <div class='chat-userlist-time text-muted time-message-$val->id'>$time</div>
+                                     $unseenCout
                                 </div>
-                                <div class='pt-1'>
-                                    <p class='chat-name fw-bold mb-0' style='color: #1079c0; font-size: 0.8rem;'>$val->name</p>
-                                    <p class='small text-muted last-message-$val->id'>$lastMsg</p>
-                                </div>
-                            </div>
-                            <div class='pt-1 text-end' style='width: 20%;'>
-                                <p class='small text-muted mb-1 time-message-$val->id'>$time</p>
-                                $unseenCout
-                            </div>
-                        </a>
-                    </li>";
+                            </div>";
                 }
 
                 if(count($data) < 1) return errorMsg("No users found");

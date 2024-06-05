@@ -75,6 +75,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::get('/community-management', [CommunityController::class, 'communityManagement'])->name('community-management.list');
         Route::post('/add-new-community', [CommunityController::class, 'communityStoreData'])->name('community-management.store.data');
         Route::post('/change-community-status', [CommunityController::class, 'changeCommunityStatus'])->name('community-management.change.status');
+        Route::post('/edit-community', [CommunityController::class, 'updateCommunity'])->name('community-management.update.data');
+        Route::post('/community/delete', [CommunityController::class, 'deleteCommunity'])->name('community-management.delete');
         Route::get('/community-management-details/{id}', [CommunityController::class, 'communityManagementDetails'])->name('community-management.details');
         Route::get('/community-approval', [CommunityController::class, 'communityApproval'])->name('community-management.approval');
         Route::get('/rejected-community', [CommunityController::class, 'communityRejected'])->name('community-management.rejected');
@@ -86,6 +88,8 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/community/post/create-comment', [CommunityController::class, 'createComment'])->name('community-management.post.create.comment');
         Route::post('/community/post/edit-comment', [CommunityController::class, 'editComment'])->name('community-management.post.edit.comment');
         Route::post('/like-unlike-post', [CommunityController::class, 'postLikeUnlike'])->name('community-management.post.like.unlike');
+
+        Route::get('/remove-community-dropzone-image/{id}', [CommunityController::class, 'removeImage'])->name('community-management.remove.dropzone.image');
 
         // journals
         Route::get('/journals', [JournalController::class, 'journalList'])->name('journal.list');

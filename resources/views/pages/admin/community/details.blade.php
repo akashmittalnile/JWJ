@@ -2,6 +2,17 @@
 
 @push('css')
 <link rel="stylesheet" type="text/css" href="{{ assets('assets/css/community-management.css') }}">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/dropzone@5.9.2/dist/min/dropzone.min.css">
+<style>
+    .dz-image-preview .dz-image img{
+        object-fit: contain;
+        object-position: center;
+        width: 120px;
+        height: 120px;
+        border: 1px solid #eee;
+        border-radius: 20px;
+    }
+</style>
 @endpush
 
 @section('title','Journey with Journals - Community Management Details')
@@ -52,6 +63,11 @@
                                     <p>{{ count($follow) }} Followers</p>
                                 </div>
                             </div>
+
+                            <!-- <a class="edit-btn1 mx-3" data-bs-toggle="modal" data-bs-target="#editCommunityModal" href="javacript:void(0)"><img src="{{ assets('assets/images/editwh.svg') }}"> Edit</a> -->
+
+                            <a class="delete-btn1 mx-3" data-bs-toggle="modal" data-bs-target="#deleteCommunityModal" href="javascript:void(0)"><img src="{{ assets('assets/images/trash.svg') }}"> Delete </a>
+
                         </div>
                         <div class="jwj-posts-body">
                             <div class="row g-1">
@@ -215,6 +231,89 @@
     </div>
 </div>
 
+<!-- DELETE COMMUNITY -->
+<div class="modal lm-modal fade" id="deleteCommunityModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="jwj-modal-form text-center">
+                    <h2>Are You Sure?</h2>
+                    <p>You want to delete this community!</p>
+                    <form action="{{ route('admin.community-management.delete') }}" method="post">
+                        @csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <input type="hidden" name="id" value="{{ encrypt_decrypt('encrypt', $data->id) }}" >
+                                <div class="form-group">
+                                    <button class="cancel-btn" data-bs-dismiss="modal" aria-label="Close" type="button">Cancel</button>
+                                    <button type="submit" class="save-btn">Yes! Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- EDIT COMMUNITY -->
+<div class="modal lm-modal fade" id="editCommunityModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="jwj-modal-form">
+                    <h2>EDIT COMMUNITY</h2>
+                    <form action="{{ route('admin.community-management.update.data') }}" method="post" id="newCommunity" enctype="multipart/form-data">@csrf
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" value="{{ $data->name ?? '' }}" name="title" placeholder="Title">
+                                </div>
+                            </div>
+                            <div class="product-item-card">
+                                <div class="card-header form-group" style="border-bottom: none;">
+                                    <div class="d-flex flex-column justify-content-between">
+                                        <div class="dropzone" id="multipleImage">
+                                            @forelse($imgs as $item)
+                                            <div class="dz-preview dz-image-preview">
+                                                <div class="dz-image">
+                                                    <img src="{{ assets('uploads/community/'.$item->name) }}" />
+                                                </div>
+                                                <a href="{{ route('admin.community-management.remove.dropzone.image', encrypt_decrypt('encrypt', $item->id)) }}" class="dz-remove dz-remove-image">Remove Link</a>
+                                            </div>
+                                            @empty
+                                            <div class="dz-default dz-message">
+                                                <span>Click once inside the box to upload an image 
+                                                    <br>
+                                                    <small class="text-danger">Make sure the image size is less than 5 MB</small>
+                                                </span>
+                                            </div>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <textarea type="text" name="description" class="form-control" placeholder="Enter description here...">{{ $data->description ?? '' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
+                                    <button type="submit" class="save-btn">Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Post On Community -->
 <div class="modal lm-modal fade" id="PostOnCommunity" data-community-id="{{ encrypt_decrypt('encrypt', $data->id) }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -257,6 +356,7 @@
 @endsection
 
 @push('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.0/dropzone.js"></script>
     <script>
         $('#PostOnCommunity').on('hidden.bs.modal', function(e) {
             $(this).find('form').trigger('reset');

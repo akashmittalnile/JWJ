@@ -471,6 +471,45 @@ class CommunityController extends Controller
         }
     }
 
+        // Dev name : Dishant Gupta
+    // This function is used to delete the journal
+    public function deleteCommunity(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $id = encrypt_decrypt('decrypt', $request->id);
+                $community = Community::where('id', $id)->first();
+                if(isset($community->id)){
+                    $commImage = CommunityImage::where('community_id', $community->id)->get();
+                    foreach($commImage as $key => $val){
+                        // fileRemove("/uploads/community/$val->name");
+                    }
+                    $posts = Post::where('community_id', $community->id)->get();
+                    foreach($posts as $key => $val){
+                        $postImage = PostImage::where('post_id', $val->id)->get();
+                        foreach($postImage as $key1 => $val1){
+                            // fileRemove("/uploads/community/post/$val1->name");
+                        }
+                        PostImage::where('post_id', $val->id)->delete();
+                        $likes = UserLike::where('object_id', $val->id)->where('object_type', 'post')->delete();
+                        $comment = Comment::where('object_id', $val->id)->where('object_type', 'post')->delete();
+                    }
+                    CommunityImage::where('community_id', $community->id)->delete();
+                    Post::where('community_id', $community->id)->delete();
+                    UserFollowedCommunity::where('community_id', $community->id)->delete();
+                    Community::where('id', $id)->delete();
+                    return redirect()->route('admin.community-management.list')->with('success', 'Community deleted successfully.');
+                } else return redirect()->back()->with('error', 'Community not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
     // Dev name : Dishant Gupta
     // This function is used to show the listing of all pending communities. which is created by user
     public function communityRejected(Request $request)
