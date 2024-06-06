@@ -104,7 +104,7 @@ class UserController extends Controller
             $user = User::where('id', $id)->first();
             $plan = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $id)->where('user_plans.status', 1)->select('plan.name', 'user_plans.price', 'user_plans.plan_timeperiod', 'plan.image')->first();
             $totalSum = UserPlan::where('user_plans.user_id', $id)->sum('price');
-            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'user_plans.price')->get();
+            $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'user_plans.plan_timeperiod', 'user_plans.price')->orderByDesc('user_plans.id')->get();
             $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
             $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
             foreach($totalMood as $val){

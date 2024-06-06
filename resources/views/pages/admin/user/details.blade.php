@@ -287,7 +287,7 @@
                                         </td>
                                         <td>{{ $val->name }}</td>
                                         <td>${{ number_format((float)$val->price, 2, '.', '') }}</td>
-                                        <td>Montly</td>
+                                        <td>{{ $val->plan_timeperiod==1 ? 'Monthly' : 'Yearly' }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->renewal_date)) }}</td>
                                         <td>{{ $val->transaction_id ?? 'NA' }}</td>
