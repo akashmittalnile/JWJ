@@ -800,7 +800,7 @@ class CommunityController extends Controller
                     $temp1['reply_posted_by'] = $value1->user->name ?? 'NA';
                     $temp1['reply_my_comment'] = $value1->user_id == auth()->user()->id ? true : false;
                     $temp1['reply_posted_by_user_name'] = $value1->user->user_name ?? 'NA';
-                    $temp1['reply_posted_by_profile_image'] = isset($value1->user->profile) ? assets('uploads/profile/'.$value1->user->profile) : null;
+                    $temp1['reply_posted_by_profile_image'] = $value1->user->profile;
                     $replyArr[] = $temp1;
                 }
                 $temp['comment_id'] = $value->id;
@@ -810,7 +810,7 @@ class CommunityController extends Controller
                 $temp['posted_date'] = date('d M, Y h:i A', strtotime($value->created_at));
                 $temp['posted_by'] = $value->user->name ?? 'NA';
                 $temp['posted_by_user_name'] = $value->user->user_name ?? 'NA';
-                $temp['posted_by_profile_image'] = isset($value->user->profile) ? assets('uploads/profile/'.$value->user->profile) : null;
+                $temp['posted_by_profile_image'] = $value->user->profile;
                 $commentArr[] = $temp;
             };
             // dd($commentArr);
