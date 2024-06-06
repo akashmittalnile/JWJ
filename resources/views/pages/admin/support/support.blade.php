@@ -97,7 +97,14 @@
         <div class="modal-content">
             <div class="modal-body">
                 <div class="Sendreply-modal-form">
-                    <h2>Admin Reply</h2>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2>Admin Reply</h2>
+                        </div>
+                        <div>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
