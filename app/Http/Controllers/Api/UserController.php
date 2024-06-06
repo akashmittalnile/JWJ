@@ -108,6 +108,7 @@ class UserController extends Controller
                 $communitytemp['description'] = $val->description;
                 $communitytemp['status'] = $val->status;
                 $communitytemp['image'] = $images;
+                $communitytemp['my_community'] = ($val->created_by==auth()->user()->id) ? true : false;
                 $communitytemp['follow'] = isset($ufc->id) ? true : false;
                 $communitytemp['member_follow_count'] = $followCount ?? 0;
                 $communitytemp['member_image'] = $memberImage;

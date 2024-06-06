@@ -104,7 +104,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/create-notifications', [SupportController::class, 'createNotification'])->name('notification.store');
 
         // chats
-        Route::get('/chat', [ChatController::class, 'chat'])->name('chats');
+        Route::get('/chat/{id?}', [ChatController::class, 'chat'])->name('chats');
         Route::post('/chat-image', [ChatController::class, 'chatImage'])->name('chats.image');
         Route::post('/chat-record', [ChatController::class, 'chatRecord'])->name('chats.record');
         Route::post('/chat-record-seen', [ChatController::class, 'chatRecordSeen'])->name('chats.record.seen');

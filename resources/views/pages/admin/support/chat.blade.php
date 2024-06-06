@@ -20,20 +20,43 @@
                 </div>
                 <div class="chat-userlist-sidebar-body">
                     <div class="chat-userlist-filter">
-                        <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name & email address">
+                        <input type="text" name="" id="searchInput" class="form-control" placeholder="Search by user name">
                         <span class="search-icon"><img src="{{ assets('assets/images/search-icon.svg') }}"></span>
                     </div>
-                    <div class="chat-userlist-info" id="appendData">
+                    <div class="chat-userlist-info">
+                        @foreach($users as $val)
+                        <a href="{{ route('admin.chats', encrypt_decrypt('encrypt', $val['id'])) }}">
+                            <div class="chat-userlist-item user-info" data-id="$val->id" data-name="{{ $val['name'] }}" data-img="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}">
+                                <div class="chat-userlist-item-inner">
+                                    <div class="chat-userlist-item-image">
+                                        <img src="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}" alt="avatar">
+                                        <span class="user-status"></span>
+                                    </div>
+                                    <div class="chat-userlist-item-content">
+                                        <h4>{{ $val['name'] }}</h4>
+                                        <p class="text-muted last-message-{{ $val['id'] }}">{{ $val['last_msg'] }}</p>
+                                    </div>
+                                </div>
+                                <div class="chat-userlist-item-date">
+                                    <div class="chat-userlist-time text-muted time-message-{{ $val['id'] }}">{{ $val['time'] }}</div>
+                                    @if( isset($val['unseen_msg_count']) && $val['unseen_msg_count'] != 0 )
+                                    <span class="badge bg-danger rounded-pill float-end unseen-count-{{ $val['id'] }}">{{ $val['unseen_msg_count'] }}</span>
+                                    @endif
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
+            @if(isset($user->id))
             <div class="chat-panel-section">
                 <div class="chat-panel-chat-header">
                     <div class="chat-panel-user-item">
-                        <div class="chat-panel-user-item-image"><img src="images/user-default.png"></div>
+                        <div class="chat-panel-user-item-image"><img src="{{ (isset($user->profile) && file_exists(public_path('uploads/profile/'.$user->profile))) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/avatar.png') }}"></div>
                         <div class="chat-panel-user-item-text">
-                            <h4>Mark Jane</h4>
-                            <p>Platinum Member</p>
+                            <h4>{{ $user->name ?? 'NA' }}</h4>
+                            <p>{{ $user->plan->name ?? 'Plan A' }} Member</p>
                         </div>
                     </div>
                 </div>
@@ -45,12 +68,7 @@
                 </div>
                 <div class="chat-panel-chat-footer">
                     <div class="row g-1">
-                        <div class="col-md-1">
-                            <div class="userAvatar-group">
-                               <img  src="{{ assets('assets/images/user.svg') }}" alt="avatar" id="userAvatar">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
+                        <div class="col-md-9">
                             <div class="form-group">
                                <input type="text" class="form-control" id="message-input" placeholder="Type message">
                             </div>
@@ -67,11 +85,12 @@
                             </button>
                         </div>
                     </div>
-                    <input type="hidden" id="ajax-chat-url" value="">
-                    <input type="hidden" id="ajax-chat-url-name" value="">
-                    <input type="hidden" id="ajax-chat-url-img" value="">
+                    <input type="hidden" id="ajax-chat-url" value="{{ $user->id }}">
+                    <input type="hidden" id="ajax-chat-url-name" value="{{ $user->name }}">
+                    <input type="hidden" id="ajax-chat-url-img" value="{{ (isset($user->profile) && file_exists(public_path('uploads/profile/'.$user->profile))) ? assets('uploads/profile/'.$user->profile) : assets('assets/images/avatar.png') }}">
                 </div>
             </div>
+            @endif
         </div>
     <div>
 </div>
@@ -83,16 +102,6 @@
 
     $(document).on('change', "input[name='image-attachment']", function() {
         $('.la-paperclip').css('color', '#0d6efd');
-    })
-
-    $(document).on('click', '.user-info', function() {
-        $("#ajax-chat-url").val($(this).attr('data-id'));
-        $("#ajax-chat-url-name").val($(this).attr('data-name'));
-        $("#ajax-chat-url-img").val($(this).attr('data-img'));
-        $(".body-chat-message-user").removeClass('d-none');
-        let userAvaImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/user.svg') }}" : $("#ajax-chat-url-img").val();
-        // console.log(userAvaImg);
-        $("#userAvatar").attr('src', userAvaImg);
     })
 </script>
 <script type="module" >
@@ -174,57 +183,6 @@
         $(".last-message-"+receiver_id).text(message ?? image);
         $(".time-message-"+receiver_id).text('Just Now');
         showAllMessages(chatList);
-        let form = new FormData();
-        form.append('msg', message ?? image);
-        form.append('user_id', receiver_id);
-        $.ajax({
-            type: 'post',
-            url: "{{ route('admin.chats.record') }}",
-            data: form,
-            dataType: 'json',
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.status) {
-                    $.ajax({
-                        type: 'get',
-                        url: "{{ route('admin.chats') }}",
-                        data: {
-                            search: $("#searchInput").val()
-                        },
-                        dataType: 'json',
-                        success: function(result) {
-                            if (result.status) {
-                                let userData = result.data.html.data;
-                                let html = result.data.html;
-                                $("#appendData").html(result.data.html);
-                            } else {
-                                let html = `<div class="d-flex justify-content-center align-items-center flex-column">
-                                            <div>
-                                                <img width="250" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
-                                            </div>
-                                        </div>`;
-                                $("#appendData").html(html);
-                            }
-                        },
-                        error: function(data, textStatus, errorThrown) {
-                            jsonValue = jQuery.parseJSON(data.responseText);
-                            console.error(jsonValue.message);
-                        },
-                    });
-                    return false;
-                } else {
-                    console.error(response.message);
-                    return false;
-                }
-            },
-            error: function(data, textStatus, errorThrown) {
-                jsonValue = jQuery.parseJSON(data.responseText);
-                console.error(jsonValue.message);
-            },
-        });
-
-       
     }
 
 
@@ -238,63 +196,28 @@
 
         showAllMessages(chatList, ajax_call);
     }
-    $(document).on('click', '.user-info', function() {
-        getClientChat(group_id, true);
-        $(".unseen-count-"+receiver_id).remove();
-        let form = new FormData();
-        form.append('user_id', $("#ajax-chat-url").val());
-        $.ajax({
-            type: 'post',
-            url: "{{ route('admin.chats.record.seen') }}",
-            data: form,
-            dataType: 'json',
-            contentType: false,
-            processData: false,
-            success: function(response) {
-                if (response.status) {
-                    // console.log(response.message);
-                    return false;
-                } else {
-                    console.error(response.message);
-                    return false;
-                }
-            },
-            error: function(data, textStatus, errorThrown) {
-                jsonValue = jQuery.parseJSON(data.responseText);
-                console.error(jsonValue.message);
-            },
-        })
-        
-        $.ajax({
-            type: 'get',
-            url: "{{ route('admin.chats') }}",
-            data: {
-                search: $("#searchInput").val()
-            },
-            dataType: 'json',
-            success: function(result) {
-                if (result.status) {
-                    let userData = result.data.html.data;
-                    let html = result.data.html;
-                    $("#appendData").html(result.data.html);
-                } else {
-                    let html = `<div class="d-flex justify-content-center align-items-center flex-column">
-                                <div>
-                                    <img width="250" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
-                                </div>
-                            </div>`;
-                    $("#appendData").html(html);
-                }
-            },
-            error: function(data, textStatus, errorThrown) {
-                jsonValue = jQuery.parseJSON(data.responseText);
-                console.error(jsonValue.message);
-            },
-        });
-    });
+    
+    getClientChat(group_id);
 </script>
 
 <script>
+    $.extend($.expr[':'], { //definizione di :conaints() case insesitive
+        'containsi': function(elem, i, match, array)
+        {
+            return (elem.textContent || elem.innerText || '').toLowerCase()
+                    .indexOf((match[3] || "").toLowerCase()) >= 0;
+        }
+    });
+    $(document).on('keyup','#searchInput',function(){
+        let text = $(this).val();
+        if(!text){
+            $(".chat-userlist-info a").show();
+        }else{
+            $(".chat-userlist-info a").hide();
+            $(".chat-userlist-info a:containsi("+text+")").show();
+        }
+    });
+
     const baseChatUrl = "{{ url('/') }}" + '/public/uploads/chat/';
     console.log(baseChatUrl);
     $(document).ready(function() {
@@ -347,7 +270,7 @@
     });
 
     function showAllMessages(list, ajax_call = false) {
-        $('.messages-card').html('<div class="no-datafound-content">No messages found</div>');
+        $('.messages-card').html('<div class="no-datafound-content" style="font-size: 1rem;">No messages found</div>');
         if (list.length == 0) return false;
         let html = `${list.map(row => admin(row,ajax_call)).join('')}`;
         $('.messages-card').html(html);
@@ -427,42 +350,6 @@
         const group_id = "1-" + receiver_id;
         getClientChat(group_id, true);
     }, 5000);
-
-    $(document).ready(function() {
-        const getList = (search = null) => {
-            $.ajax({
-                type: 'get',
-                url: "{{ route('admin.chats') }}",
-                data: {
-                    search
-                },
-                dataType: 'json',
-                success: function(result) {
-                    if (result.status) {
-                        let userData = result.data.html.data;
-                        let html = result.data.html;
-                        $("#appendData").html(result.data.html);
-                    } else {
-                        let html = `<div class="d-flex justify-content-center align-items-center flex-column">
-                                    <div>
-                                        <img width="250" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
-                                    </div>
-                                </div>`;
-                        $("#appendData").html(html);
-                    }
-                },
-                error: function(data, textStatus, errorThrown) {
-                    jsonValue = jQuery.parseJSON(data.responseText);
-                    console.error(jsonValue.message);
-                },
-            });
-        };
-        getList();
-        $(document).on('keyup', "#searchInput", function() {
-            let search = $("#searchInput").val();
-            getList(search);
-        });
-    })
 </script>
 
 @endsection
