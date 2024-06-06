@@ -26,7 +26,7 @@
                     <div class="chat-userlist-info">
                         @foreach($users as $val)
                         <a href="{{ route('admin.chats', encrypt_decrypt('encrypt', $val['id'])) }}">
-                            <div class="chat-userlist-item user-info" data-id="$val->id" data-name="{{ $val['name'] }}" data-img="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}">
+                            <div class="chat-userlist-item @if(isset($user->id) && ($val['id'] == $user->id)) current-user @endif user-info" data-id="$val->id" data-name="{{ $val['name'] }}" data-img="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}">
                                 <div class="chat-userlist-item-inner">
                                     <div class="chat-userlist-item-image">
                                         <img src="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}" alt="avatar">
@@ -174,15 +174,42 @@
             createdAt: new Date()
         };
 
-        // console.log("Data => ", data);
+        let chatMsg
+        if((message != null) && (message != '')){
+            chatMsg = message;
+        } else chatMsg = image;
 
         const add = await addDoc(chatCol, data);
         const chatCols = query(collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages'), orderBy('createdAt', 'asc'));
         const chatSnapshot = await getDocs(chatCols);
         const chatList = chatSnapshot.docs.map(doc => doc.data());
-        $(".last-message-"+receiver_id).text(message ?? image);
+        $(".last-message-"+receiver_id).text(chatMsg);
         $(".time-message-"+receiver_id).text('Just Now');
         showAllMessages(chatList);
+
+        let form = new FormData();
+        form.append('msg', chatMsg);
+        form.append('user_id', receiver_id);
+        $.ajax({
+            type: 'post',
+            url: "{{ route('admin.chats.record') }}",
+            data: form,
+            dataType: 'json',
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                if (response.status) {
+                    return false;
+                } else {
+                    console.error(response.message);
+                    return false;
+                }
+            },
+            error: function(data, textStatus, errorThrown) {
+                jsonValue = jQuery.parseJSON(data.responseText);
+                console.error(jsonValue.message);
+            },
+        });
     }
 
 
@@ -283,7 +310,7 @@
 
     function showMessage(message, time, userName, image) {
         // alert(1);
-        let msg = ` <div class="message-item  outgoing-message">
+        let msg = ` <div class="message-item outgoing-message">
                          <div class="message-item-chat-card">
                             <div class="message-item-user">
                                 <img src="{{ ((auth()->user()->profile=='' || auth()->user()->profile == null) && !file_exists(public_path('uploads/profile/'.auth()->user()->profile))) ? assets('assets/images/avatar.png') : assets('uploads/profile/'.auth()->user()->profile) }}" alt="avatar 1" >
@@ -291,7 +318,7 @@
                             <div class="message-item-chat-content">
                                 <div class="message-content">
                                     ${(image !== undefined && image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${image}" alt="avatar"  width="100"/>` : ''}
-                    ${(message !== '' && message !== undefined) ? `<p style="background: #1079c0;" class="small p-2 me-3 mb-1 text-white rounded-3">${message}</p>` : ''}
+                                    ${(message !== '' && message !== undefined) ? `<p>${message}</p>` : ''}
                                 </div>
                                 <div class="time">${time}</div>
                             </div>
@@ -333,7 +360,7 @@
                             </div>
                             <div class="message-item-chat-content">
                                 <div class="message-content">
-                                    ${(row.image !== undefined && row.image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar"  width="100"/>` : ''}
+                                    ${(row.image !== undefined && row.image !== '') ? `<a data-fancybox="" href="${baseChatUrl+row.image}"><img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${baseChatUrl+row.image}" alt="avatar" width="100"/></a>` : ''}
                                     ${(row.text !== '' && row.text !== undefined) ? `<p >${row.text}</p>` : '' }
                                 </div>
                                 <div class="time">${formattedDate}</div>

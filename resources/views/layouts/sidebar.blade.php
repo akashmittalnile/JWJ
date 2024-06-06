@@ -109,12 +109,7 @@
                             <div style="border-radius: 50%; border: 4px solid red; position: absolute; left: 7%; top: 27%"></div>
                         @endif
                         <span class="menu-icon">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8.5 19H8C4 19 2 18 2 13V8C2 4 4 2 8 2H16C20 2 22 4 22 8V13C22 17 20 19 16 19H15.5C15.19 19 14.89 19.15 14.7 19.4L13.2 21.4C12.54 22.28 11.46 22.28 10.8 21.4L9.3 19.4C9.14 19.18 8.77 19 8.5 19Z" stroke="#455A64" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M15.9965 11H16.0054" stroke="#455A64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M11.9955 11H12.0045" stroke="#455A64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M7.99451 11H8.00349" stroke="#455A64" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"> <path d="M17 9C17 12.87 13.64 16 9.5 16L8.57001 17.12L8.02 17.78C7.55 18.34 6.65 18.22 6.34 17.55L5 14.6C3.18 13.32 2 11.29 2 9C2 5.13 5.36 2 9.5 2C12.52 2 15.13 3.67001 16.3 6.07001C16.75 6.96001 17 7.95 17 9Z" stroke="#4F5168" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M22 12.86C22 15.15 20.82 17.18 19 18.46L17.66 21.41C17.35 22.08 16.45 22.21 15.98 21.64L14.5 19.86C12.08 19.86 9.92001 18.79 8.57001 17.12L9.5 16C13.64 16 17 12.87 17 9C17 7.95 16.75 6.96001 16.3 6.07001C19.57 6.82001 22 9.57999 22 12.86Z" stroke="#4F5168" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> <path d="M7 9H12" stroke="#7BC043" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path> </svg> 
                         </span>
                         <span class="menu-title">Chats</span>
                     </a>

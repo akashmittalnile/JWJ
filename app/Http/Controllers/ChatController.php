@@ -16,6 +16,9 @@ class ChatController extends Controller
     public function chat(Request $request, $id = null)
     {
         try {
+            if(isset($id)){
+                FirebaseChat::where('user_id', encrypt_decrypt('decrypt', $id))->update(['unseen_msg_count'=> 0, 'status'=> 1]);
+            }
             $data = User::leftJoin('firebase_chats as fc', 'fc.user_id', '=', 'users.id')->where('users.status', 1)->where('users.role', 1);
             if ($request->filled('search')) {
                 $data->whereRaw("(`users`.`name` LIKE '%" . $request->search . "%') or `users`.`email` LIKE '%" . $request->search . "%'")->where('users.status', 1)->where('users.role', 1);
@@ -56,10 +59,13 @@ class ChatController extends Controller
                 $users[] = $temp;
             }
 
-            $id = encrypt_decrypt('decrypt', $id);
-            $user = User::where('id', $id)->first();
-            $userPlan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $id)->where('user_plans.status', 1)->select('p.name')->first();
-            return view('pages.admin.support.chat')->with(compact('users', 'user', 'userPlan'));
+            if(isset($id)){
+                $userId = encrypt_decrypt('decrypt', $id);
+                $user = User::where('id', $userId)->first();
+                $userPlan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $userId)->where('user_plans.status', 1)->select('p.name')->first();
+                return view('pages.admin.support.chat')->with(compact('users', 'user', 'userPlan'));
+            }
+            return view('pages.admin.support.chat')->with(compact('users'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
