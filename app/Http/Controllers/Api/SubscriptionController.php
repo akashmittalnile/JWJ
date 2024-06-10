@@ -22,8 +22,15 @@ class SubscriptionController extends Controller
         try {
             $plan = Plan::orderBy('monthly_price')->get();
             $response = array();
+            $myPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
             foreach ($plan as $val) {
-                $myPlan = UserPlan::where('plan_id', $val->id)->where('user_id', auth()->user()->id)->where('status', 1)->count();
+                if(isset($myPlan->id)){
+                    if($myPlan->plan_id == $val->id) $currentPlan = true;
+                    else $currentPlan = false;
+                } else {
+                    if(6 == $val->id) $currentPlan = true;
+                    else $currentPlan = false;
+                }
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
                 $temp['monthly_price'] = $val->monthly_price;
@@ -31,7 +38,7 @@ class SubscriptionController extends Controller
                 $temp['anually_price'] = $val->anually_price;
                 $temp['anually_price_id'] = $val->anually_price_id;
                 $temp['currency'] = $val->currency;
-                $temp['current_plan'] = ($myPlan) ? true : false;
+                $temp['current_plan'] = $currentPlan;
                 $temp['point1'] = $val->entries_per_day . ' Entry Per Day / ' . $val->words . ' Words';
                 $temp['point2'] = $val->routines . ' Routines With Ability To Share';
                 $temp['point3'] = 'Add ' . $val->picture_per_day . ' Picture Per Day';
