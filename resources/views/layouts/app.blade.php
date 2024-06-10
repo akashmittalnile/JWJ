@@ -13,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="{{ assets('assets/plugins/apexcharts/apexcharts.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ assets('assets/plugins/OwlCarousel/assets/owl.carousel.min.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
     @stack('css')
 
     <link rel="stylesheet" type="text/css" href="{{ assets('assets/css/responsive.css') }}">
@@ -28,7 +27,6 @@
     <script src="{{ assets('assets/js/dashboard-function.js') }}" type="text/javascript"></script>
     <script src="{{ assets('assets/js/function.js') }}" type="text/javascript"></script>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" rel="stylesheet">
     <!-- -------- end script ----------- -->
@@ -59,6 +57,7 @@
     <!-- -------- script ----------- -->
     <script src="{{ assets('assets/plugins/jquery-validation/jquery.validate.min.js') }}" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
     @if(Session::has('success'))
     <script>
         toastr.success("{{ Session::get('success') }}");

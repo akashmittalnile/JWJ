@@ -629,6 +629,17 @@ class CommunityController extends Controller
                         $postImage->save();
                     }
                 }
+
+                $data = Community::where('id', encrypt_decrypt('decrypt', $request->community_id))->first();
+                if(auth()->user()->id != $data->created_by){
+                    $notify = new Notify;
+                    $notify->sender_id = auth()->user()->id;
+                    $notify->receiver_id = $data->created_by;
+                    $notify->type = 'POST';
+                    $notify->title = 'New Post';
+                    $notify->message = '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community';
+                    $notify->save();
+                }
                 return redirect()->back()->with('success', 'Post created successfully');
             }
         } catch (\Exception $e) {
@@ -699,6 +710,7 @@ class CommunityController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $id = encrypt_decrypt('decrypt', $request->post_id);
+                $post = Post::where('id', $id)->first();
                 $comment = new Comment;
                 $comment->user_id = auth()->user()->id;
                 $comment->object_id = $id;
@@ -707,6 +719,17 @@ class CommunityController extends Controller
                 $comment->comment = $request->comment ?? null;
                 $comment->status = 1;
                 $comment->save();
+
+                if(auth()->user()->id != $post->created_by){
+                    $notify = new Notify;
+                    $notify->sender_id = auth()->user()->id;
+                    $notify->receiver_id = $post->created_by;
+                    $notify->type = 'COMMENT';
+                    $notify->title = 'New Comment';
+                    $notify->message = '"'. auth()->user()->name .'" comment on your "'. $post->title .'" post';
+                    $notify->save();
+                }
+
                 if(isset($request->comment_id)) return successMsg('Replied successfully.');
                 return successMsg('Comment posted successfully.');
             }

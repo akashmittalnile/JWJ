@@ -115,9 +115,9 @@
                                 <div class="search-filter">
                                     <div class="row g-1">
                                         <div class="col-md-6">
-                                            <!-- <div class="form-group">
-                                                <input type="date" placeholder="MM-DD-YYYY" name="" class="form-control">
-                                            </div> -->
+                                            <div class="form-group">
+                                                <input type="date" placeholder="MM-DD-YYYY" name="" id="date" class="form-control">
+                                            </div>
                                         </div>
                                         <div class="col-md-6">
                                             <!-- <div class="form-group">
@@ -257,6 +257,7 @@
 
 @push('js')
 <script type="text/javascript">
+    $('#date').mask('mm/dd/yyyy');
     let data1 = [];
     let data2 = [];
     let planC = [];
@@ -528,18 +529,6 @@
         $('.subscription-card .subscription-price' + '.' + $(this).data('name')).removeClass('d-none');
         $('.subscription-card .subscription-text' + '.' + $(this).data('name')).removeClass('d-none');
         $(this).addClass('active');
-    });
-
-    $("#date").daterangepicker({
-        singleDatePicker: true,
-        autoUpdateInput: false,
-        showDropdowns: true,
-        autoApply: true,
-        locale: {
-            format: 'MM-DD-YYYY'
-        }
-    }).on('apply.daterangepicker', function(ev, picker) {
-        $(this).val(picker.startDate.format('MM-DD-YYYY'));
     });
 
     $(document).ready(function() {

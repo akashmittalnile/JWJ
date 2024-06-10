@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\Community;
 use App\Models\CommunityImage;
+use App\Models\Notify;
 use App\Models\Plan;
 use App\Models\Post;
 use App\Models\PostImage;
@@ -520,6 +521,17 @@ class CommunityController extends Controller
                             $postImage->save();
                         }
                     }
+
+                    if(auth()->user()->id != $data->created_by){
+                        $notify = new Notify;
+                        $notify->sender_id = auth()->user()->id;
+                        $notify->receiver_id = $data->created_by;
+                        $notify->type = 'POST';
+                        $notify->title = 'New Post';
+                        $notify->message = '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community';
+                        $notify->save();
+                    }
+
                     Log::channel('post')->info($post);
                     return successMsg('New post created successfully.');
                 } else return errorMsg('Please follow community first.');
@@ -712,8 +724,7 @@ class CommunityController extends Controller
                             $like->status = ($like->status == 0) ? 1 : 0;
                             $like->updated_at = date('Y-m-d H:i:s');
                             $like->save();
-                            $msg = ($like->status == 0) ? "You have liked the post" : "You have unliked the post";
-                            return successMsg($msg);
+                            $msg = ($like->status == 1) ? "You have liked the post" : "You have unliked the post";
                         } else {
                             $like = new UserLike;
                             $like->object_id = $request->id;
@@ -721,8 +732,20 @@ class CommunityController extends Controller
                             $like->user_id = auth()->user()->id;
                             $like->status = 1;
                             $like->save();
-                            return successMsg("You have liked the post");
+                            $msg = "You have liked the post";
                         }
+                        
+                        if((auth()->user()->id != $data->created_by) && ($like->status == 1)){
+                            $notify = new Notify;
+                            $notify->sender_id = auth()->user()->id;
+                            $notify->receiver_id = $data->created_by;
+                            $notify->type = 'POST';
+                            $notify->title = 'Post Liked';
+                            $notify->message = 'Your "'. $data->name .'" community got a like from "'. auth()->user()->name .'"';
+                            $notify->save();
+                        }
+
+                        return successMsg($msg);
                     } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
             }
@@ -756,6 +779,17 @@ class CommunityController extends Controller
                         $comment->comment = $request->comment ?? null;
                         $comment->status = 1;
                         $comment->save();
+
+                        if(auth()->user()->id != $post->created_by){
+                            $notify = new Notify;
+                            $notify->sender_id = auth()->user()->id;
+                            $notify->receiver_id = $post->created_by;
+                            $notify->type = 'COMMENT';
+                            $notify->title = 'New Comment';
+                            $notify->message = '"'. auth()->user()->name .'" comment on your "'. $post->title .'" post';
+                            $notify->save();
+                        }
+
                         if(isset($request->is_reply) && $request->is_reply == 1)
                             return successMsg('Replied successfully.');
                         else return successMsg('Comment posted successfully.');
