@@ -212,6 +212,7 @@ class SubscriptionController extends Controller
                 'plan_timeperiod' => 'required',
                 'price_id' => 'required',
                 'price' => 'required',
+                'card_id' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -241,6 +242,9 @@ class SubscriptionController extends Controller
                             'items' => [
                                 ['price' => $request->price_id],
                             ],
+                            [
+                                'default_payment_method' => $request->card_id,
+                            ]
                         ]);
                     } else return errorMsg('Customer could not be created in stripe');
                     if (isset($subscription->id)) {
