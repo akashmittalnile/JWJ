@@ -44,6 +44,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('buy-plan', [SubscriptionController::class, 'buyPlan']);
     Route::post('cancel-plan', [SubscriptionController::class, 'cancelPlan']);
     Route::get('card-list', [SubscriptionController::class, 'cardList']);
+    Route::post('add-card', [SubscriptionController::class, 'addCard']);
+    Route::post('set-default-card', [SubscriptionController::class, 'setDefaultCard']);
     Route::get('transaction-list', [SubscriptionController::class, 'transactionList']);
 
     Route::get('home', [UserController::class, 'home']);

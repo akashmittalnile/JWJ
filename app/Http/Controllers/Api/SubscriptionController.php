@@ -86,6 +86,7 @@ class SubscriptionController extends Controller
                 if (count($list) > 0) {
                     $response = array();
                     foreach($list as $val){
+                        $temp['card_id'] = $val['id'] ?? null;
                         $temp['brand'] = $val['card']['brand'] ?? null;
                         $temp['exp_month'] = $val['card']['exp_month'] ?? null;
                         $temp['exp_year'] = $val['card']['exp_year'] ?? null;
@@ -97,6 +98,77 @@ class SubscriptionController extends Controller
                     return successMsg('Card list', $response);
                 } else return errorMsg('Card not found!');
             } else return errorMsg('Card not found!');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to set a default card
+    public function setDefaultCard(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'card_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                // dd(auth()->user()->subscription_id);
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe::setApiKey(env("STRIPE_SECRET"));
+                \Stripe\Subscription::update(
+                    auth()->user()->subscription_id,
+                    [
+                      'default_payment_method' => $request->card_id,
+                    ]
+                );
+                return successMsg('Default card changed successfully');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to add a new card
+    public function addCard(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'stripeToken' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe::setApiKey(env("STRIPE_SECRET"));
+                $user = User::where('id', auth()->user()->id)->first();
+                $customer = null;
+                if ($user->customer_id) {
+                    $customer =  Customer::retrieve(
+                        $user->customer_id,
+                        []
+                    );
+                    if(isset($customer->id)){
+                        $stripe->customers->createSource($customer->id, ['source' => $request->stripeToken]);
+                    }
+                } else {
+                    $customer = Customer::create([
+                        'email' => $user->email,
+                        'name' => $user->name,
+                        "source" => $request->stripeToken
+                    ]);
+                }
+                if(isset($customer->id)){
+                    $user->customer_id = $customer->id;
+                    $user->save();
+                }
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Card added successfully.',
+                ]);
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
