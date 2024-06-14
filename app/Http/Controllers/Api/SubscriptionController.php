@@ -203,6 +203,49 @@ class SubscriptionController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to buy a free plan
+    public function buyFreePlan(Request $request)
+    {
+        try {
+            $validator = Validator::make($request->all(), [
+                'plan_id' => 'required',
+                'price' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe::setApiKey(env("STRIPE_SECRET"));
+                if($request->price != 0) return errorMsg('Please select free plan');
+                $user = User::where('id', auth()->user()->id)->first();
+                $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
+                if ($userPlanExist) {
+                    $user->subscription_id = null;
+                    $user->plan_id = $request->plan_id;
+                    $user->save();
+
+                    $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
+                    $userPlanExists->status = 2;
+                    $userPlanExists->save();
+                    $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                    
+                    $userPlan = new UserPlan;
+                    $userPlan->user_id = auth()->user()->id;
+                    $userPlan->plan_id = $request->plan_id;
+                    $userPlan->price = $request->price;
+                    $userPlan->subscription_id = null;
+                    $userPlan->status = 1;
+                    $userPlan->activated_date = date('Y-m-d H:i:s');
+                    $userPlan->save();
+                }
+                return successMsg("Plan downgraded successfully");
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to purchase a plan
     public function buyPlan(Request $request)
     {

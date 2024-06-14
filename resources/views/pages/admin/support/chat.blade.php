@@ -167,6 +167,7 @@
             // sendto: '1',
             adminName: 'JourneyWithJournals',
             userName: userName,
+            seen: false,
             user: {
                 _id: 1
             },
