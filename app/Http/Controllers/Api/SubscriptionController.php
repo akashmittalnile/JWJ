@@ -32,6 +32,7 @@ class SubscriptionController extends Controller
                     else $currentPlan = false;
                 }
                 $temp['id'] = $val->id;
+                $temp['product_id'] = $val->product_id;
                 $temp['name'] = $val->name;
                 $temp['monthly_price'] = $val->monthly_price;
                 $temp['monthly_price_id'] = $val->monthly_price_id;
