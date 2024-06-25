@@ -67,7 +67,8 @@ class SubscriptionController extends Controller
                 $user->subscription_id = null;
                 $user->plan_id = planData(true);
                 $user->save();
-                $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                if($userPlanExists->type == 1)
+                    $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
                 return successMsg('Subscription cancelled successfully.');
             } else return errorMsg('Subscription not found!');
         } catch (\Exception $e) {
@@ -228,7 +229,8 @@ class SubscriptionController extends Controller
                     $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
                     $userPlanExists->status = 2;
                     $userPlanExists->save();
-                    $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                    if($userPlanExists->type == 1)
+                        $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
                     
                     $userPlan = new UserPlan;
                     $userPlan->user_id = auth()->user()->id;
@@ -240,6 +242,56 @@ class SubscriptionController extends Controller
                     $userPlan->save();
                 }
                 return successMsg("Plan downgraded successfully");
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function iosBuyPlan(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'plan_id' => 'required',
+                'plan_timeperiod' => 'required',
+                'price_id' => 'required',
+                'price' => 'required',
+                'transaction_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe::setApiKey(env("STRIPE_SECRET"));
+                $user = User::where('id', auth()->user()->id)->first();
+                $plan = Plan::where('id', $request->plan_id)->first();
+                if (isset($plan->id)) {
+                    $user->subscription_id = null;
+                    $user->plan_id = $request->plan_id;
+                    $user->save();
+                    $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
+                    if ($userPlanExist) {
+                        $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
+                        $userPlanExists->status = 2;
+                        $userPlanExists->save();
+                        if($userPlanExists->type == 1)
+                            $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                    }
+                    $userPlan = new UserPlan;
+                    $userPlan->user_id = auth()->user()->id;
+                    $userPlan->type = 2;
+                    $userPlan->plan_id = $plan->id;
+                    $userPlan->plan_timeperiod = $request->plan_timeperiod;
+                    $userPlan->price_id = $request->price_id;
+                    $userPlan->price = $request->price;
+                    $userPlan->subscription_id = $request->transaction_id;
+                    $userPlan->status = 1;
+                    $userPlan->activated_date = date('Y-m-d H:i:s');
+                    $userPlan->save();
+                    return response()->json([
+                        'status' => true,
+                        'message' => 'You have successfully subscribed to "'. $plan->name .'"',
+                    ]);
+                } else return errorMsg('Invalid plan');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

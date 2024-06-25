@@ -411,7 +411,7 @@ class AuthController extends Controller
     // This function is used to show error message when bearer token expired
     public function tokenExpire() {
         try{
-            return errorMsg('Token expired! Please login....');
+            return response()->json(['status' => false, 'message' => 'Token expired! Please login....'], 401);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
