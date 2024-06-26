@@ -32,7 +32,7 @@ Route::get('test-push-notification', [AuthController::class, 'testPushNotificati
 Route::get('mood', [JournalController::class, 'mood']);
 Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinenotification']);
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
     Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
 
@@ -47,6 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('cancel-plan', [SubscriptionController::class, 'cancelPlan']);
     Route::get('card-list', [SubscriptionController::class, 'cardList']);
     Route::post('add-card', [SubscriptionController::class, 'addCard']);
+    Route::post('delete-card', [SubscriptionController::class, 'deleteCard']);
     Route::post('set-default-card', [SubscriptionController::class, 'setDefaultCard']);
     Route::get('transaction-list', [SubscriptionController::class, 'transactionList']);
 

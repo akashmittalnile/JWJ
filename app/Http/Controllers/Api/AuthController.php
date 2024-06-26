@@ -401,7 +401,7 @@ class AuthController extends Controller
                 'fcm_token' => null
             ]);
             Auth::user()->tokens()->delete();
-            return successMsg('Logout successfully.');
+            return successMsg('Logged out successfully');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -411,7 +411,7 @@ class AuthController extends Controller
     // This function is used to show error message when bearer token expired
     public function tokenExpire() {
         try{
-            return response()->json(['status' => false, 'message' => 'Token expired! Please login....'], 401);
+            return response()->json(['status' => false, 'message' => 'Session expired, Please login again'], 401);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -176,6 +176,31 @@ class SubscriptionController extends Controller
         }
     }
 
+    public function deleteCard(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'card_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe::setApiKey(env("STRIPE_SECRET"));
+                $user = User::where('id', auth()->user()->id)->first();
+                if(isset($user->customer_id)){
+                    $stripe->customers->deleteSource(
+                        $user->customer_id,
+                        $request->card_id,
+                        []
+                    );
+                    return successMsg('Card deleted successfully');
+                } else errorMsg('Customer not found');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
     // Dev name : Dishant Gupta
     // This function is used to getting the list of transaction lists
     public function transactionList(Request $request)
@@ -241,7 +266,7 @@ class SubscriptionController extends Controller
                     $userPlan->activated_date = date('Y-m-d H:i:s');
                     $userPlan->save();
                 }
-                return successMsg("Plan downgraded successfully");
+                return successMsg("Plan changed successfully");
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -289,7 +314,7 @@ class SubscriptionController extends Controller
                     $userPlan->save();
                     return response()->json([
                         'status' => true,
-                        'message' => 'You have successfully subscribed to "'. $plan->name .'"',
+                        'message' => 'Plan changed successfully',
                     ]);
                 } else return errorMsg('Invalid plan');
             }
@@ -371,7 +396,7 @@ class SubscriptionController extends Controller
                         $userPlan->status = 1;
                         $userPlan->activated_date = date('Y-m-d H:i:s');
                         $userPlan->save();
-                        return successMsg($msg);
+                        return successMsg('Plan changed successfully');
                     } else return errorMsg('Something went wrong with subscription process');
                 } else return errorMsg('Invalid plan');
             }
