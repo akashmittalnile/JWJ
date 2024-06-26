@@ -173,7 +173,7 @@ class AuthController extends Controller
                             ], 'access_token' => $token);
                             return successMsg('Logged In Successfully.', $response);
                         } else  return errorMsg('Invalid Email or Password!');  
-                    } else return errorMsg('Your account was temporarily inactive by administrator!');
+                    } else return errorMsg('Your account is inactived. Please contact administrator');
                 } else return errorMsg('This account is not registered with us!');
             }
         } catch (\Exception $e) {

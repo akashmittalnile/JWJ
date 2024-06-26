@@ -195,7 +195,7 @@ class UserController extends Controller
                     $temp['category_name'] = $alltask->category_name;
                     $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                     $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                    $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
+                    $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
                 } elseif ($alltask->frequency == 'T') {
                     if ($alltask->schedule_time == date('Y-m-d')) {
                         $temp['routineid'] = $alltask->routineId;
@@ -205,7 +205,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                        $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
+                        $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
                     } else {
                         continue;
                     }
