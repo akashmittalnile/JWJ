@@ -250,6 +250,11 @@ class CommunityController extends Controller
                 $notify->title = ($request->status == 1) ? 'Community Approved' : 'Community Rejected';
                 $notify->message = ($request->status == 1) ? 'Congratulations, Your "' . $community->name .'" community is approved' : 'Sorry, Your "' . $community->name .'"  community is rejected. Please contact administrator';
                 $notify->save();
+                $pushData = array(
+                    'msg' => ($request->status == 1) ? 'Congratulations, Your "' . $community->name .'" community is approved' : 'Sorry, Your "' . $community->name .'"  community is rejected. Please contact administrator',
+                    'title' => ($request->status == 1) ? 'Community Approved' : 'Community Rejected'
+                );
+                sendNotification($community->user->fcm_token, $pushData);
                 $msg = ($request->status == 1) ? 'Community approved' : 'Community rejected';
                 return successMsg("$msg successfully");
             }
@@ -639,6 +644,11 @@ class CommunityController extends Controller
                     $notify->title = 'New Post';
                     $notify->message = '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community';
                     $notify->save();
+                    $pushData = array(
+                        'msg' => '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community',
+                        'title' => 'New Post'
+                    );
+                    sendNotification($data->user->fcm_token, $pushData);
                 }
                 return redirect()->back()->with('success', 'Post created successfully');
             }
@@ -728,6 +738,12 @@ class CommunityController extends Controller
                     $notify->title = 'New Comment';
                     $notify->message = '"'. auth()->user()->name .'" comment on your "'. $post->title .'" post';
                     $notify->save();
+
+                    $pushData = array(
+                        'msg' => '"'. auth()->user()->name .'" comment on your "'. $post->title .'" post',
+                        'title' => 'New Comment'
+                    );
+                    sendNotification($post->user->fcm_token, $pushData);
                 }
 
                 if(isset($request->comment_id)) return successMsg('Replied successfully.');

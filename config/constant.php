@@ -31,6 +31,20 @@ return [
 	'object_type' => array(
 		1 => 'post', 2 => 'community', 3 => 'routine', 4 => 'task', 5 => 'journal'
 	),
+	'fcm' => array(
+		'url'=>'https://fcm.googleapis.com/fcm/send',
+		'secretKey'=>'key=AAAA6y2v4W8:APA91bG84auFeLYvL6XXwBfwoJxiF_XB1V6nai2IHyyY9TMoMl2YtoLxCLl6YwvoZ309_AiRWCVRTb5uNZtpekzUznYQj7vgMAEY5nt22L374fndQ-4r4SyJNM4kh4VYpGjVa5tEXaWx',
+		'FCM_API_KEY'=>'AIzaSyBopYjZG97AO9Da83d5AzsBXrdlNBFvPqk',
+		'FCM_AUTH_DOMAIN'=>"chatapp-29659.firebaseapp.com",
+		'FCM_PROJECT_ID'=>"chatapp-29659",
+		'FCM_STORAGE_BUCKET'=>"chatapp-29659.appspot.com",
+		'FCM_MESSAGIN_SENDER_ID'=>"1010083815791",
+		'FCM_APP_ID'=>"1:1010083815791:web:750f119bab8c0a81a3889a",
+		'FCM_JSON'=>'fcm.json',
+		'FCM_API_SERVER_KEY'=>'key=AAAA6y2v4W8:APA91bG84auFeLYvL6XXwBfwoJxiF_XB1V6nai2IHyyY9TMoMl2YtoLxCLl6YwvoZ309_AiRWCVRTb5uNZtpekzUznYQj7vgMAEY5nt22L374fndQ-4r4SyJNM4kh4VYpGjVa5tEXaWx'
+	),
+
+	
 ];
 
 ?>

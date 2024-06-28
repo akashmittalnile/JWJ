@@ -386,8 +386,8 @@ class AuthController extends Controller
                 'msg' => 'Journey With Journals',
                 'title' => 'Testing'
             );
-            sendNotification($request->token, $data);
-            return successMsg('Test Notification.');
+            $res = sendNotification($request->token, $data);
+            return successMsg('Test Notification.', $res);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

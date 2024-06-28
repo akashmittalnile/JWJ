@@ -220,7 +220,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                        $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
+                        $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
                     } else {
                         continue;
                     }
@@ -250,7 +250,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                        $temp['status'] = ($time <= $currenttime) ? 'Compeleted' : 'Pending';
+                        $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
                         $temp['day'] = $todayday;
                     } else {
                         continue;

@@ -11,47 +11,55 @@ use Illuminate\Support\Facades\File;
 // Dev name : Dishant Gupta
 // This function is used to push notification using firebase
 if (!function_exists('sendNotification')) {
-    function sendNotification($token, $data)
-    {
-        $url = 'https://fcm.googleapis.com/fcm/send';
-        $serverKey = env('FIREBASE_SERVER_KEY'); // ADD SERVER KEY HERE PROVIDED BY FCM
-        $msg = array(
-            'body'  => $data['msg'] ?? 'NA',
-            'title' => $data['title'] ?? "Journey with Journals",
-            'icon'  => "{{ assets('assets/images/logo.svg') }}", //Default Icon
-            'sound' => 'default'
-        );
-        $arr = array(
-            'to' => $token,
-            'notification' => $msg,
-            'data' => $data,
-            "priority" => "high"
-        );
-        $encodedData = json_encode($arr);
-        $headers = [
-            'Authorization:key=' . $serverKey,
-            'Content-Type: application/json',
-        ];
+    function sendNotification($fcm, $data){
 
+        $credentialsFilePath = "fcm.json";
+        $client = new \Google_Client();
+        $client->setAuthConfig($credentialsFilePath);
+        $client->addScope('https://www.googleapis.com/auth/firebase.messaging');
+        $client->refreshTokenWithAssertion();
+        $token = $client->getAccessToken();
+        $access_token = $token['access_token'];
+        
+        $data['apiurl'] = 'https://fcm.googleapis.com/v1/projects/'.config('constant.fcm.FCM_PROJECT_ID').'/messages:send';
+        $headers = [
+            'Authorization: Bearer ' . $access_token,
+            'Content-Type:application/json'
+        ];
+        $data['headers'] = $headers;
+        
+        $fields = [
+            'message' => [
+                'token' => $fcm,
+                'notification' => [
+                    'title' => $data['title'],
+                    'body' => $data['msg']
+                ]
+            ]
+        ];
+        $fields = json_encode($fields);
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_URL, $data['apiurl']);
         curl_setopt($ch, CURLOPT_POST, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $data['headers']);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
-        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-        // Disabling SSL Certificate support temporarly
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $encodedData);
-        // Execute post
-        $result = curl_exec($ch);
-        if ($result === FALSE) {
-            die('Curl failed: ' . curl_error($ch));
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+        curl_exec($ch);
+        $res = curl_close($ch);
+        if($res){
+            return response()->json([
+                'message' => 'Notification has been Sent'
+            ]);
+        } else {
+            return response()->json([
+                'message' => 'Notification not Sent'
+            ]);
         }
-        // Close connection
-        curl_close($ch);
     }
 }
+
+
 
 // Dev name : Dishant Gupta
 // This function is used to encrypt decrypt data
@@ -244,6 +252,11 @@ if (!function_exists('notifyUsers')) {
             $notify->title = $data['title'];
             $notify->message = $data['message'];
             $notify->save();
+            $pushData = array(
+                'msg' => $data['message'],
+                'title' => $data['title']
+            );
+            sendNotification($val->fcm_token, $pushData);
         }
     }
 }
