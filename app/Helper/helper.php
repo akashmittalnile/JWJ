@@ -20,7 +20,6 @@ if (!function_exists('sendNotification')) {
         $client->refreshTokenWithAssertion();
         $token = $client->getAccessToken();
         $access_token = $token['access_token'];
-        dd($access_token);
         $data['apiurl'] = 'https://fcm.googleapis.com/v1/projects/'.config('constant.fcm.FCM_PROJECT_ID').'/messages:send';
         $headers = [
             'Authorization: Bearer ' . $access_token,
