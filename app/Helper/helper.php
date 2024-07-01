@@ -20,7 +20,7 @@ if (!function_exists('sendNotification')) {
         $client->refreshTokenWithAssertion();
         $token = $client->getAccessToken();
         $access_token = $token['access_token'];
-        
+        dd($access_token);
         $data['apiurl'] = 'https://fcm.googleapis.com/v1/projects/'.config('constant.fcm.FCM_PROJECT_ID').'/messages:send';
         $headers = [
             'Authorization: Bearer ' . $access_token,
@@ -249,6 +249,7 @@ if (!function_exists('notifyUsers')) {
             $notify->sender_id = auth()->user()->id;
             $notify->receiver_id = $val->id;
             $notify->type = $data['type'];
+            $notify->image_id = $data['image_id'] ?? null;
             $notify->title = $data['title'];
             $notify->message = $data['message'];
             $notify->save();

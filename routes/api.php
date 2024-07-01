@@ -39,6 +39,7 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('notifications', [SupportController::class, 'notifications']);
     Route::post('clear-notifications', [SupportController::class, 'clearNotifications']);
     Route::post('notification-seen', [SupportController::class, 'notificationSeen']);
+    Route::get('notification-count', [SupportController::class, 'notificationCount']);
 
     Route::get('plans', [SubscriptionController::class, 'plans']);
     Route::post('buy-plan', [SubscriptionController::class, 'buyPlan']);

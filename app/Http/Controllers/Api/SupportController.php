@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Community;
+use App\Models\CommunityImage;
 use App\Models\FirebaseChat;
 use App\Models\HelpSupport;
 use App\Models\Notify;
+use App\Models\PostImage;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -106,12 +109,22 @@ class SupportController extends Controller
     public function notifications(Request $request) {
         try{
             $response = array();
-            $list = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->orderByDesc('id')->paginate(config('constant.apiPaginatePerPage'));
+            $list = Notify::where('receiver_id', auth()->user()->id)->orderByDesc('id')->paginate(config('constant.apiPaginatePerPage'));
             foreach($list as $key => $val){
+                if(($val->type == 'COMMUNITY') && isset($val->image_id)){
+                    $community = CommunityImage::where('community_id', $val->image_id)->first();
+                    $img = isset($community->name) ? assets('uploads/community/'.$community->name) : null;
+                }
+                if(($val->type == 'POST') && isset($val->image_id)){
+                    $pos = PostImage::where('post_id', $val->image_id)->first();
+                    $img = isset($pos->name) ? assets('uploads/community/post/'.$pos->name) : null;
+                }
                 $temp['id'] = $val->id;
                 $temp['sender_name'] = $val->sender->name;
                 $temp['sender_image'] = isset($val->sender->profile) ? assets('uploads/profile/'.$val->sender->profile) : null;
-                $temp['title'] = $val->	title;
+                $temp['title'] = $val->title;
+                $temp['seen'] = ($val->is_seen == 1) ? true : false;
+                $temp['image'] = $img ?? null;
                 $temp['message'] = $val->message;
                 $temp['type'] = $val->type;
                 $temp['created_date'] = date('d M, Y h:i A', strtotime($val->created_at));
@@ -143,7 +156,7 @@ class SupportController extends Controller
     // This function is used to getting the list of all the notifications
     public function notificationSeen(Request $request) {
         try{
-            Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->update(['is_seen', 2]);
+            Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->update(['is_seen'=> 2]);
             return successMsg('Notifications seen');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -218,6 +231,17 @@ class SupportController extends Controller
                 'user_unseen_msg_count' => 0
             ]);  
             return successMsg('Message seen');
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to get a count of notification
+    public function notificationCount(){
+        try {
+            $notify = Notify::where('receiver_id', auth()->user()->id)->where('is_seen', 1)->count();
+            return successMsg('Message seen', $notify ?? 0);
         } catch (\Exception $e) {
             return $e->getMessage();
         }

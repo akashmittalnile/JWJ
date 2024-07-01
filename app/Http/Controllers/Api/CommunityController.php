@@ -527,6 +527,7 @@ class CommunityController extends Controller
                         $notify->sender_id = auth()->user()->id;
                         $notify->receiver_id = $data->created_by;
                         $notify->type = 'POST';
+                        $notify->image_id = $post->id;
                         $notify->title = 'New Post';
                         $notify->message = '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community';
                         $notify->save();
@@ -740,6 +741,7 @@ class CommunityController extends Controller
                             $notify->sender_id = auth()->user()->id;
                             $notify->receiver_id = $data->created_by;
                             $notify->type = 'POST';
+                            $notify->image_id = $post->id;
                             $notify->title = 'Post Liked';
                             $notify->message = 'Your "'. $data->name .'" community got a like from "'. auth()->user()->name .'"';
                             $notify->save();

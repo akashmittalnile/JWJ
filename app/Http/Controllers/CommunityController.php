@@ -213,6 +213,7 @@ class CommunityController extends Controller
                 }
 
                 $data['type'] = 'COMMUNITY';
+                $data['image_id'] = $community->id;
                 $data['title'] = 'New Community';
                 $data['message'] = 'Journey with journals administrator has created a new community "' .$request->title . '"';
                 $data['user_id'] = auth()->user()->id;
@@ -247,6 +248,7 @@ class CommunityController extends Controller
                 $notify->sender_id = auth()->user()->id;
                 $notify->receiver_id = $community->user->id ?? null;
                 $notify->type = 'COMMUNITY';
+                $notify->image_id = $community->id;
                 $notify->title = ($request->status == 1) ? 'Community Approved' : 'Community Rejected';
                 $notify->message = ($request->status == 1) ? 'Congratulations, Your "' . $community->name .'" community is approved' : 'Sorry, Your "' . $community->name .'"  community is rejected. Please contact administrator';
                 $notify->save();
@@ -641,6 +643,7 @@ class CommunityController extends Controller
                     $notify->sender_id = auth()->user()->id;
                     $notify->receiver_id = $data->created_by;
                     $notify->type = 'POST';
+                    $notify->image_id = $post->id;
                     $notify->title = 'New Post';
                     $notify->message = '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community';
                     $notify->save();
