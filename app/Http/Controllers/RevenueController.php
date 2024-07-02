@@ -53,7 +53,7 @@ class RevenueController extends Controller
                             ".date('d M, Y', strtotime($val->activated_date))."
                         </td>
                         <td>
-                            ".date('d M, Y', strtotime($val->renewal_date))."
+                            ".date('d M, Y', strtotime($val->created_at))."
                         </td>
                         <td>
                             $val->transaction_id

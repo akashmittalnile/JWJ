@@ -188,7 +188,7 @@ class JournalController extends Controller
                 'title' => 'required',
                 'content' => 'required',
                 'mood_id' => 'required',
-                'file' => 'required|array',
+                'file' => 'array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
             ]);
@@ -225,7 +225,7 @@ class JournalController extends Controller
                 $journal->created_by = auth()->user()->id;
                 $journal->save();
 
-                if (count($request->file) > 0) {
+                if (isset($request->file) && count($request->file) > 0) {
                     foreach ($request->file as $key => $value) {
                         $name = fileUpload($request->file[$key], "/uploads/journal/");
                         $journalImage = new JournalImage;

@@ -62,7 +62,7 @@
                                         </div>
                                         @empty
                                         <div class='item'>
-                                            <div class='community-media'>
+                                            <div class='community-posts-media'>
                                                 <img src="{{ assets('assets/images/no-image.jpg') }}">
                                             </div>
                                         </div>

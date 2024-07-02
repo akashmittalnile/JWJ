@@ -308,7 +308,7 @@ class SubscriptionController extends Controller
                     $userPlan->plan_timeperiod = $request->plan_timeperiod;
                     $userPlan->price_id = $request->price_id;
                     $userPlan->price = $request->price;
-                    $userPlan->subscription_id = $request->transaction_id;
+                    $userPlan->transaction_id = $request->transaction_id;
                     $userPlan->status = 1;
                     $userPlan->activated_date = date('Y-m-d H:i:s');
                     $userPlan->save();
@@ -376,7 +376,7 @@ class SubscriptionController extends Controller
                         $msg = "Subscription has been done successfully.";
                         $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
                         if ($userPlanExist) {
-                            $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
+                            $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->where("type", 1)->first();
                             $userPlanExists->status = 2;
                             $userPlanExists->save();
                             $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
@@ -388,6 +388,7 @@ class SubscriptionController extends Controller
 
                         $userPlan = new UserPlan;
                         $userPlan->user_id = auth()->user()->id;
+                        $userPlan->type = 1;
                         $userPlan->plan_id = $plan->id;
                         $userPlan->plan_timeperiod = $request->plan_timeperiod;
                         $userPlan->price_id = $request->price_id;
