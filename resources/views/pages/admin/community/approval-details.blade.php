@@ -36,7 +36,7 @@
                                 </div>
                                 <div class="post-member-text">
                                     <h3>{{ $data->user_name ?? 'NA' }}</h3>
-                                    <div class="post-member-plan"><img src="{{ assets('assets/images/freeplan.svg') }}"> Plan A member</div>
+                                    <div class="post-member-plan"><img src="{{ isset($data->user->plan->image) ? assets('assets/images/'.$data->user->plan->image) : assets('assets/images/freeplan.svg') }}"> {{ $data->user->plan->name ?? 'Plan A' }} Member</div>
                                 </div>
                             </div>
                             @if($data->status == 3)

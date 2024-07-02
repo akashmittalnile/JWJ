@@ -77,7 +77,6 @@
                                             <th>Billing Type</th>
                                             <th>Plan Activate On</th>
                                             <th>Amount Recieved On</th>
-                                            <th>Transaction ID</th>
                                         </tr>
                                     </thead>
                                     <tbody id="appendData">

@@ -25,7 +25,7 @@ class RevenueController extends Controller
                 if($request->filled('search')){
                     $data->whereRaw("(`u`.`user_name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }
-                $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->orderByDesc('user_plans.id')->paginate(config('constant.paginatePerPage'));
+                $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount', 'user_plans.created_at')->orderByDesc('user_plans.id')->paginate(config('constant.paginatePerPage'));
 
                 $html = '';
                 foreach($data as $key => $val) {
@@ -53,10 +53,7 @@ class RevenueController extends Controller
                             ".date('d M, Y', strtotime($val->activated_date))."
                         </td>
                         <td>
-                            ".date('d M, Y', strtotime($val->created_at))."
-                        </td>
-                        <td>
-                            $val->transaction_id
+                            ".date('d M, Y', strtotime($val->activated_date))."
                         </td>
                     </tr>";
                 }
@@ -103,7 +100,7 @@ class RevenueController extends Controller
             header('Content-Disposition: attachment; filename="Users Revenue List "' . time() . '.csv');
             $output = fopen("php://output", "w");
 
-            fputcsv($output, array('S.No.', 'User Name', 'Subscription Plan', 'Amount Paid', 'Billing Type', 'Plan Activate On', 'Amount Received On', 'Transaction ID'));
+            fputcsv($output, array('S.No.', 'User Name', 'Subscription Plan', 'Amount Paid', 'Billing Type', 'Plan Activate On', 'Amount Received On'));
 
             if (count($data) > 0) {
                 foreach ($data as $key => $row) {
@@ -116,7 +113,6 @@ class RevenueController extends Controller
                         $row->plan_timeperiod == 1 ? 'Monthly' : 'Yearly',
                         date('d M, Y', strtotime($row->activated_date)),
                         date('d M, Y', strtotime($row->renewal_date)),
-                        $row->transaction_id
                     ];
 
                     fputcsv($output, $final);

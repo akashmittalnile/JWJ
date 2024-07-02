@@ -470,7 +470,7 @@ class CommunityController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->first();
+            $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->select('communities.*', 'u.role', 'ci.name as image_name', 'u.name as user_name', 'u.profile as user_image')->where('communities.id', $id)->with('user')->first();
             $imgs = CommunityImage::where('community_id', $id)->get();
             return view('pages.admin.community.approval-details')->with(compact('data', 'imgs'));
         } catch (\Exception $e) {
