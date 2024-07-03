@@ -276,7 +276,6 @@
                                         <th>Billing Type</th>
                                         <th>Billing Due Date</th>
                                         <th>Amount Recieved On</th>
-                                        <th>Transaction ID</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -289,12 +288,11 @@
                                         <td>${{ number_format((float)$val->price, 2, '.', '') }}</td>
                                         <td>{{ $val->plan_timeperiod==1 ? 'Monthly' : 'Yearly' }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
-                                        <td>{{ date('d M, Y', strtotime($val->renewal_date)) }}</td>
-                                        <td>{{ $val->transaction_id ?? 'NA' }}</td>
+                                        <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
                                     </tr>
                                     @empty
                                     <tr class="text-center">
-                                        <td colspan="7"><img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data"></td>
+                                        <td colspan="7" class="no-record-found"><img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data"></td>
                                     </tr>
                                     @endforelse
                                 </tbody>

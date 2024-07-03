@@ -75,7 +75,7 @@
                                             </div>
                                             <p>{{ $post->post_description ?? 'NA' }}</p>
                                             <div class="community-post-action">
-                                                <a class="Like-btn"><img id="likeme" data-isliked="{{ $isLiked }}" data-likecount="{{ $likesCount ?? 0 }}" data-postid="{{ encrypt_decrypt('encrypt', $post->id) }}" src="{{ $isLiked ? assets('assets/images/like1.svg') : assets('assets/images/like.svg') }}"> <span id="likesCounting">{{ $likesCount ?? 0 }}</span> likes</a>
+                                                <a class="Like-btn"><img style="cursor: pointer;" id="likeme" data-isliked="{{ $isLiked }}" data-likecount="{{ $likesCount ?? 0 }}" data-postid="{{ encrypt_decrypt('encrypt', $post->id) }}" src="{{ $isLiked ? assets('assets/images/like1.svg') : assets('assets/images/like.svg') }}"> <span id="likesCounting">{{ $likesCount ?? 0 }}</span> likes</a>
                                             </div>
                                         </div>
                                     </div>

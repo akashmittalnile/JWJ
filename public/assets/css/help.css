@@ -66,7 +66,7 @@ input.form-control:focus{
 
 
 
-.chat-userlist-sidebar {flex: 0 0 auto; width: 30%; background:var(--white); }
+.chat-userlist-sidebar {flex: 0 0 auto; width: 30%; background:var(--white); border-right: 1px solid #e4dfdf;}
 
 .chat-userlist-sidebar-head {display: flex; align-items: center; gap: 10px; padding: 20px 10px; border-bottom: 1px solid #e8ecf2; }
 .chat-userlist-sidebar-head h2 {font-size: 16px; margin: 0; padding: 0; line-height: normal; color: var(--blue); font-weight: 700; }

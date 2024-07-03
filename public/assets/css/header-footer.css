@@ -849,6 +849,9 @@ a.trash-btn {
     background: var(--lightbg);
     cursor: pointer;
 }
+.jwj-table table tr:hover td.no-record-found {
+    background: #fff !important;
+}
 .jwj-table .table > :not(:last-child) > :last-child > * {
     border-bottom-color: #efeff0;
 }

@@ -40,7 +40,7 @@ class CommunityController extends Controller
                 $html = '';
                 foreach($data as $val)
                 {
-                    $image = CommunityImage::where('community_id', $val->id)->orderByDesc('id')->first();
+                    $image = CommunityImage::where('community_id', $val->id)->first();
                     $imgs = CommunityImage::where('community_id', $val->id)->get();
                     $image_html = "";
                     foreach($imgs as $name){
