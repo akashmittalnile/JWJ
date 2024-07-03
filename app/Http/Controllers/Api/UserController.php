@@ -353,7 +353,7 @@ class UserController extends Controller
                 $temp['date'] = $myroutine->created_date;
                 $temp['category_name'] = $category->name;
                 $temp['category_logo'] = assets('assets/images/' . $category->logo);
-                $temp['createdBy'] = ($myroutine->created_by == auth()->user()->id) ? 'mySelf' : 'shared';
+                $temp['createdBy'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $routine[] = $temp;
             }
