@@ -32,6 +32,8 @@ Route::get('test-push-notification', [AuthController::class, 'testPushNotificati
 Route::get('mood', [JournalController::class, 'mood']);
 Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinenotification']);
 
+Route::get('download-pdf/{id}', [JournalController::class, "generatePDF"]);
+
 Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
     Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
