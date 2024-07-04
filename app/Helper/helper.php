@@ -2,11 +2,18 @@
 
 use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
+use App\Models\Community;
 use App\Models\FirebaseChat;
+use App\Models\Journal;
 use App\Models\Notify;
 use App\Models\Plan;
+use App\Models\Post;
+use App\Models\Routine;
 use App\Models\User;
+use App\Models\UserPlan;
 use Illuminate\Support\Facades\File;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 // Dev name : Dishant Gupta
 // This function is used to push notification using firebase
@@ -301,5 +308,69 @@ if (!function_exists('graphData')) {
             }
         }
         return $dataGraph;
+    }
+}
+
+if (!function_exists('journalLimit')) {
+    function journalLimit()
+    {
+        $journal = Journal::where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
+        $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
+        if(isset($userPlan->id)){
+            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            if($journal > $plan->entries_per_day) return false;
+            return true;
+        } else {
+            $plan = Plan::where('monthly_price', 0)->first();
+            if($journal > $plan->entries_per_day) return false;
+            return true;
+        }
+    }
+}
+
+if (!function_exists('routineLimit')) {
+    function routineLimit()
+    {
+        $routine = Routine::whereNull('shared_by')->where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
+        $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
+        if(isset($userPlan->id)){
+            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            if($routine > $plan->routines) return false;
+            return true;
+        } else {
+            $plan = Plan::where('monthly_price', 0)->first();
+            if($routine > $plan->routines) return false;
+            return true;
+        }
+    }
+}
+if (!function_exists('communityLimit')) {
+    function communityLimit()
+    {
+        $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
+        if(isset($userPlan->id)){
+            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            if($plan->community == 3) return true;
+            return false;
+        } else {
+            $plan = Plan::where('monthly_price', 0)->first();
+            if($plan->community == 3) return true;
+            return false;
+        }
+    }
+}
+if (!function_exists('postLimit')) {
+    function postLimit()
+    {
+        $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
+        if(isset($userPlan->id)){
+            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            if($plan->community == 1) return false;
+            return true;
+        } else {
+            $plan = Plan::where('monthly_price', 0)->first();
+            if($plan->community == 1) return false;
+            return true;
+        }
     }
 }

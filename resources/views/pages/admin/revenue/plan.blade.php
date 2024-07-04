@@ -56,9 +56,8 @@
                         <div class="membership-body">
                             <div class="membership-list">
                                 <ul>
-                                    <li><i class="las la-check-circle"></i>{{ $val->entries_per_day }} Entry Per Day/{{ $val->words }} Words</li>
-                                    <li><i class="las la-check-circle"></i>{{ $val->routines }} Routines With Ability To Share</li>
-                                    <li><i class="las la-check-circle"></i>Add {{ $val->picture_per_day }} Picture Per Day</li>
+                                    <li><i class="las la-check-circle"></i>{{ $val->entries_per_day }} Journals Per Day</li>
+                                    <li><i class="las la-check-circle"></i>{{ $val->routines }} Routines Per Day</li>
                                     <li><i class="las la-check-circle"></i>
                                         @if($val->community == 1) View Community
                                         @elseif($val->community == 2) Participate In Communities
@@ -90,30 +89,16 @@
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="entries">Entries per day</label>
-                                    <input type="number" min="1" id="entries" class="form-control" name="entries" placeholder="Entries per day">
+                                    <label for="journals">Journals per day</label>
+                                    <input type="number" min="1" id="journals" class="form-control" name="journal" placeholder="Journals per day">
                                 </div>
                             </div>
 
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="words">Words per entries</label>
-                                    <input type="number" min="1" class="form-control" id="words" name="words" placeholder="Words per entries">
+                                    <label for="routine">Routines per day</label>
+                                    <input type="number" min="1" class="form-control" id="routine" name="routine" placeholder="Routines per day">
                                     <input type="hidden" name="id" value="">
-                                </div>
-                            </div>
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="picture">Picture per day</label>
-                                    <input type="number" min="1" class="form-control" id="picture" name="picture" placeholder="Picture per day">
-                                </div>
-                            </div>
-
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label for="routine">Routines with ability to share</label>
-                                    <input type="number" min="1" class="form-control" id="routine" name="routine" placeholder="Routines with ability to share">
                                 </div>
                             </div>
 
@@ -151,124 +136,6 @@
                                 </div>
                             </div>
 
-
-                            <!-- <div class="col-md-12">
-                                <div class="form-group">
-                                    <ul class="plan-list">
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="3 Entries Per Day/ 250 Words Each" name="feature">
-                                                <label for="3 Entries Per Day/ 250 Words Each">
-                                                    3 Entries Per Day/ 250 Words Each
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Add 1 Picture Per Day" name="feature">
-                                                <label for="Add 1 Picture Per Day">
-                                                    Add 1 Picture Per Day
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="10 Routines With Ability To Share" name="feature">
-                                                <label for="10 Routines With Ability To Share">
-                                                    10 Routines With Ability To Share
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Participate In Communities" name="feature">
-                                                <label for="Participate In Communities">
-                                                    Participate In Communities
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="1 Entry Per Day/250 Words" name="feature">
-                                                <label for="1 Entry Per Day/250 Words">
-                                                    1 Entry Per Day/250 Words
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="3 Routine Tasks" name="feature">
-                                                <label for="3 Routine Tasks">
-                                                    3 Routine Tasks
-                                                </label>
-                                            </div>
-                                        </li>
-
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="View Community" name="feature">
-                                                <label for="View Community">
-                                                    View Community
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Participate In Preset Communities" name="feature">
-                                                <label for="Participate In Preset Communities">
-                                                    Participate In Preset Communities
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Up To 5 Entries Per Day/500  Words Each" name="feature">
-                                                <label for="Up To 5 Entries Per Day/500  Words Each">
-                                                    Up To 5 Entries Per Day/500 Words Each
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Add 3 Pictures Per Day" name="feature">
-                                                <label for="Add 3 Pictures Per Day">
-                                                    Add 3 Pictures Per Day
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Unlimited Routines With Ability To Share" name="feature">
-                                                <label for="Unlimited Routines With Ability To Share">
-                                                    Unlimited Routines With Ability To Share
-                                                </label>
-                                            </div>
-                                        </li>
-
-
-                                        <li>
-                                            <div class="plancheckbox">
-                                                <input type="checkbox" id="Submit Your Own Communities/ App Approval Required." name="feature">
-                                                <label for="Submit Your Own Communities/ App Approval Required.">
-                                                    Submit Your Own Communities/ App Approval Required.
-                                                </label>
-                                            </div>
-                                        </li>
-
-                                    </ul>
-                                </div>
-                            </div> -->
-
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <button type="button" class="cancel-btn" data-bs-dismiss="modal" aria-label="Close">Cancel</button>
@@ -294,13 +161,7 @@
 
     $('#updatePlan').validate({
         rules: {
-            entries: {
-                required: true,
-            },
-            words: {
-                required: true,
-            },
-            picture: {
+            journal: {
                 required: true,
             },
             routine: {
@@ -311,17 +172,11 @@
             },
         },
         messages: {
-            entries: {
-                required: 'Please enter number of entries per day',
-            },
-            words: {
-                required: 'Please enter number of words per entries',
-            },
-            picture: {
-                required: 'Please enter number of picture per day',
+            journal: {
+                required: 'Please enter number of journals per day',
             },
             routine: {
-                required: 'Please enter number of routines',
+                required: 'Please enter number of routines per day',
             },
             community: {
                 required: 'Please select community',
@@ -388,10 +243,8 @@
                 if (result.status) {
                     $("#planName").html("Manage " + result.data.name);
                     $("input[name='id']").val(id);
-                    $("input[name='entries']").val(result.data.entries_per_day);
-                    $("input[name='words']").val(result.data.words);
+                    $("input[name='journal']").val(result.data.entries_per_day);
                     $("input[name='routine']").val(result.data.routines);
-                    $("input[name='picture']").val(result.data.picture_per_day);
                     $("#community"+ result.data.community).attr('checked', true);
                     $("#EditPlan").modal('show');
                 } else {

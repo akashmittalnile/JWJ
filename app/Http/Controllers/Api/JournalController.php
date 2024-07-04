@@ -224,6 +224,7 @@ class JournalController extends Controller
     // This function is used to create a journal
     public function createJournal(Request $request) {
         try{
+            if(!journalLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'content' => 'required',

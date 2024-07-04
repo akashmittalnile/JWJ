@@ -196,9 +196,7 @@ class RevenueController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
-                'entries' => 'required',
-                'words' => 'required',
-                'picture' => 'required',
+                'journal' => 'required',
                 'routine' => 'required',
                 'community' => 'required',
             ]);
@@ -208,9 +206,7 @@ class RevenueController extends Controller
                 $id = encrypt_decrypt('decrypt', $request->id);
                 $plan = Plan::where('id', $id)->first();
                 if(isset($plan->id)) {
-                    $plan->entries_per_day = $request->entries;
-                    $plan->words = $request->words;
-                    $plan->picture_per_day = $request->picture;
+                    $plan->entries_per_day = $request->journal;
                     $plan->community = $request->community;
                     $plan->routines = $request->routine;
                     $plan->updated_at = date('Y-m-d H:i:s');

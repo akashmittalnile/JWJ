@@ -315,6 +315,7 @@ class CommunityController extends Controller
     // This function is used to create a community by user
     public function createCommunity(Request $request) {
         try{
+            if(!communityLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required|array',
@@ -492,6 +493,7 @@ class CommunityController extends Controller
     // This function is used to create a post by user. If they are follower
     public function createPost(Request $request) {
         try{
+            if(!postLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
             $validator = Validator::make($request->all(), [
                 'community_id' => 'required',
                 'title' => 'required',
@@ -708,6 +710,7 @@ class CommunityController extends Controller
     // This function is used to like or dislike a post
     public function postLikeUnlike(Request $request) {
         try{
+            if(!postLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'type' => 'required',
@@ -760,6 +763,7 @@ class CommunityController extends Controller
     // This function is used to comment on a post
     public function postComment(Request $request) {
         try{
+            if(!postLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
             if(isset($request->is_reply) && $request->is_reply == 1)
                 $valid = ['id' => 'required', 'comment' => 'required', 'is_reply' => 'required', 'reply_id' => 'required', 'type' => 'required'];
             else

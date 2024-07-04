@@ -40,8 +40,8 @@ class SubscriptionController extends Controller
                 $temp['anually_price_id'] = $val->anually_price_id;
                 $temp['currency'] = $val->currency;
                 $temp['current_plan'] = $currentPlan;
-                $temp['point1'] = $val->entries_per_day . ' Entry Per Day / ' . $val->words . ' Words';
-                $temp['point2'] = $val->routines . ' Routines With Ability To Share';
+                $temp['point1'] = $val->entries_per_day . ' Journals Per Day';
+                $temp['point2'] = $val->routines . ' Routines Per Day';
                 $temp['point3'] = 'Add ' . $val->picture_per_day . ' Picture Per Day';
                 $temp['point4'] = (($val->community == 3) ? 'Submit Your Own Communities/ App Approval Required' : ($val->community == 2 ? 'Participate In Communities' : 'View Community'));
                 $response[] = $temp;
@@ -251,11 +251,12 @@ class SubscriptionController extends Controller
                     $user->plan_id = $request->plan_id;
                     $user->save();
 
-                    $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
-                    $userPlanExists->status = 2;
-                    $userPlanExists->save();
-                    if($userPlanExists->type == 1)
-                        $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                    UserPlan::where("user_id", $user->id)->where("status", 1)->update(['status' => 2]);
+                    $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->get();
+                    foreach($userPlanExists as $plans){
+                        if($plans->type == 1)
+                            $stripe->subscriptions->cancel($plans->subscription_id, []);
+                    }
                     
                     $userPlan = new UserPlan;
                     $userPlan->user_id = auth()->user()->id;
@@ -295,11 +296,12 @@ class SubscriptionController extends Controller
                     $user->save();
                     $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
                     if ($userPlanExist) {
-                        $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->first();
-                        $userPlanExists->status = 2;
-                        $userPlanExists->save();
-                        if($userPlanExists->type == 1)
-                            $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
+                        UserPlan::where("user_id", $user->id)->where("status", 1)->update(['status' => 2]);
+                        $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->get();
+                        foreach($userPlanExists as $plans){
+                            if($plans->type == 1)
+                                $stripe->subscriptions->cancel($plans->subscription_id, []);
+                        }
                     }
                     $userPlan = new UserPlan;
                     $userPlan->user_id = auth()->user()->id;
@@ -376,14 +378,12 @@ class SubscriptionController extends Controller
                         $msg = "Subscription has been done successfully.";
                         $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
                         if ($userPlanExist) {
-                            $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->where("type", 1)->first();
-                            $userPlanExists->status = 2;
-                            $userPlanExists->save();
-                            $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
-                            if ($userPlanExists->price > $request->price) 
-                                $msg = "Plan downgraded successfully";
-                            else 
-                                $msg = "Plan upgraded successfully";
+                            UserPlan::where("user_id", $user->id)->where("status", 1)->update(['status' => 2]);
+                            $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->get();
+                            foreach($userPlanExists as $plans){
+                                if($plans->type == 1)
+                                    $stripe->subscriptions->cancel($plans->subscription_id, []);
+                            }
                         }
 
                         $userPlan = new UserPlan;

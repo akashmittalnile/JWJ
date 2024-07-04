@@ -391,6 +391,7 @@ class RoutineController extends Controller
     public function createRoutine(Request $request)
     {
         try {
+            if(!routineLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
             if ($request->frequency == 'T') {
                 $validRequest = ['name' => 'required', 'description' => 'required', 'category_id' => 'required', 'frequency' => 'required', 'schedule_time' => 'required|array', 'date' => 'required'];
             } elseif ($request->frequency == 'C') {
