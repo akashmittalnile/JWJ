@@ -276,6 +276,8 @@ class AuthController extends Controller
                 $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
             else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
 
+            $todayMood = UserMood::where('user_id', auth()->user()->id)->whereDate('created_at', date('Y-m-d'))->first();
+
             $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->where('p.status', 1)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
             $current_plan = [
                 'name' => $plan->name ?? 'Plan A',
@@ -301,6 +303,7 @@ class AuthController extends Controller
                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
                 'average_mood_data' => $avgMood,
                 'current_plan' => $current_plan,
+                'today_mood' => isset($todayMood->id) ? ['name' => $todayMood->mood->name, 'logo' => isset($todayMood->mood->logo) ? assets('assets/images/'.$todayMood->mood->logo) : null] : [],
                 'admin' => array(
                     'profile' => isset($admin->profile) ? assets('uploads/profile/'.$admin->profile) : assets('assets/images/no-image.jpg'),
                     'naame' => $admin->name ?? 'NA'

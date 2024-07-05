@@ -10,4 +10,9 @@ class UserMood extends Model
     use HasFactory;
     protected $table = 'user_mood';
     protected $id = 'id';
+
+    public function mood()
+    {
+        return $this->belongsTo(MoodMaster::class, 'mood_id', 'id');
+    }
 }
