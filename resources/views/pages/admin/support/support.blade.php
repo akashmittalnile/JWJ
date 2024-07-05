@@ -8,15 +8,6 @@
 @section('content')
 <div class="page-breadcrumb-title-section">
     <h4>Support & Communication</h4>
-    <div class="search-filter wd2">
-        <div class="row g-1">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <a href="{{ route('admin.notification') }}" class="btn-bl">Manage App Notifcation</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="body-main-content">

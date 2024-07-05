@@ -8,14 +8,9 @@
 @section('content')
 <div class="page-breadcrumb-title-section">
     <h4> Manage App Notifcation</h4>
-    <div class="search-filter wd3">
+    <div class="search-filter wd2">
         <div class="row g-1">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <a href="{{ route('admin.support') }}" class="btn-bl" >Back</a>
-                </div>
-            </div>
-            <div class="col-md-9">
+            <div class="col-md-12">
                 <div class="form-group">
                     <a href="javascript:void(0)" class="btn-bl" data-bs-toggle="modal" data-bs-target="#CreateNotification">Push New App Notifcation</a>
                 </div>

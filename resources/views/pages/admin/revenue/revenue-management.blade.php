@@ -8,15 +8,6 @@
 @section('content')
 <div class="page-breadcrumb-title-section">
     <h4>Revenue Management</h4>
-    <div class="search-filter wd2">
-        <div class="row g-1">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <a href="{{ route('admin.revenue-management.plans') }}" class="btn-bl">Manage Subscription Plan</a>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <div class="body-main-content">

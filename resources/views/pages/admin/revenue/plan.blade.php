@@ -8,16 +8,11 @@
 @section('content')
 <div class="page-breadcrumb-title-section">
     <h4>Manage Subscription Plan</h4>
-    <div class="search-filter wd2">
+    <div class="search-filter wd1">
         <div class="row g-1">
-            <div class="col-md-5">
+            <div class="col-md-12">
                 <div class="form-group">
-                    <a href="{{ route('admin.revenue-management.list') }}" class="btn-bl">Back</a>
-                </div>
-            </div>
-            <div class="col-md-7">
-                <div class="form-group">
-                    <a href="{{ route('admin.revenue-management.plans') }}" class="btn-bl">Sync Plan</a>
+                    <a href="{{ route('admin.subscription.plans') }}" class="btn-bl">Sync Plan</a>
                 </div>
             </div>
         </div>
@@ -85,7 +80,7 @@
             <div class="modal-body">
                 <div class="plan-modal-form">
                     <h2 id="planName"></h2>
-                    <form action="{{ route('admin.revenue-management.update.plan') }}" method="post" id="updatePlan">@csrf
+                    <form action="{{ route('admin.subscription.update.plan') }}" method="post" id="updatePlan">@csrf
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -232,7 +227,7 @@
         let id = $(this).data('id');
         $.ajax({
             type: 'get',
-            url: "{{ route('admin.revenue-management.plan.details') }}",
+            url: "{{ route('admin.subscription.plan.details') }}",
             data: {
                 id,
                 _token: "{{ csrf_token() }}"

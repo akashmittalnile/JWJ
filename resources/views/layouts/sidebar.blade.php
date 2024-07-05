@@ -45,6 +45,20 @@
                         <span class="menu-title">Revenue Management</span>
                     </a>
                 </li>
+
+                <li class="nav-item {{ Route::is('admin.subscription*') ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.subscription.plans') }}">
+                        <span class="menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M8.67188 14.3298C8.67188 15.6198 9.66188 16.6598 10.8919 16.6598H13.4019C14.4719 16.6598 15.3419 15.7498 15.3419 14.6298C15.3419 13.4098 14.8119 12.9798 14.0219 12.6998L9.99187 11.2998C9.20187 11.0198 8.67188 10.5898 8.67188 9.36984C8.67188 8.24984 9.54187 7.33984 10.6119 7.33984H13.1219C14.3519 7.33984 15.3419 8.37984 15.3419 9.66984" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12 6V18" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span class="menu-title">Manage Subscription Plan</span>
+                    </a>
+                </li>
+
                 <li class="nav-item {{ Route::is('admin.community-management*') ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.community-management.list') }}">
                         <span class="menu-icon">
@@ -92,7 +106,7 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ (Route::is('admin.support*') || Route::is('admin.notification*')) ? 'active' : '' }}">
+                <li class="nav-item {{ (Route::is('admin.support*')) ? 'active' : '' }}">
                     <a class="nav-link" href="{{ route('admin.support') }}">
                         <span class="menu-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -100,6 +114,17 @@
                             </svg>
                         </span>
                         <span class="menu-title">Support & Communication</span>
+                    </a>
+                </li>
+
+                <li class="nav-item {{ (Route::is('admin.notification*')) ? 'active' : '' }}">
+                    <a class="nav-link" href="{{ route('admin.notification') }}">
+                        <span class="menu-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M5.46 18.49V15.57C5.46 14.6 6.22 13.73 7.3 13.73C8.27 13.73 9.14 14.49 9.14 15.57V18.38C9.14 20.33 7.52 21.95 5.57 21.95C3.62 21.95 2 20.32 2 18.38V12.22C1.89 6.6 6.33 2.05 11.95 2.05C17.57 2.05 22 6.6 22 12.11V18.27C22 20.22 20.38 21.84 18.43 21.84C16.48 21.84 14.86 20.22 14.86 18.27V15.46C14.86 14.49 15.62 13.62 16.7 13.62C17.67 13.62 18.54 14.38 18.54 15.46V18.49" stroke="#455A64" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </span>
+                        <span class="menu-title">Manage App Notifcation</span>
                     </a>
                 </li>
 
