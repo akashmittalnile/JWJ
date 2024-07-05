@@ -62,7 +62,7 @@ class ChatController extends Controller
             if(isset($id)){
                 $userId = encrypt_decrypt('decrypt', $id);
                 $user = User::where('id', $userId)->first();
-                $userPlan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $userId)->where('user_plans.status', 1)->select('p.name')->first();
+                $userPlan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $userId)->where('user_plans.status', 1)->where('p.status', 1)->select('p.name')->first();
                 return view('pages.admin.support.chat')->with(compact('users', 'user', 'userPlan'));
             }
             return view('pages.admin.support.chat')->with(compact('users'));

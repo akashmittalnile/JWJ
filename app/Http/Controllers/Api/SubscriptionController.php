@@ -20,7 +20,7 @@ class SubscriptionController extends Controller
     public function plans(Request $request)
     {
         try {
-            $plan = Plan::orderBy('monthly_price')->get();
+            $plan = Plan::orderBy('monthly_price')->where('status', 1)->get();
             $response = array();
             $myPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
             foreach ($plan as $val) {
@@ -65,7 +65,7 @@ class SubscriptionController extends Controller
                 $userPlanExists->save();
                 $user = User::where('id', auth()->user()->id)->first();
                 $user->subscription_id = null;
-                $user->plan_id = planData(true);
+                $user->plan_id = null;
                 $user->save();
                 if($userPlanExists->type == 1)
                     $stripe->subscriptions->cancel($userPlanExists->subscription_id, []);
@@ -234,41 +234,42 @@ class SubscriptionController extends Controller
     public function buyFreePlan(Request $request)
     {
         try {
-            $validator = Validator::make($request->all(), [
-                'plan_id' => 'required',
-                'price' => 'required',
-            ]);
-            if ($validator->fails()) {
-                return errorMsg($validator->errors()->first());
-            } else {
-                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-                Stripe::setApiKey(env("STRIPE_SECRET"));
-                if($request->price != 0) return errorMsg('Please select free plan');
-                $user = User::where('id', auth()->user()->id)->first();
-                $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
-                if ($userPlanExist) {
-                    $user->subscription_id = null;
-                    $user->plan_id = $request->plan_id;
-                    $user->save();
+            return errorMsg('This api is no longer exists!');
+            // $validator = Validator::make($request->all(), [
+            //     'plan_id' => 'required',
+            //     'price' => 'required',
+            // ]);
+            // if ($validator->fails()) {
+            //     return errorMsg($validator->errors()->first());
+            // } else {
+            //     $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+            //     Stripe::setApiKey(env("STRIPE_SECRET"));
+            //     if($request->price != 0) return errorMsg('Please select free plan');
+            //     $user = User::where('id', auth()->user()->id)->first();
+            //     $userPlanExist = UserPlan::where("user_id", $user->id)->where("status", 1)->count();
+            //     if ($userPlanExist) {
+            //         $user->subscription_id = null;
+            //         $user->plan_id = $request->plan_id;
+            //         $user->save();
 
-                    UserPlan::where("user_id", $user->id)->where("status", 1)->update(['status' => 2]);
-                    $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->get();
-                    foreach($userPlanExists as $plans){
-                        if($plans->type == 1)
-                            $stripe->subscriptions->cancel($plans->subscription_id, []);
-                    }
+            //         UserPlan::where("user_id", $user->id)->where("status", 1)->update(['status' => 2]);
+            //         $userPlanExists = UserPlan::where("user_id", $user->id)->where("status", 1)->get();
+            //         foreach($userPlanExists as $plans){
+            //             if($plans->type == 1)
+            //                 $stripe->subscriptions->cancel($plans->subscription_id, []);
+            //         }
                     
-                    $userPlan = new UserPlan;
-                    $userPlan->user_id = auth()->user()->id;
-                    $userPlan->plan_id = $request->plan_id;
-                    $userPlan->price = $request->price;
-                    $userPlan->subscription_id = null;
-                    $userPlan->status = 1;
-                    $userPlan->activated_date = date('Y-m-d H:i:s');
-                    $userPlan->save();
-                }
-                return successMsg("Plan changed successfully");
-            }
+            //         $userPlan = new UserPlan;
+            //         $userPlan->user_id = auth()->user()->id;
+            //         $userPlan->plan_id = $request->plan_id;
+            //         $userPlan->price = $request->price;
+            //         $userPlan->subscription_id = null;
+            //         $userPlan->status = 1;
+            //         $userPlan->activated_date = date('Y-m-d H:i:s');
+            //         $userPlan->save();
+            //     }
+            //     return successMsg("Plan changed successfully");
+            // }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -289,7 +290,7 @@ class SubscriptionController extends Controller
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
                 Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
-                $plan = Plan::where('id', $request->plan_id)->first();
+                $plan = Plan::where('id', $request->plan_id)->where('status', 1)->first();
                 if (isset($plan->id)) {
                     $user->subscription_id = null;
                     $user->plan_id = $request->plan_id;
@@ -343,7 +344,7 @@ class SubscriptionController extends Controller
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
                 Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
-                $plan = Plan::where('id', $request->plan_id)->first();
+                $plan = Plan::where('id', $request->plan_id)->where('status', 1)->first();
                 if(isset($plan->id)){
                     $customer = null;
                     if ($user->customer_id) {
@@ -390,7 +391,7 @@ class SubscriptionController extends Controller
                         $userPlan->user_id = auth()->user()->id;
                         $userPlan->type = 1;
                         $userPlan->plan_id = $plan->id;
-                        $userPlan->plan_timeperiod = $request->plan_timeperiod;
+                        $userPlan->plan_timeperiod = ($plan->monthly_price != 0 && !isset($plan->anually_price)) ? 3 : $request->plan_timeperiod;
                         $userPlan->price_id = $request->price_id;
                         $userPlan->price = $request->price;
                         $userPlan->subscription_id = $subscription->id;

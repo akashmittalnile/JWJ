@@ -49,7 +49,7 @@ class CommunityController extends Controller
                     $tem['image'] = isset($item->name) ? assets("uploads/community/".$item->name) : null;
                     $images[] = $tem;
                 }
-                $plan = Plan::where('id', $val->plan_id)->first();
+                $plan = Plan::where('id', $val->plan_id)->where('status', 1)->first();
                 $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
@@ -116,7 +116,7 @@ class CommunityController extends Controller
                     $images[] = $tem;
                 }
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
-                $plan = Plan::where('id', $val->plan_id)->first();
+                $plan = Plan::where('id', $val->plan_id)->where('status', 1)->first();
                 $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
                 $temp['id'] = $val->id;
                 $temp['name'] = $val->name;
@@ -176,7 +176,7 @@ class CommunityController extends Controller
                     $images[] = $tem;
                 }
                 $status_name = ($val->status == 0) ? 'Pending' : (($val->status == 1) ? 'Active' : (($val->status == 2) ? 'Inactive' : 'Rejected'));
-                $plan = Plan::where('id', $val->plan_id)->first();
+                $plan = Plan::where('id', $val->plan_id)->where('status', 1)->first();
                 $post = Post::join('users as u', 'u.id', '=', 'posts.created_by')->where('u.status', 1)->where('community_id', $val->id)->count();
                 $user = User::where('id', $val->created_by)->first();
                 $temp['id'] = $val->id;
@@ -238,7 +238,7 @@ class CommunityController extends Controller
                         $tem['image'] = isset($item->name) ? assets("uploads/community/".$item->name) : null;
                         $images[] = $tem;
                     }
-                    $plan = Plan::where('id', $data->plan_id)->first();
+                    $plan = Plan::where('id', $data->plan_id)->where('status', 1)->first();
                     $post = array();
                     foreach($posts as $item){
                         $img = PostImage::where('post_id', $item->id)->get();

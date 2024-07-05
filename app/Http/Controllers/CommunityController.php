@@ -61,7 +61,7 @@ class CommunityController extends Controller
                     }
                     
                     if(isset($val->plan_id)){
-                        $plan = Plan::where('id', $val->plan_id)->first();
+                        $plan = Plan::where('id', $val->plan_id)->where('status', 1)->first();
                         if(isset($plan->id)){
                             $plan_type = (($plan->name=='Plan A') ? 'freeplan.svg' : ($plan->name=='Plan B' ? 'goldplan.svg' : 'platinumplan.svg'));
                             $plan_html = "<div class='community-plan-info'>

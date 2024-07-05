@@ -280,18 +280,6 @@ if (!function_exists('isAlert')) {
 }
 
 // Dev name : Dishant Gupta
-// This function is used to check message alert for users
-if (!function_exists('planData')) {
-    function planData($free = false)
-    {
-        if($free){
-            $plan = Plan::where('monthly_price', 0)->first();
-            return $plan->id;
-        }
-    }
-}
-
-// Dev name : Dishant Gupta
 // This function is used to filter data for usage of graphs
 if (!function_exists('graphData')) {
     function graphData($data)
@@ -317,13 +305,11 @@ if (!function_exists('journalLimit')) {
         $journal = Journal::where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
-            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
             if($journal > $plan->entries_per_day) return false;
             return true;
         } else {
-            $plan = Plan::where('monthly_price', 0)->first();
-            if($journal > $plan->entries_per_day) return false;
-            return true;
+            return false;
         }
     }
 }
@@ -334,13 +320,11 @@ if (!function_exists('routineLimit')) {
         $routine = Routine::whereNull('shared_by')->where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
-            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
             if($routine > $plan->routines) return false;
             return true;
         } else {
-            $plan = Plan::where('monthly_price', 0)->first();
-            if($routine > $plan->routines) return false;
-            return true;
+            return false;
         }
     }
 }
@@ -349,12 +333,10 @@ if (!function_exists('communityLimit')) {
     {
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
-            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
             if($plan->community == 3) return true;
             return false;
         } else {
-            $plan = Plan::where('monthly_price', 0)->first();
-            if($plan->community == 3) return true;
             return false;
         }
     }
@@ -364,13 +346,11 @@ if (!function_exists('postLimit')) {
     {
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
-            $plan = Plan::where('id', $userPlan->plan_id)->first();
+            $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
             if($plan->community == 1) return false;
             return true;
         } else {
-            $plan = Plan::where('monthly_price', 0)->first();
-            if($plan->community == 1) return false;
-            return true;
+            return false;
         }
     }
 }

@@ -42,11 +42,21 @@
                             </div>
                             <div class="membership-text">
                                 <div class="membership-title">{{ $val->name ?? 'NA' }}</div>
-                                <div class="membership-day-price">@if($val->monthly_price == 0) <span></span> @else @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}}/month @endif</div>
+                                <div class="membership-day-price">
+                                    @if($val->monthly_price != 0 && !isset($val->anually_price)) One Time<span></span> 
+                                    @else 
+                                        @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}}/month 
+                                    @endif
+                                </div>
                             </div>
                         </div>
                         <div class="membership-month-price">
-                            <p>@if($val->anually_price == 0) Free <span></span> @else @if($val->currency == 'usd')$@endif{{number_format((float)$val->anually_price, 2, '.', '')}} <span>Per Year</span> @endif</p>
+                            <p>
+                                @if($val->monthly_price != 0 && !isset($val->anually_price)) @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}} <span></span> 
+                                @else 
+                                    @if($val->currency == 'usd')$@endif{{number_format((float)$val->anually_price, 2, '.', '')}} <span>Per Year</span> 
+                                @endif
+                            </p>
                         </div>
                         <div class="membership-body">
                             <div class="membership-list">
@@ -193,7 +203,9 @@
                 success: function(response) {
                     if (response.status) {
                         toastr.success(response.message);
-                        setInterval(() => {window.location.reload()}, 2000);
+                        setInterval(() => {
+                            window.location.reload()
+                        }, 2000);
                         return false;
                     } else {
                         toastr.error(response.message);
@@ -240,7 +252,7 @@
                     $("input[name='id']").val(id);
                     $("input[name='journal']").val(result.data.entries_per_day);
                     $("input[name='routine']").val(result.data.routines);
-                    $("#community"+ result.data.community).attr('checked', true);
+                    $("#community" + result.data.community).attr('checked', true);
                     $("#EditPlan").modal('show');
                 } else {
                     toastr.error(result.message);

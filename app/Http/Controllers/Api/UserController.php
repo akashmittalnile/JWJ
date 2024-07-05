@@ -101,7 +101,7 @@ class UserController extends Controller
                 foreach($imgs as $item){
                     array_push($images, isset($item->name) ? assets("uploads/community/".$item->name) : null);
                 }
-                $planComm = Plan::where('id', $val->plan_id)->first();
+                $planComm = Plan::where('id', $val->plan_id)->where('status', 1)->first();
                 $postCount = Post::where('community_id', $val->id)->count();
                 $communitytemp['id'] = $val->id;
                 $communitytemp['name'] = $val->name;
@@ -153,7 +153,7 @@ class UserController extends Controller
                 $reviewDetails[] = $tempRate;
             }
 
-            $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
+            $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->where('p.status', 1)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
             $current_plan = [
                 'name' => $plan->name ?? 'Plan A',
                 'price' => $plan->price ?? '0',

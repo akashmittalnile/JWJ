@@ -71,14 +71,17 @@
                         <h2 class="subscription-title">Total subscription payment received</h2>
                         <p class="subscription-price month">${{ number_format((float)$monthReceived, 2, '.', '') }}</p>
                         <p class="subscription-price year d-none">${{ number_format((float)$yearReceived, 2, '.', '') }}</p>
+                        <p class="subscription-price one d-none">${{ number_format((float)$oneReceived, 2, '.', '') }}</p>
                         <div class="subscription-button">
                             <a href="javascript:void(0)" data-name="month" class="Plan-btn active">Monthly</a>
                             <a href="javascript:void(0)" data-name="year" class="Plan-btn">Annually</a>
+                            <a href="javascript:void(0)" data-name="one" class="Plan-btn">One Time</a>
                         </div>
                     </div>
                     <div class="subscription-chart">
                         <div id="chartBar1" class="chart month"></div>
                         <div id="chartBar2" class="chart year d-none"></div>
+                        <div id="chartBar3" class="chart one d-none"></div>
                     </div>
                 </div>
             </div>
@@ -115,9 +118,9 @@
                                 <div class="search-filter">
                                     <div class="row g-1">
                                         <div class="col-md-6">
-                                            <div class="form-group">
+                                            <!-- <div class="form-group">
                                                 <input type="date" placeholder="MM-DD-YYYY" name="" id="date" class="form-control">
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="col-md-6">
                                             <!-- <div class="form-group">
@@ -251,8 +254,10 @@
 </div>
 <input type="hidden" data-json="{{json_encode($data1Graph)}}" id="data1_graph">
 <input type="hidden" data-json="{{json_encode($data2Graph)}}" id="data2_graph">
+<input type="hidden" data-json="{{json_encode($data3Graph)}}" id="data3_graph">
 <input type="hidden" data-json="{{json_encode($plancGraph)}}" id="planc_graph">
 <input type="hidden" data-json="{{json_encode($planbGraph)}}" id="planb_graph">
+<input type="hidden" data-json="{{json_encode($planaGraph)}}" id="plana_graph">
 @endsection
 
 @push('js')
@@ -260,8 +265,10 @@
     $('#date').mask('mm/dd/yyyy');
     let data1 = [];
     let data2 = [];
+    let data3 = [];
     let planC = [];
     let planB = [];
+    let planA = [];
     $(document).ready(function() {
         let arrOver1 = $("#data1_graph").data('json');
         arrOver1.map(ele => {
@@ -271,6 +278,10 @@
         arrOver2.map(ele => {
             data2.push(ele.toFixed(2));
         });
+        let arrOver3 = $("#data3_graph").data('json');
+        arrOver3.map(ele => {
+            data3.push(ele.toFixed(2));
+        });
 
         let arrPlanC = $("#planc_graph").data('json');
         arrPlanC.map(ele => {
@@ -279,6 +290,10 @@
         let arrPlanB = $("#planb_graph").data('json');
         arrPlanB.map(ele => {
             planB.push(ele.toFixed(2));
+        });
+        let arrPlanA = $("#plana_graph").data('json');
+        arrPlanA.map(ele => {
+            planA.push(ele.toFixed(2));
         });
     });
 
@@ -405,6 +420,67 @@
     });
 
     $(function() {
+        var options4 = {
+            chart: {
+                type: "line",
+                height: 240,
+                width: 250,
+                sparkline: {
+                    enabled: true,
+                },
+            },
+            stroke: {
+                show: true,
+                curve: "smooth",
+                lineCap: "butt",
+                colors: ["#1079c0"],
+                width: 2,
+                dashArray: 0,
+            },
+
+            series: [{
+                name: "Payment received",
+                data: data3,
+            }, ],
+            yaxis: {
+                min: 0,
+                show: false,
+                axisBorder: {
+                    show: false,
+                },
+            },
+            xaxis: {
+                categories: [
+                    "Jan",
+                    "Feb",
+                    "Mar",
+                    "Apr",
+                    "May",
+                    "Jun",
+                    "Jul",
+                    "Aug",
+                    "Sep",
+                    "Oct",
+                    "Nov",
+                    "Dec",
+                ],
+                axisBorder: {
+                    show: false,
+                },
+                axisTicks: {
+                    show: false,
+                },
+            },
+            tooltip: {
+                enabled: true,
+            },
+            colors: ["#1079c0"],
+        };
+        var chart = new ApexCharts(document.querySelector("#chartBar3"), options4);
+        chart.render();
+    });
+
+    $(function() {
         var options2 = {
             series: [{
                     name: "Plan B",
@@ -413,6 +489,10 @@
                 {
                     name: "Plan C",
                     data: planC,
+                },
+                {
+                    name: "Plan A",
+                    data: planA,
                 },
             ],
             chart: {

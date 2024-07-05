@@ -17,7 +17,7 @@ class RevenueController extends Controller
     {
         try {
             $paymentReceived = UserPlan::sum('price');
-            $plan = Plan::where('status', 1)->where('monthly_price', '!=', 0)->get();
+            $plan = Plan::where('status', 1)->get();
             if($request->ajax()) {
                 $data = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id');
                 if($request->filled('planDate')) $data->whereDate('user_plans.activated_date', $request->planDate);
@@ -25,7 +25,7 @@ class RevenueController extends Controller
                 if($request->filled('search')){
                     $data->whereRaw("(`u`.`user_name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }
-                $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount', 'user_plans.created_at')->orderByDesc('user_plans.id')->paginate(config('constant.paginatePerPage'));
+                $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount', 'user_plans.created_at')->where('plan.status', 1)->orderByDesc('user_plans.id')->paginate(config('constant.paginatePerPage'));
 
                 $html = '';
                 foreach($data as $key => $val) {
@@ -84,7 +84,7 @@ class RevenueController extends Controller
             if($request->filled('search')){
                 $data->whereRaw("(`u`.`user_name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
             }
-            $data = $data->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->orderByDesc('user_plans.id')->get();
+            $data = $data->where('plan.status', 1)->select('plan.name', 'plan.image', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'u.name as user_name', 'user_plans.price as paid_amount')->orderByDesc('user_plans.id')->get();
             $this->downloadRevenueReportFunction($data);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -134,16 +134,16 @@ class RevenueController extends Controller
             foreach ($plans as $item) {
                 $product_id = $item["id"];
                 $price = $stripe->prices->all(['product' => $product_id]);
-                $plan = Plan::where("product_id", $product_id)->first();
+                $plan = Plan::where("product_id", $product_id)->where('status', 1)->first();
                 // dd($price->data);
                 if ($plan) {
                     foreach ($price->data as $val) {
-                        if ($val->recurring->interval == 'month') {
+                        if (isset($val->recurring->interval) && ($val->recurring->interval == 'month')) {
                             $plan->monthly_price = $val->unit_amount / 100;
                             $plan->monthly_price_id = $val->id ?? null;
                         } else {
-                            $plan->anually_price = $val->unit_amount / 100;
-                            $plan->anually_price_id = $val->id ?? null;
+                            $plan->monthly_price = $val->unit_amount / 100;
+                            $plan->monthly_price_id = $val->id ?? null;
                         }
                         $plan->currency = $val->currency;
                     }
@@ -162,7 +162,7 @@ class RevenueController extends Controller
                     $plan->save();
                 }
             }
-            $plan = Plan::orderBy('monthly_price')->get();
+            $plan = Plan::orderBy('monthly_price')->where('status', 1)->get();
             return view('pages.admin.revenue.plan')->with(compact('plan'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -181,7 +181,7 @@ class RevenueController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             } else {
                 $id = encrypt_decrypt('decrypt', $request->id);
-                $plan = Plan::where('id', $id)->first();
+                $plan = Plan::where('id', $id)->where('status', 1)->first();
                 if(isset($plan->id)) return successMsg('Plan found', $plan);
                 else return errorMsg('Plan not found');
             }
@@ -204,7 +204,7 @@ class RevenueController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             } else {
                 $id = encrypt_decrypt('decrypt', $request->id);
-                $plan = Plan::where('id', $id)->first();
+                $plan = Plan::where('id', $id)->where('status', 1)->first();
                 if(isset($plan->id)) {
                     $plan->entries_per_day = $request->journal;
                     $plan->community = $request->community;
