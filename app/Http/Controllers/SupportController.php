@@ -206,7 +206,7 @@ class SupportController extends Controller
     public function notification(Request $request)
     {
         try {
-            $plan = Plan::where('status', 1)->get();
+            $plan = Plan::where('status', 1)->orderByDesc('id')->get();
             if($request->ajax()){
                 $data = Notification::orderByDesc('id');
                 if($request->filled('search')){
@@ -227,7 +227,7 @@ class SupportController extends Controller
                     $pageNum = $data->currentPage();
                     $userProfileImage = (isset($val->user->profile) && File::exists(public_path("uploads/profile/".$val->user->profile))) ? assets("uploads/profile/".$val->user->profile) : assets("assets/images/no-image.jpg");
 
-                    
+                    $planName = ($val->plan_id == 100) ? 'All' : $val->plan->name;
 
                     $html .= "<div class='col-md-12'>
                     <div class='manage-notification-item'>
@@ -240,7 +240,7 @@ class SupportController extends Controller
                             </div>
                             <div class='notification-tag'>
                                 <div class='tags-list'>
-                                    <div class='Tags-text'>". $val->plan->name ." Users</div>
+                                    <div class='Tags-text'>". $planName ." Users</div>
                                 </div>
                             </div>
                             <div class='notification-date'>Pushed on: ". date('d M, Y h:i a', strtotime($val->created_at)) ."</div>
@@ -283,7 +283,11 @@ class SupportController extends Controller
                 $notification->user_id = auth()->user()->id;
                 $notification->status = 1;
                 $notification->save();
-                $users = User::where('status', 1)->where('role', 1)->get();
+                if(isset($request->plan) && ($request->plan != 100)){
+                    $users = User::where('status', 1)->where('role', 1)->where('plan_id', $request->plan_id)->get();
+                } else {
+                    $users = User::where('status', 1)->where('role', 1)->get();
+                }
                 foreach($users as $val){
                     $notify = new Notify;
                     $notify->sender_id = auth()->user()->id;
