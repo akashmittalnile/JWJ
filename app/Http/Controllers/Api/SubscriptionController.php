@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Plan;
 use App\Models\User;
 use App\Models\UserPlan;
-use Stripe\Stripe;
+use Stripe;
 use Stripe\Customer;
 use Laravel\Cashier\Subscription as Subscribe;
 use Illuminate\Http\Request;
@@ -58,7 +58,7 @@ class SubscriptionController extends Controller
     {
         try {
             $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-            Stripe::setApiKey(env("STRIPE_SECRET"));
+            Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
             $userPlanExists = UserPlan::where("user_id", auth()->user()->id)->where("status", 1)->first();
             if (isset($userPlanExists->id)) {
                 $userPlanExists->status = 2;
@@ -118,7 +118,7 @@ class SubscriptionController extends Controller
             } else {
                 // dd(auth()->user()->subscription_id);
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-                Stripe::setApiKey(env("STRIPE_SECRET"));
+                Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
                 \Stripe\Subscription::update(
                     auth()->user()->subscription_id,
                     [
@@ -144,7 +144,7 @@ class SubscriptionController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-                Stripe::setApiKey(env("STRIPE_SECRET"));
+                Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
                 $customer = null;
                 if ($user->customer_id) {
@@ -185,7 +185,7 @@ class SubscriptionController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-                Stripe::setApiKey(env("STRIPE_SECRET"));
+                Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
                 if(isset($user->customer_id)){
                     $stripe->customers->deleteSource(
@@ -288,7 +288,7 @@ class SubscriptionController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-                Stripe::setApiKey(env("STRIPE_SECRET"));
+                Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
                 $plan = Plan::where('id', $request->plan_id)->where('status', 1)->first();
                 if (isset($plan->id)) {
@@ -342,7 +342,7 @@ class SubscriptionController extends Controller
                 return errorMsg($validator->errors()->first());
             } else {
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
-                Stripe::setApiKey(env("STRIPE_SECRET"));
+                Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
                 $plan = Plan::where('id', $request->plan_id)->where('status', 1)->first();
                 if(isset($plan->id)){
@@ -361,18 +361,34 @@ class SubscriptionController extends Controller
                         ]);
                     }
                     if ($customer && $request->price_id) {
-                        $subscription =  $stripe->subscriptions->create([
-                            'customer' => $customer->id,
-                            'items' => [
-                                ['price' => $request->price_id],
-                            ],
-                            [
-                                'default_payment_method' => $request->card_id,
-                            ]
-                        ]);
+                        if($plan->monthly_price == $plan->anually_price){
+                            $paymentIntent = $stripe->paymentIntents->create([
+                                'customer' => $customer->id,
+                                'amount' => $request->price*100,
+                                'currency' => 'usd',
+                                'payment_method_types' => ['card'],
+                                'payment_method' => $request->card_id,
+                            ]);
+                            $subscription = $stripe->paymentIntents->confirm(
+                                $paymentIntent->id,
+                            );
+                            $isRecurr = false;
+                        } else {
+                            $subscription = $stripe->subscriptions->create([
+                                'customer' => $customer->id,
+                                'items' => [
+                                    ['price' => $request->price_id],
+                                ],
+                                [
+                                    'default_payment_method' => $request->card_id,
+                                ]
+                            ]);
+                            $isRecurr = true;
+                        }
                     } else return errorMsg('Customer could not be created in stripe');
                     if (isset($subscription->id)) {
-                        $user->subscription_id = $subscription->id;
+                        if($isRecurr)
+                            $user->subscription_id = $subscription->id;
                         $user->customer_id = $customer->id;
                         $user->plan_id = $request->plan_id;
                         $user->save();
@@ -391,10 +407,13 @@ class SubscriptionController extends Controller
                         $userPlan->user_id = auth()->user()->id;
                         $userPlan->type = 1;
                         $userPlan->plan_id = $plan->id;
-                        $userPlan->plan_timeperiod = ($plan->monthly_price != 0 && !isset($plan->anually_price)) ? 3 : $request->plan_timeperiod;
+                        $userPlan->plan_timeperiod = ($plan->monthly_price == $plan->anually_price) ? 3 : $request->plan_timeperiod;
                         $userPlan->price_id = $request->price_id;
                         $userPlan->price = $request->price;
-                        $userPlan->subscription_id = $subscription->id;
+                        if($isRecurr)
+                            $userPlan->subscription_id = $subscription->id;
+                        else
+                            $userPlan->transaction_id = $subscription->latest_charge ?? $subscription->id;
                         $userPlan->status = 1;
                         $userPlan->activated_date = date('Y-m-d H:i:s');
                         $userPlan->save();

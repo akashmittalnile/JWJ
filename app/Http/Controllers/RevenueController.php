@@ -144,6 +144,8 @@ class RevenueController extends Controller
                         } else {
                             $plan->monthly_price = $val->unit_amount / 100;
                             $plan->monthly_price_id = $val->id ?? null;
+                            $plan->anually_price = $val->unit_amount / 100;
+                            $plan->anually_price_id = $val->id ?? null;
                         }
                         $plan->currency = $val->currency;
                     }

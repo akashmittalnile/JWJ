@@ -43,7 +43,7 @@
                             <div class="membership-text">
                                 <div class="membership-title">{{ $val->name ?? 'NA' }}</div>
                                 <div class="membership-day-price">
-                                    @if($val->monthly_price != 0 && !isset($val->anually_price)) One Time<span></span> 
+                                    @if($val->monthly_price == $val->anually_price) One Time<span></span> 
                                     @else 
                                         @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}}/month 
                                     @endif
@@ -52,7 +52,7 @@
                         </div>
                         <div class="membership-month-price">
                             <p>
-                                @if($val->monthly_price != 0 && !isset($val->anually_price)) @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}} <span></span> 
+                                @if($val->monthly_price == $val->anually_price) @if($val->currency == 'usd')$@endif{{number_format((float)$val->monthly_price, 2, '.', '')}} <span></span> 
                                 @else 
                                     @if($val->currency == 'usd')$@endif{{number_format((float)$val->anually_price, 2, '.', '')}} <span>Per Year</span> 
                                 @endif
