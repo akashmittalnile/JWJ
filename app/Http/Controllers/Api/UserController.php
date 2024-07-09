@@ -159,7 +159,7 @@ class UserController extends Controller
                 'price' => $plan->price ?? '0',
                 'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
                 'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
-                'plan_timeperiod' => isset($plan->plan_timeperiod) ? ($plan->plan_timeperiod == 1 ? 'Monthly' : 'Yearly') : null,
+                'plan_timeperiod' => isset($plan->plan_timeperiod) ? (($plan->plan_timeperiod == 1) ? 'Monthly' : (($plan->plan_timeperiod == 2) ? 'Yearly' : 'One-Time')) : null,
             ];
             
             $response = array(['mood' => $moods, 'user' => $mydata, 'current_plan' => $current_plan, 'my_journal' => $journals, 'community' => $community, 'mood_calender' => $calender, 'average_mood' => $avgMood, 'my_routine' => $routines, 'rating_submit' => $isSubmit, 'review_details' => $reviewDetails]);
