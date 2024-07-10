@@ -300,13 +300,28 @@ if (!function_exists('graphData')) {
 }
 
 if (!function_exists('journalLimit')) {
-    function journalLimit()
+    function journalLimit($count = 0)
     {
         $journal = Journal::where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
             if($journal > $plan->entries_per_day) return false;
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
+
+if (!function_exists('journalImageLimit')) {
+    function journalImageLimit($count = 0)
+    {
+        $journal = Journal::where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
+        $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
+        if(isset($userPlan->id)){
+            $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
+            if($plan->picture_per_day < $count) return false;
             return true;
         } else {
             return false;

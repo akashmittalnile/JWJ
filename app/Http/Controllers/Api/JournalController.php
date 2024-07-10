@@ -225,7 +225,10 @@ class JournalController extends Controller
     // This function is used to create a journal
     public function createJournal(Request $request) {
         try{
+            $count = 0;
+            if(isset($request->file) && count($request->file) > 0) $count = count($request->file);
             if(!journalLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
+            if(!journalImageLimit($count)) return errorMsg('Your image limit for this plan has been exhausted. Please upgrade to continue');
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'content' => 'required',
@@ -298,6 +301,12 @@ class JournalController extends Controller
     // This function is used to update a journal
     public function editJournal(Request $request) {
         try{
+            $count = JournalImage::where('journal_id', $request->id)->count();
+            $newCount = 0;
+            if(isset($request->file) && count($request->file) > 0) $newCount = count($request->file);
+            $delCount = 0;
+            if(isset($request->deletefile) && count($request->deletefile) > 0) $delCount = count($request->deletefile);
+            if(!journalImageLimit($count+$newCount-$delCount)) return errorMsg('Your image limit for this plan has been exhausted. Please upgrade to continue');
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'title' => 'required',
