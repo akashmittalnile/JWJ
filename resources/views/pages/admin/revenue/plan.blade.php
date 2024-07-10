@@ -63,6 +63,7 @@
                                 <ul>
                                     <li><i class="las la-check-circle"></i>{{ $val->entries_per_day }} Journals Per Day</li>
                                     <li><i class="las la-check-circle"></i>{{ $val->routines }} Routines Per Day</li>
+                                    <li><i class="las la-check-circle"></i>{{ $val->picture_per_day }} Images Per Journal</li>
                                     <li><i class="las la-check-circle"></i>
                                         @if($val->community == 1) View Community
                                         @elseif($val->community == 2) Participate In Communities
@@ -104,6 +105,13 @@
                                     <label for="routine">Routines per day</label>
                                     <input type="number" min="1" class="form-control" id="routine" name="routine" placeholder="Routines per day">
                                     <input type="hidden" name="id" value="">
+                                </div>
+                            </div>
+
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="image">Images per journal</label>
+                                    <input type="number" min="1" class="form-control" id="image" name="image" placeholder="Images per journal">
                                 </div>
                             </div>
 
@@ -172,6 +180,9 @@
             routine: {
                 required: true,
             },
+            image: {
+                required: true,
+            },
             community: {
                 required: true,
             },
@@ -182,6 +193,9 @@
             },
             routine: {
                 required: 'Please enter number of routines per day',
+            },
+            image: {
+                required: 'Please enter number of images per journal',
             },
             community: {
                 required: 'Please select community',
@@ -252,6 +266,7 @@
                     $("input[name='id']").val(id);
                     $("input[name='journal']").val(result.data.entries_per_day);
                     $("input[name='routine']").val(result.data.routines);
+                    $("input[name='image']").val(result.data.picture_per_day);
                     $("#community" + result.data.community).attr('checked', true);
                     $("#EditPlan").modal('show');
                 } else {

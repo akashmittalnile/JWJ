@@ -200,6 +200,7 @@ class RevenueController extends Controller
             $validator = Validator::make($request->all(), [
                 'journal' => 'required',
                 'routine' => 'required',
+                'image' => 'required',
                 'community' => 'required',
             ]);
             if ($validator->fails()) {
@@ -211,6 +212,7 @@ class RevenueController extends Controller
                     $plan->entries_per_day = $request->journal;
                     $plan->community = $request->community;
                     $plan->routines = $request->routine;
+                    $plan->picture_per_day = $request->image;
                     $plan->updated_at = date('Y-m-d H:i:s');
                     $plan->save();
                     return successMsg('Plan updated successfully.');

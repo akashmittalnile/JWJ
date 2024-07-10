@@ -42,7 +42,7 @@ class SubscriptionController extends Controller
                 $temp['current_plan'] = $currentPlan;
                 $temp['point1'] = $val->entries_per_day . ' Journals Per Day';
                 $temp['point2'] = $val->routines . ' Routines Per Day';
-                $temp['point3'] = 'Add ' . $val->picture_per_day . ' Picture Per Day';
+                $temp['point3'] = $val->picture_per_day . ' Images Per Journal';
                 $temp['point4'] = (($val->community == 3) ? 'Submit Your Own Communities/ App Approval Required' : ($val->community == 2 ? 'Participate In Communities' : 'View Community'));
                 $response[] = $temp;
             }
