@@ -43,6 +43,10 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function mood(){
+        return $this->hasMany(UserMood::class, 'user_id', 'id')->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'));
+    }
+
     public function plan()
     {
         return $this->belongsTo(Plan::class, 'plan_id', 'id')->withDefault(['name' => null, 'monthly_price' => null, 'image' => null, '	anually_price' => null]);

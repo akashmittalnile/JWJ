@@ -101,27 +101,30 @@ class UserController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $user = User::where('id', $id)->first();
+            $user = User::where('id', $id)->with('mood')->first();
             $plan = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_plans.user_id', $id)->where('user_plans.status', 1)->where('plan.status', 1)->select('plan.name', 'user_plans.price', 'user_plans.plan_timeperiod', 'plan.image')->first();
             $totalSum = UserPlan::where('user_plans.user_id', $id)->sum('price');
             $list = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->where('user_id', $id)->where('plan.status', 1)->select('plan.name', 'user_plans.activated_date', 'user_plans.renewal_date', 'user_plans.transaction_id', 'user_plans.plan_timeperiod', 'user_plans.price')->orderByDesc('user_plans.id')->get();
-            $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->get();
-            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
-            foreach($totalMood as $val){
-                $mood = MoodMaster::where('id', $val->mood_id)->first();
-                if($mood->code=='happy') $happyCount ++;
-                elseif($mood->code=='sad') $sadCount ++;
-                elseif($mood->code=='anger') $angerCount ++;
-                else $anxietyCount ++;
+            $allMood = MoodMaster::get();
+            $mood = array();
+            foreach($allMood as $val){
+                $total = count($user->mood) ?? 0;
+                $subTotal = UserMood::where('mood_id', $val->id)->where('user_id', $id)->whereMonth('created_at', date('m'))->whereYear('created_at', date('Y'))->count();
+                $temp['id'] = $val->id;
+                $temp['name'] = $val->name;
+                $temp['code'] = $val->code;
+                $temp['logo'] = $val->logo;
+                $temp['total'] = $total;
+                $temp['subTotal'] = $subTotal;
+                $temp['avg'] = ($total==0) ? 0 : number_format((float)($subTotal*100)/$total, 1, '.', '');
+                $mood[] = $temp;
             }
-            if(count($totalMood) > 0)
-                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
-            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
+            // dd($mood);
             $totalCommunity = Community::where('created_by', $id)->count();
             $totalRoutine = Routine::where('created_by', $id)->count();
             $totalJournal = Journal::where('created_by', $id)->count();
             
-            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'avgMood', 'totalCommunity', 'totalRoutine', 'totalJournal', 'totalSum'));
+            return view('pages.admin.user.details')->with(compact('user', 'plan', 'list', 'mood', 'totalCommunity', 'totalRoutine', 'totalJournal', 'totalSum'));
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
@@ -133,19 +136,21 @@ class UserController extends Controller
     {
         try {
             $id = encrypt_decrypt('decrypt', $id);
-            $totalMood = UserMood::where('user_id', $id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->get();
-            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
-            foreach($totalMood as $val){
-                $mood = MoodMaster::where('id', $val->mood_id)->first();
-                if($mood->code=='happy') $happyCount ++;
-                elseif($mood->code=='sad') $sadCount ++;
-                elseif($mood->code=='anger') $angerCount ++;
-                else $anxietyCount ++;
+            $allMood = MoodMaster::get();
+            $mood = array();
+            foreach($allMood as $val){
+                $total = UserMood::where('user_id', $id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->count();
+                $subTotal = UserMood::where('mood_id', $val->id)->where('user_id', $id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->count();
+                $temp['id'] = $val->id;
+                $temp['name'] = $val->name;
+                $temp['code'] = $val->code;
+                $temp['logo'] = $val->logo;
+                $temp['total'] = $total;
+                $temp['subTotal'] = $subTotal;
+                $temp['avg'] = ($total==0) ? 0 : number_format((float)($subTotal*100)/$total, 1, '.', '');
+                $mood[] = $temp;
             }
-            if(count($totalMood) > 0)
-                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
-            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
-            return successMsg('Change mood data', $avgMood);
+            return successMsg('Change mood data', $mood);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

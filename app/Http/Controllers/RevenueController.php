@@ -30,7 +30,7 @@ class RevenueController extends Controller
                 $html = '';
                 foreach($data as $key => $val) {
                     $planImg = isset($val->image) ? assets('assets/images/'.$val->image) : assets('assets/images/no-image.jpg');
-                    $timePeriod = $val->plan_timeperiod == 1 ? 'Monthly' : 'Yearly';
+                    $timePeriod = ($val->plan_timeperiod == 1 ? 'Monthly' : ($val->plan_timeperiod == 2 ? 'Yearly' : 'One Time'));
 
                     $html .= "<tr>
                         <td>

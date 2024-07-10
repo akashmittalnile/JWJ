@@ -154,7 +154,7 @@
                             <div class="plan-content-text">
                                 <p>Current Subscription Plan:</p>
                                 @if(isset($plan->price))
-                                <h2>${{ number_format((float)$plan->price ?? 0, 2, '.', '') }} / {{ $plan->plan_timeperiod==1 ? 'Monthly' : 'Yearly' }}</h2>
+                                <h2>${{ number_format((float)$plan->price ?? 0, 2, '.', '') }} / {{ ($plan->plan_timeperiod==1 ? 'Monthly' : ($plan->plan_timeperiod==2 ? 'Yearly' : 'One Time')) }}</h2>
                                 @else
                                 <h2>$0</h2>
                                 @endif
@@ -206,34 +206,19 @@
                     </div>
                     <div class="feeling-card">
                         <div class="row">
-                            <div class="col-md-3">
+                            
+
+                            @forelse($mood as $val)
+                            <div class="col-md-3 mb-3">
                                 <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/happy.png') }}"></div>
-                                    <p>Happy</p>
-                                    <h2 id="happy">{{ ($avgMood['happy'] == 0 || !isset($avgMood['happy'])) ? 0 : $avgMood['happy'] }}%</h2>
+                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/'. $val['logo']) }}"></div>
+                                    <p>{{$val['name'] ?? 'NA'}}</p>
+                                    <h2 id="{{$val['code'] ?? 'NA'}}">{{$val['avg'] ?? 0}}%</h2>
                                 </div>
                             </div>
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/sad.png') }}"></div>
-                                    <p>Sad</p>
-                                    <h2 id="sad">{{ ($avgMood['sad'] == 0 || !isset($avgMood['sad'])) ? 0 : $avgMood['sad'] }}%</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anger.png') }}"></div>
-                                    <p>Anger</p>
-                                    <h2 id="anger">{{ ($avgMood['anger'] == 0 || !isset($avgMood['anger'])) ? 0 : $avgMood['anger'] }}%</h2>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="feeling-content-item">
-                                    <div class="feeling-emoj-icon"><img src="{{ assets('assets/images/anxiety.png') }}"></div>
-                                    <p>Anxiety</p>
-                                    <h2 id="anxiety">{{ ($avgMood['anxiety'] == 0 || !isset($avgMood['anxiety'])) ? 0 : $avgMood['anxiety'] }}%</h2>
-                                </div>
-                            </div>
+                            @empty
+                            @endforelse
+
                         </div>
                     </div>
                 </div>
@@ -286,7 +271,7 @@
                                         </td>
                                         <td>{{ $val->name }}</td>
                                         <td>${{ number_format((float)$val->price, 2, '.', '') }}</td>
-                                        <td>{{ $val->plan_timeperiod==1 ? 'Monthly' : 'Yearly' }}</td>
+                                        <td>{{ ($val->plan_timeperiod==1 ? 'Monthly' : ($val->plan_timeperiod==2 ? 'Yearly' : 'One Time')) }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
                                         <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
                                     </tr>
@@ -326,11 +311,10 @@
             success: function(result) {
                 if (result.status) {
                     // toastr.success(result.message);
-                    // console.log(result.data);
-                    $("#happy").text(result.data.happy + "%");
-                    $("#sad").text(result.data.sad + "%");
-                    $("#anger").text(result.data.anger + "%");
-                    $("#anxiety").text(result.data.anxiety + "%");
+                    // console.log(result);
+                    (result.data).forEach(element => {
+                        $("#"+element.code).text(element.avg + "%");
+                    });
                 } else {
                     toastr.error(result.message);
                     return false;

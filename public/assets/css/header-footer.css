@@ -137,7 +137,7 @@ h6 {
     overflow-y: scroll;
     position: relative;
     height: calc(100vh - 100px);
-    padding: 10px;
+    padding: 6px;
 }
 .sidebar-wrapper {
     position: fixed;
@@ -200,7 +200,7 @@ h6 {
 }
 .menu-icon {
     width: 25px;
-    margin-right: 10px;
+    margin-right: 6px;
 }
 .sidebar .nav .iot-dropdown a.nav-link.collapsed:before {
     content: "";

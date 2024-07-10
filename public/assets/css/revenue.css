@@ -22,7 +22,7 @@
 .membership-month-price p{font-size: 30px; font-weight: 600; margin: 0; padding: 0; color: var(--gray);}
 .membership-month-price p span{font-size: 13px; font-weight: 400; margin: 0; padding: 0; color: var(--lightgray); }
 
-.membership-list {margin-bottom: 20px; padding-top: 10px; min-height: 130px;}
+.membership-list {margin-bottom: 20px; padding-top: 10px; min-height: 170px;}
 .membership-list ul {margin: 0; padding: 0px; list-style: none; } 
 .membership-list ul li {position: relative; text-align: left; font-size: 14px; color: var(--gray); margin-bottom: 5px; display: inline-block; padding-left: 30px; font-weight: 400; width: 100%; vertical-align: middle; }
 .membership-list ul li i {font-size: 18px;color: #4caf50;width: 24px;height: 24px;position: absolute;top: 5px;left: 0;} 
