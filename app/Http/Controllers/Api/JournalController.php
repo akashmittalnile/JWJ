@@ -172,13 +172,14 @@ class JournalController extends Controller
         }
         $search = array();
         foreach($data->searchCriteria as $item){
-            $temp2['id'] = $item->id;
-            $temp2['name'] = $item->name;
+            $temp2['id'] = $item->criteria->id;
+            $temp2['name'] = $item->criteria->name;
             $search[] = $temp2;
         }
         $mood = array(
             'img_path' => isset($data->mood->logo) ? assets('assets/images/'.$data->mood->logo) : null
         );
+        // dd($search);
         $html = view('pages.admin.journal.pdf', compact('data', 'path', 'search', 'mood'))->render();
 
         // Instantiate Dompdf
@@ -187,7 +188,7 @@ class JournalController extends Controller
         $dompdf->loadHtml($html);
 
         // Set paper size and orientation
-        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->setPaper('A4', 'landscape');
 
         // Render PDF (important step!)
         $dompdf->render();

@@ -34,6 +34,10 @@ Route::get('/clear-cache', function () {
     return '<center>Cache clear</center>';
 });
 
+Route::get('/phpinfo', function () {
+    phpinfo();
+});
+
 Route::stripeWebhooks('stripe-auto-payment');
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
