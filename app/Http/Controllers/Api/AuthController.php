@@ -263,25 +263,23 @@ class AuthController extends Controller
     public function profile(Request $request) {
         try{
             $user = Auth::user();
-            $totalMood = UserMood::where('user_id', auth()->user()->id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->get();
-            $happyCount = $sadCount = $anxietyCount = $angerCount = 0;
-            foreach($totalMood as $val){
-                $mood = MoodMaster::where('id', $val->mood_id)->first();
-                if($mood->code=='happy') $happyCount ++;
-                elseif($mood->code=='sad') $sadCount ++;
-                elseif($mood->code=='anger') $angerCount ++;
-                else $anxietyCount ++;
+            $allMood = MoodMaster::get();
+            $mood = array();
+            foreach($allMood as $val){
+                $total = UserMood::where('user_id', auth()->user()->id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->count();
+                $subTotal = UserMood::where('mood_id', $val->id)->where('user_id', auth()->user()->id)->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)))->count();
+                $temp['name'] = $val->name;
+                $temp['logo'] = assets('assets/images/'.$val->logo);
+                $temp['avg'] = ($total==0) ? 0 : number_format((float)($subTotal*100)/$total, 1, '.', '');
+                $mood[] = $temp;
             }
-            if(count($totalMood) > 0)
-                $avgMood = ['happy' => number_format((float)($happyCount*100)/count($totalMood), 1, '.', ''), 'sad' => number_format((float)($sadCount*100)/count($totalMood), 1, '.', ''), 'anger' => number_format((float)($angerCount*100)/count($totalMood), 1, '.', ''), 'anxiety' => number_format((float)($anxietyCount*100)/count($totalMood), 1, '.', '')];
-            else $avgMood = ['happy' => 0, 'sad' => 0, 'anger' => 0, 'anxiety' => 0];
 
             $todayMood = UserMood::where('user_id', auth()->user()->id)->whereDate('created_at', date('Y-m-d'))->first();
 
             $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->where('p.status', 1)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
             $current_plan = [
-                'name' => $plan->name ?? 'Plan A',
-                'price' => $plan->price ?? '0',
+                'name' => $plan->name ?? null,
+                'price' => $plan->price ?? null,
                 'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
                 'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? (($plan->plan_timeperiod == 1) ? 'Monthly' : (($plan->plan_timeperiod == 2) ? 'Yearly' : 'One-Time')) : null,
@@ -301,7 +299,7 @@ class AuthController extends Controller
                 'fcm_token' => $user->fcm_token,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
                 'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
-                'average_mood_data' => $avgMood,
+                'average_mood_data' => $mood,
                 'current_plan' => $current_plan,
                 'today_mood' => isset($todayMood->id) ? ['name' => $todayMood->mood->name, 'logo' => isset($todayMood->mood->logo) ? assets('assets/images/'.$todayMood->mood->logo) : null] : [],
                 'admin' => array(
