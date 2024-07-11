@@ -20,7 +20,7 @@
 .jwj-review-card-head {display: flex; align-items: center; margin-bottom: 10px; gap:10px }
 .review-rating-user-text h3 {font-size: 14px; margin: 0; padding: 0px; color: var(--gray); font-weight: 600; }
 .review-rating {display: flex; gap: 20px; align-items: center; }
-.review-desc {color: var(--gray); text-align: justify; font-size: 14px; font-style: normal; font-weight: 400; line-height: 24px; }
+.review-desc {color: var(--gray); text-align: justify; font-size: 14px; font-style: normal; font-weight: 400; line-height: 24px; display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; height: 22px; overflow: hidden;}
 .review-date {color: var(--lightgray); font-size: 14px; font-style: normal; font-weight: 400; line-height: 20px; letter-spacing: 0.25px; }
 .review-rating-icon span {color: var(--lightgray); }
 .review-rating-icon span.activerating{color: var(--yellow);}

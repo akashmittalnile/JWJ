@@ -127,13 +127,7 @@ h5, h3, p{
             </table>
           </td>
         </tr><!-- end tr -->
-        <tr>
-          <td valign="middle">
-            <table align="center">
-                <tr><h3>{{ $data->title ?? 'Title here' }}</h3></tr>
-            </table>
-          </td>
-        </tr><!-- end tr -->
+        
         <tr>
           <td valign="top" >
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -149,13 +143,23 @@ h5, h3, p{
             </table>
           </td>
         </tr><!-- end tr -->
+
+        <tr>
+          <td valign="middle">
+            <table align="left">
+                <tr><h3 style="margin: 0 0 20px 0;">{{ $data->title ?? 'Title here' }}</h3></tr>
+            </table>
+          </td>
+        </tr>
+
         <tr>
           <td valign="middle">
             <table align="center">
-                <tr><h5>{{ $data->content ?? 'Content here' }}</h5></tr>
+                <tr><h5 style="margin: 0 0 20px 0;">{{ $data->content ?? 'Content here' }}</h5></tr>
             </table>
           </td>
         </tr><!-- end tr -->
+
         <!-- <tr>
           <td valign="middle">
             <table align="center">
@@ -180,6 +184,7 @@ h5, h3, p{
             </table>
           </td>
         </tr> -->
+
         <tr>
           <td valign="middle">
             <table align="center">

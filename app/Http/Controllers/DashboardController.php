@@ -98,7 +98,7 @@ class DashboardController extends Controller
                                 <div class='review-rating-text'>$val->rating Rating</div>
                             </div>
                         </td>
-                        <td>
+                        <td style='width:50%;'>
                             $val->description
                         </td>
                         <td>

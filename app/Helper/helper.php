@@ -302,11 +302,11 @@ if (!function_exists('graphData')) {
 if (!function_exists('journalLimit')) {
     function journalLimit($count = 0)
     {
-        $journal = Journal::where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
+        $journal = Journal::where('created_by', auth()->user()->id)->whereDate('created_at', date('Y-m-d'))->count();
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
-            if($journal > $plan->entries_per_day) return false;
+            if($journal >= $plan->entries_per_day) return false;
             return true;
         } else {
             return false;
@@ -317,7 +317,6 @@ if (!function_exists('journalLimit')) {
 if (!function_exists('journalImageLimit')) {
     function journalImageLimit($count = 0)
     {
-        $journal = Journal::where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
@@ -332,11 +331,11 @@ if (!function_exists('journalImageLimit')) {
 if (!function_exists('routineLimit')) {
     function routineLimit()
     {
-        $routine = Routine::whereNull('shared_by')->where('created_by', auth()->user()->id)->where('created_at', date('Y-m-d'))->count();
+        $routine = Routine::whereNull('shared_by')->where('created_by', auth()->user()->id)->whereDate('created_at', date('Y-m-d'))->count();
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
-            if($routine > $plan->routines) return false;
+            if($routine >= $plan->routines) return false;
             return true;
         } else {
             return false;
