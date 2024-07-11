@@ -29,7 +29,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <input type="month" id="selectMonth" name="" class="form-control">
+                            <input type="text" class="form-control selector" name="date" id="selectMonth" placeholder="mm-dd-yyyy" readonly>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -265,6 +265,22 @@
             let date = $("#selectMonth").val();
             let search = $("#searchInput").val();
             getList($(this).data('page'), search, inquiry, date);
+        });
+
+        $(".selector").datepicker({
+            dateFormat: 'mm-dd-yy', //check change
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            closeText: 'Clear',
+            onClose: function(dateText, inst) {
+                if ($(window.event.srcElement).hasClass('ui-datepicker-close')) {
+                    document.getElementById(this.id).value = '';
+                    let inquiry = $("#searchSelect").val();
+                    let search = $("#searchInput").val();
+                    getList($(this).data('page'), search, inquiry, '');
+                }
+            }
         });
     });
 </script>

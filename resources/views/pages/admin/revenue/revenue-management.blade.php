@@ -27,7 +27,7 @@
                     </div>
                     <div class="col-md-2">
                         <div class="form-group">
-                            <input type="date" name="" id="selectDate" class="form-control">
+                            <input type="text" class="form-control selector" name="date" id="selectDate" placeholder="mm-dd-yyyy" readonly>
                         </div>
                     </div>
                     <div class="col-md-2">
@@ -159,6 +159,21 @@
             let search = $("#searchInput").val();
             getList($(this).data('page'), search, status, planDate);
             $("#download-report").attr('href', "{{url('/')}}/admin/revenue-management-reports?search="+search+"&planDate="+planDate+"&status="+status);
+        });
+        $(".selector").datepicker({
+            dateFormat: 'mm-dd-yy', //check change
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            closeText: 'Clear',
+            onClose: function(dateText, inst) {
+                if ($(window.event.srcElement).hasClass('ui-datepicker-close')) {
+                    document.getElementById(this.id).value = '';
+                    let status = $("#selectStatus").val();
+                    let search = $("#searchInput").val();
+                    getList($(this).data('page'), search, status, '');
+                }
+            }
         });
     })
 </script>

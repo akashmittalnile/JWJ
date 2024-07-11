@@ -178,7 +178,7 @@
         let chatMsg
         if((message != null) && (message != '')){
             chatMsg = message;
-        } else chatMsg = image;
+        } else chatMsg = 'Sent an attachment';
 
         const add = await addDoc(chatCol, data);
         const chatCols = query(collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages'), orderBy('createdAt', 'asc'));

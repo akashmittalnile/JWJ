@@ -27,7 +27,8 @@ class SupportController extends Controller
                     $data->where('help_and_supports.status', $request->status);
                 };
                 if($request->filled('date')){
-                    $data->whereMonth('help_and_supports.created_at', date('m', strtotime($request->date)))->whereYear('help_and_supports.created_at', date('Y', strtotime($request->date)));
+                    $request->date = \Carbon\Carbon::createFromFormat('m-d-Y', $request->date)->format('Y-m-d');
+                    $data->whereDate('help_and_supports.created_at', $request->date);
                 };
                 if($request->filled('inquiry')){
                     $data->where('help_and_supports.inquiry_type', $request->inquiry);
@@ -213,7 +214,8 @@ class SupportController extends Controller
                     $data->whereRaw("(`text` LIKE '%" . $request->search . "%')");
                 }
                 if($request->filled('date')){
-                    $data->whereMonth('created_at', date('m', strtotime($request->date)))->whereYear('created_at', date('Y', strtotime($request->date)));
+                    $request->date = \Carbon\Carbon::createFromFormat('m-d-Y', $request->date)->format('Y-m-d');
+                    $data->whereDate('created_at', $request->date);
                 };
                 if($request->filled('inquiry')){
                     $data->where('plan_id', $request->inquiry);

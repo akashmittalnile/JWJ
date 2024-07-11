@@ -207,7 +207,6 @@
                     <div class="feeling-card">
                         <div class="row">
                             
-
                             @forelse($mood as $val)
                             <div class="col-md-3 mb-3">
                                 <div class="feeling-content-item">

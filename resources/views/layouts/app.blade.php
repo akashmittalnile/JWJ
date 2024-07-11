@@ -26,7 +26,9 @@
     <script src="{{ assets('assets/plugins/OwlCarousel/owl.carousel.min.js') }}" type="text/javascript"></script>
     <script src="{{ assets('assets/js/dashboard-function.js') }}" type="text/javascript"></script>
     <script src="{{ assets('assets/js/function.js') }}" type="text/javascript"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.12.0/moment.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.5.7/dist/jquery.fancybox.min.css" rel="stylesheet">
     <!-- -------- end script ----------- -->

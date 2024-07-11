@@ -20,7 +20,10 @@ class RevenueController extends Controller
             $plan = Plan::where('status', 1)->get();
             if($request->ajax()) {
                 $data = UserPlan::join('plan', 'plan.id', '=', 'user_plans.plan_id')->join('users as u', 'user_plans.user_id', '=', 'u.id');
-                if($request->filled('planDate')) $data->whereDate('user_plans.activated_date', $request->planDate);
+                if($request->filled('planDate')){
+                    $request->planDate = \Carbon\Carbon::createFromFormat('m-d-Y', $request->planDate)->format('Y-m-d');
+                    $data->whereDate('user_plans.activated_date', $request->planDate);
+                }
                 if($request->filled('status')) $data->where('user_plans.plan_id', $request->status);
                 if($request->filled('search')){
                     $data->whereRaw("(`u`.`user_name` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");

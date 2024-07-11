@@ -23,7 +23,7 @@
 
                     <div class="col-md-2">
                         <div class="form-group">
-                            <input type="month" id="selectMonth" name="" class="form-control">
+                            <input type="text" class="form-control selector" name="date" id="selectMonth" placeholder="mm-dd-yyyy" readonly>
                         </div>
                     </div>
 
@@ -386,6 +386,23 @@
             let search = $("#searchInput").val();
             getList($(this).data('page'), search, inquiry, status, date);
             $("#download-report").attr('href', "{{url('/')}}/admin/support-communication-download-report?search="+search+"&status="+status+"&inquiry="+inquiry+"&date="+date);
+        });
+
+        $(".selector").datepicker({
+            dateFormat: 'mm-dd-yy', //check change
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            closeText: 'Clear',
+            onClose: function(dateText, inst) {
+                if ($(window.event.srcElement).hasClass('ui-datepicker-close')) {
+                    document.getElementById(this.id).value = '';
+                    let inquiry = $("#searchSelect").val();
+                    let status = $("#searchSelect2").val();
+                    let search = $("#searchInput").val();
+                    getList($(this).data('page'), search, inquiry, status, '');
+                }
+            }
         });
     });
 </script>
