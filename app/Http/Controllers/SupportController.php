@@ -286,7 +286,7 @@ class SupportController extends Controller
                 $notification->status = 1;
                 $notification->save();
                 if(isset($request->plan) && ($request->plan != 100)){
-                    $users = User::where('status', 1)->where('role', 1)->where('plan_id', $request->plan_id)->get();
+                    $users = User::where('status', 1)->where('role', 1)->where('plan_id', $request->plan)->get();
                 } else {
                     $users = User::where('status', 1)->where('role', 1)->get();
                 }

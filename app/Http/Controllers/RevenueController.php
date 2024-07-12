@@ -113,7 +113,7 @@ class RevenueController extends Controller
                         $row->user_name,
                         $row->name,
                         $row->paid_amount,
-                        $row->plan_timeperiod == 1 ? 'Monthly' : 'Yearly',
+                        ($row->plan_timeperiod == 1 ? 'Monthly' : ($row->plan_timeperiod == 2 ? 'Yearly' : 'One Time')),
                         date('m-d-Y', strtotime($row->activated_date)),
                         date('m-d-Y', strtotime($row->renewal_date)),
                     ];

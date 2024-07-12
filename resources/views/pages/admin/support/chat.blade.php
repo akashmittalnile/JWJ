@@ -122,12 +122,12 @@
     } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "AIzaSyBopYjZG97AO9Da83d5AzsBXrdlNBFvPqk",
-        authDomain: "chatapp-29659.firebaseapp.com",
-        projectId: "chatapp-29659",
-        storageBucket: "chatapp-29659.appspot.com",
-        messagingSenderId: "1010083815791",
-        appId: "1:1010083815791:web:e26a047de4420d04a3889a"
+        apiKey: "{{ config('constant.apiKey') }}",
+        authDomain: "{{ config('constant.authDomain') }}",
+        projectId: "{{ config('constant.projectId') }}",
+        storageBucket: "{{ config('constant.storageBucket') }}",
+        messagingSenderId: "{{ config('constant.messagingSenderId') }}",
+        appId: "{{ config('constant.appId') }}"
     };
 
     const receiver_id = $("#ajax-chat-url").val();

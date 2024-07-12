@@ -155,8 +155,8 @@ class UserController extends Controller
 
             $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->where('p.status', 1)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
             $current_plan = [
-                'name' => $plan->name ?? 'Plan A',
-                'price' => $plan->price ?? '0',
+                'name' => $plan->name ?? null,
+                'price' => $plan->price ?? null,
                 'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
                 'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? (($plan->plan_timeperiod == 1) ? 'Monthly' : (($plan->plan_timeperiod == 2) ? 'Yearly' : 'One-Time')) : null,

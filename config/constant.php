@@ -44,8 +44,14 @@ return [
 		'FCM_JSON'=>'fcm.json',
 		'FCM_API_SERVER_KEY'=>'key=AAAA6y2v4W8:APA91bG84auFeLYvL6XXwBfwoJxiF_XB1V6nai2IHyyY9TMoMl2YtoLxCLl6YwvoZ309_AiRWCVRTb5uNZtpekzUznYQj7vgMAEY5nt22L374fndQ-4r4SyJNM4kh4VYpGjVa5tEXaWx'
 	),
-
-	
+	'apiKey' => env('APIKEY', "AIzaSyBopYjZG97AO9Da83d5AzsBXrdlNBFvPqk"),
+    'authDomain' => env('AUTHDOMAIN', "chatapp-29659.firebaseapp.com"),
+    'projectId' => env('PROJECTID', "chatapp-29659"),
+    'storageBucket' => env('STORAGEBUCKET', "chatapp-29659.appspot.com"),
+    'messagingSenderId' => env('MESSAGINGSENDERID', "1010083815791"),
+    'appId' => env('APPID', "1:1010083815791:web:e26a047de4420d04a3889a"),
+	'mailFromAddress' => env('MAIL_FROM_ADDRESS', 'JourneyWJournals@gmail.com'),
+	'stripeWebhookSecret' => env('STRIPE_WEBHOOK_SECRET', 'whsec_i0kI6D0v85qLzWqRyBgZZZQh04CXk0l4')
 ];
 
 ?>
