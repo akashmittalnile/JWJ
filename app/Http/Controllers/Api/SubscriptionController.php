@@ -217,7 +217,7 @@ class SubscriptionController extends Controller
                         $temp['currency'] = $val['currency'] ?? null;
                         $temp['paid'] = $val['paid'] ?? null;
                         $temp['invoice_number'] = $val['number'] ?? null;
-                        $temp['date'] = date('m-d-Y h:i A', $val['created']);
+                        $temp['date'] = date('d M, Y h:iA', $val['created']);
                         $temp['invoice_download_url'] = $val['hosted_invoice_url'] ?? null;
                         $response[] = $temp;
                     }

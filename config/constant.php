@@ -4,7 +4,8 @@ return [
 	'siteTitle' => 'Journey with Journals',
 	'paginatePerPage' => 10,
 	'apiPaginatePerPage' => 10,
-	'communityPerPage' => 6,
+	'communityPerPage' => 10,
+	'journalsPerPage' => 14,
 	'postPerPage' => 5,
 	'role' => array(
 		'User' => 1,

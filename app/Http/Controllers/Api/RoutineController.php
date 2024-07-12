@@ -36,7 +36,7 @@ class RoutineController extends Controller
                 $temp['status'] = $val->status;
                 $temp['percentage'] = (($allRoutine < 1) || ($categoryCount < 1)) ? 0 : number_format((float)(($categoryCount / $allRoutine) * 100), 2, '.', '');
                 $temp['logo'] = assets('uploads/routine/' . $val->logo);
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $response[] = $temp;
             }
             return successMsg('Routines category', $response);
@@ -66,7 +66,7 @@ class RoutineController extends Controller
                 $temp['category_name'] = $myroutine->category->name;
                 $temp['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
                 $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($myroutine->created_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;
             }
             $pagination = array(
@@ -112,7 +112,7 @@ class RoutineController extends Controller
                 $temp['category_name'] = $cat->name ?? null;
                 $temp['category_logo'] = isset($cat->logo) ? assets('uploads/routine/' . $cat->logo) : assets("assets/images/no-image.jpg");
                 $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($myroutine->created_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;
             }
             $pagination = array(
@@ -183,7 +183,7 @@ class RoutineController extends Controller
                     $sha['share_to_user_id'] = $val->user->id ?? null;
                     $sha['share_to_user_name'] = $val->user->name ?? null;
                     $sha['share_to_user_profile'] = isset($val->user->profile) ? assets('/uploads/profile/' . $val->user->profile) : null;
-                    $sha['shared_date'] = date('m-d-Y h:i a', strtotime($val->created_at));
+                    $sha['shared_date'] = date('d M, Y h:i a', strtotime($val->created_at));
                     $sharingList[] = $sha;
                 }
                 $response = array(
@@ -192,7 +192,7 @@ class RoutineController extends Controller
                     'subtitle' => $routine->subtitle,
                     'description' => $routine->description,
                     'routinetype' => ($routine->privacy == 'P') ? 'Public Routine' : 'Private Routine',
-                    'date' => date('m-d-Y h:i A', strtotime($routine->created_at)),
+                    'date' => date('d M, Y h:i A', strtotime($routine->created_at)),
                     'category_id' => $routine->category->id ?? null,
                     'category_name' => $routine->category->name ?? null,
                     'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
@@ -608,7 +608,7 @@ class RoutineController extends Controller
                     'subtitle' => $task->subtitle,
                     'description' => $task->description,
                     'tasktype' => ($task->privacy == 'P') ? 'Public Routine' : 'Private Routine',
-                    'date' => date('m-d-Y h:i A', strtotime($task->created_at)),
+                    'date' => date('d M, Y h:i A', strtotime($task->created_at)),
                     'category_id' => $task->category->id ?? null,
                     'category_name' => $task->category->name ?? null,
                     'category_logo' => isset($task->category->logo) ? assets('uploads/routine/' . $task->category->logo) : assets("assets/images/no-image.jpg"),

@@ -38,8 +38,8 @@ class UserController extends Controller
                 $moodtemp['name'] = $val->name;
                 $moodtemp['logo'] = isset($val->logo) ? assets('assets/images/'.$val->logo) : null;
                 $moodtemp['status'] = $val->status;
-                $moodtemp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $moodtemp['updated_at'] = date('m-d-Y h:i A', strtotime($val->updated_at));
+                $moodtemp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $moodtemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $moods[] = $moodtemp;
             }
             $user = Auth::user();
@@ -52,7 +52,7 @@ class UserController extends Controller
                 'role' => $user->role,
                 'status' => $user->status,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
-                'created_at' => date('m-d-Y h:i A', strtotime($user->created_at))
+                'created_at' => date('d M, Y h:i A', strtotime($user->created_at))
             ];
             $journal = Journal::where('journals.created_by', auth()->user()->id)->whereDate('created_at', $now)->select('journals.*')->orderByDesc('journals.id')->limit(5)->distinct('journals.id')->get();
             $journals = array();
@@ -81,8 +81,8 @@ class UserController extends Controller
                 $journaltemp['mood_logo'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
                 $journaltemp['images'] = $path;
                 $journaltemp['search_criteria'] = $search;
-                $journaltemp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $journaltemp['updated_at'] = date('m-d-Y h:i A', strtotime($val->updated_at));
+                $journaltemp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $journaltemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $journals[] = $journaltemp;
             }
             $data = Community::where('communities.status', 1)->limit(5)->orderByDesc('communities.id')->get();
@@ -149,7 +149,7 @@ class UserController extends Controller
                 $tempRate['id'] = $submitRating->id;
                 $tempRate['rating'] = $submitRating->rating ?? 0;
                 $tempRate['description'] = $submitRating->description ?? null;
-                $tempRate['review_on'] = date('m-d-Y', strtotime($submitRating->created_at));
+                $tempRate['review_on'] = date('d M, Y', strtotime($submitRating->created_at));
                 $reviewDetails[] = $tempRate;
             }
 
@@ -157,8 +157,8 @@ class UserController extends Controller
             $current_plan = [
                 'name' => $plan->name ?? 'Plan A',
                 'price' => $plan->price ?? '0',
-                'activated_date' => isset($plan->activated_date) ? date('m-d-Y h:iA', strtotime($plan->activated_date)) : null,
-                'renew_date' => isset($plan->activated_date) ? date('m-d-Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
+                'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
+                'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? (($plan->plan_timeperiod == 1) ? 'Monthly' : (($plan->plan_timeperiod == 2) ? 'Yearly' : 'One-Time')) : null,
             ];
             
@@ -298,8 +298,8 @@ class UserController extends Controller
                 $journaltemp['mood_logo'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
                 $journaltemp['images'] = $path;
                 $journaltemp['search_criteria'] = $search;
-                $journaltemp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $journaltemp['updated_at'] = date('m-d-Y h:i A', strtotime($val->updated_at));
+                $journaltemp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $journaltemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $journals[] = $journaltemp;
             }
             $data = Community::join('users as u', 'u.id', '=', 'communities.created_by')->join('community_images as ci', 'ci.community_id', '=', 'communities.id')->join('plan as p', 'p.id', '=', 'communities.plan_id')->select('communities.*', 'u.role', 'ci.name as image_name', 'p.name as plan_name', 'p.monthly_price', 'p.anually_price', 'p.currency');
@@ -354,7 +354,7 @@ class UserController extends Controller
                 $temp['category_name'] = $category->name;
                 $temp['category_logo'] = assets('assets/images/' . $category->logo);
                 $temp['createdBy'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($myroutine->created_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $routine[] = $temp;
             }
             $response = array(['journal' => $journals, 'community' => $community, 'routine' => $routine]);

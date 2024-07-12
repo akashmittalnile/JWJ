@@ -28,8 +28,8 @@ class JournalController extends Controller
                 $temp['name'] = $val->name;
                 $temp['logo'] = isset($val->logo) ? assets('assets/images/'.$val->logo) : null;
                 $temp['status'] = $val->status;
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $temp['updated_at'] = date('m-d-Y h:i A', strtotime($val->updated_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $response[] = $temp;
             }
             return successMsg('Moods', $response);
@@ -52,8 +52,8 @@ class JournalController extends Controller
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
                 $temp['my_criteria'] = ($val->created_by == auth()->user()->id) ? true : false;
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $temp['updated_at'] = date('m-d-Y h:i A', strtotime($val->updated_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $response[] = $temp;
             }
             return successMsg('Search Criteria', $response);
@@ -101,8 +101,8 @@ class JournalController extends Controller
                 $temp['images'] = $path;
                 $temp['search_criteria'] = $search;
                 $temp['download_pdf'] = url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', $val->id);
-                $temp['created_at'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $temp['updated_at'] = date('m-d-Y h:i A', strtotime($val->updated_at));
+                $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $response[] = $temp;
             }
             $pagination = array(
@@ -148,8 +148,8 @@ class JournalController extends Controller
                     'images' => $path,
                     'search_criteria' => $search,
                     'download_pdf' => url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', $journal->id),
-                    'created_at' => date('m-d-Y h:i A', strtotime($journal->created_at)),
-                    'updated_at' => date('m-d-Y h:i A', strtotime($journal->updated_at)),
+                    'created_at' => date('d M, Y h:i A', strtotime($journal->created_at)),
+                    'updated_at' => date('d M, Y h:i A', strtotime($journal->updated_at)),
                 ];
                 return successMsg('Journal details', $response);
             } else {

@@ -89,8 +89,8 @@ class SupportController extends Controller
                 $temp['type'] = $val->inquiry_type;
                 $temp['status'] = $val->status;
                 $temp['status_name'] = ($val->status == 1) ? 'Closed' : (($val->status == 2) ? 'In-Progress' : 'Pending');
-                $temp['query_date'] = date('m-d-Y h:i A', strtotime($val->created_at));
-                $temp['admin_reply_date'] = isset($val->past_response) ? date('m-d-Y h:i A', strtotime($val->updated_at)) : null;
+                $temp['query_date'] = date('d M, Y h:i A', strtotime($val->created_at));
+                $temp['admin_reply_date'] = isset($val->past_response) ? date('d M, Y h:i A', strtotime($val->updated_at)) : null;
                 $response[] = $temp;
             }
             $pagination = array(
@@ -127,7 +127,7 @@ class SupportController extends Controller
                 $temp['image'] = $img ?? null;
                 $temp['message'] = $val->message;
                 $temp['type'] = $val->type;
-                $temp['created_date'] = date('m-d-Y h:i A', strtotime($val->created_at));
+                $temp['created_date'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $response[] = $temp;
             }
             $pagination = array(

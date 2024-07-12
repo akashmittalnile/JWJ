@@ -24,7 +24,7 @@ class JournalController extends Controller
                     $data->where('journals.status', $request->ustatus);
                 } else $data->whereIn('journals.status', [1,2]);
 
-                $data = $data->paginate(config('constant.paginatePerPage'));
+                $data = $data->paginate(config('constant.journalsPerPage'));
                 $html = '';
                 foreach($data as $val)
                 {
