@@ -45,7 +45,7 @@ class ChatController extends Controller
                         $time = date('D', strtotime($val->last_msg_datetime));
                     elseif (date('Y-m-d', strtotime("-7 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
                         $time = date('D', strtotime($val->last_msg_datetime));
-                    else $time = date('d M, Y', strtotime($val->last_msg_datetime));
+                    else $time = date('m-d-Y', strtotime($val->last_msg_datetime));
                 } else $time = '';
                 $lastMsg = $val->last_msg ?? 'No messages';
 

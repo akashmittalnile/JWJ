@@ -53,10 +53,10 @@ class RevenueController extends Controller
                             $timePeriod
                         </td>
                         <td>
-                            ".date('d M, Y', strtotime($val->activated_date))."
+                            ".date('m-d-Y', strtotime($val->activated_date))."
                         </td>
                         <td>
-                            ".date('d M, Y', strtotime($val->activated_date))."
+                            ".date('m-d-Y', strtotime($val->activated_date))."
                         </td>
                     </tr>";
                 }
@@ -114,8 +114,8 @@ class RevenueController extends Controller
                         $row->name,
                         $row->paid_amount,
                         $row->plan_timeperiod == 1 ? 'Monthly' : 'Yearly',
-                        date('d M, Y', strtotime($row->activated_date)),
-                        date('d M, Y', strtotime($row->renewal_date)),
+                        date('m-d-Y', strtotime($row->activated_date)),
+                        date('m-d-Y', strtotime($row->renewal_date)),
                     ];
 
                     fputcsv($output, $final);

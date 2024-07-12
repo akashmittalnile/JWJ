@@ -271,8 +271,8 @@
                                         <td>{{ $val->name }}</td>
                                         <td>${{ number_format((float)$val->price, 2, '.', '') }}</td>
                                         <td>{{ ($val->plan_timeperiod==1 ? 'Monthly' : ($val->plan_timeperiod==2 ? 'Yearly' : 'One Time')) }}</td>
-                                        <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
-                                        <td>{{ date('d M, Y', strtotime($val->activated_date)) }}</td>
+                                        <td>{{ date('m-d-Y', strtotime($val->activated_date)) }}</td>
+                                        <td>{{ date('m-d-Y', strtotime($val->activated_date)) }}</td>
                                     </tr>
                                     @empty
                                     <tr class="text-center">

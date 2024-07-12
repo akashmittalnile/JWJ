@@ -45,13 +45,13 @@ class SupportController extends Controller
                     $adminReply = '';
                     if(isset($val->past_response) && $val->past_response != ''){
                         $adminReply = "<div class='col-md-4'>
-                                            <a class='Sendreply-btn' data-id='". encrypt_decrypt('encrypt', $val->id) ."' data-name='$val->name' data-img='". $userProfileImage ."' data-msg='$val->message' data-time='". date('d M, Y h:i a', strtotime($val->created_at)) ."' data-updatetime='". date('d M, Y h:i a', strtotime($val->updated_at)) ."' data-past='$val->past_response' id='seeRply' href='javascript:void(0)'>Your Answer</a>
+                                            <a class='Sendreply-btn' data-id='". encrypt_decrypt('encrypt', $val->id) ."' data-name='$val->name' data-img='". $userProfileImage ."' data-msg='$val->message' data-time='". date('m-d-Y h:i a', strtotime($val->created_at)) ."' data-updatetime='". date('m-d-Y h:i a', strtotime($val->updated_at)) ."' data-past='$val->past_response' id='seeRply' href='javascript:void(0)'>Your Answer</a>
                                     </div>";
                     }
                     $sendReply = '';
                     if(isset($val->status) && $val->status != 1){
                         $sendReply = "<div class='col-md-4'>
-                        <a class='Sendreply-btn' data-id='". encrypt_decrypt('encrypt', $val->id) ."' data-name='$val->name' data-img='". $userProfileImage ."' data-msg='$val->message' data-time='". date('d M, Y h:i a', strtotime($val->created_at)) ."' id='sendRply' href='javascript:void(0)'>Send reply</a>
+                        <a class='Sendreply-btn' data-id='". encrypt_decrypt('encrypt', $val->id) ."' data-name='$val->name' data-img='". $userProfileImage ."' data-msg='$val->message' data-time='". date('m-d-Y h:i a', strtotime($val->created_at)) ."' id='sendRply' href='javascript:void(0)'>Send reply</a>
                     </div>";
                     }
 
@@ -96,7 +96,7 @@ class SupportController extends Controller
 
                             <div class='jwjcard-support-foot'>
                                 <div class='support-date-info'>
-                                    <img src='". assets('assets/images/calendar.svg') ."'> Submitted On ". date('d M, Y h:i a', strtotime($val->created_at)) ."
+                                    <img src='". assets('assets/images/calendar.svg') ."'> Submitted On ". date('m-d-Y h:i a', strtotime($val->created_at)) ."
                                 </div>
                             </div>
                         </div>
@@ -190,8 +190,8 @@ class SupportController extends Controller
                         $row->message,
                         $row->past_response ?? null,
                         ($row->status == 1) ? 'Closed' : (($row->status == 2) ? 'In-Progress' : 'Pending'),
-                        date('d M, Y h:i A', strtotime($row->created_at)),
-                        date('d M, Y h:i A', strtotime($row->updated_at)),
+                        date('m-d-Y h:i A', strtotime($row->created_at)),
+                        date('m-d-Y h:i A', strtotime($row->updated_at)),
                     ];
 
                     fputcsv($output, $final);
@@ -245,7 +245,7 @@ class SupportController extends Controller
                                     <div class='Tags-text'>". $planName ." Users</div>
                                 </div>
                             </div>
-                            <div class='notification-date'>Pushed on: ". date('d M, Y h:i a', strtotime($val->created_at)) ."</div>
+                            <div class='notification-date'>Pushed on: ". date('m-d-Y h:i a', strtotime($val->created_at)) ."</div>
                         </div>
                     </div>
                 </div>";

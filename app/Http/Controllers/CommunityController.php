@@ -158,7 +158,7 @@ class CommunityController extends Controller
                                 </div>
                                 <div class='service-shift-card-text'>
                                     <h2>Created On </h2>
-                                    <p>".date('d M, Y h:iA', strtotime($val->created_at))."</p>
+                                    <p>".date('m-d-Y h:iA', strtotime($val->created_at))."</p>
                                 </div>
                             </div>
                         </div>
@@ -349,7 +349,7 @@ class CommunityController extends Controller
                                             <div class='community-post-description'>
                                                 <h3>$val->title</h3>
                                                 <div class='post-date-info'>
-                                                    <img src='". assets('assets/images/calendar.svg') ."'> Submitted On: ".date('d M, Y h:iA', strtotime($val->created_at))."
+                                                    <img src='". assets('assets/images/calendar.svg') ."'> Submitted On: ".date('m-d-Y h:iA', strtotime($val->created_at))."
                                                 </div>
                                                 <p>$val->post_description</p> 
                                                 <div class='community-post-action'>
@@ -838,7 +838,7 @@ class CommunityController extends Controller
                     $commentCount++;
                     $temp1['reply_id'] = $value1->id;
                     $temp1['reply_comment'] = $value1->comment;
-                    $temp1['reply_posted_date'] = date('d M, Y h:i A', strtotime($value1->created_at));
+                    $temp1['reply_posted_date'] = date('m-d-Y h:i A', strtotime($value1->created_at));
                     $temp1['reply_posted_by'] = $value1->user->name ?? 'NA';
                     $temp1['reply_my_comment'] = $value1->user_id == auth()->user()->id ? true : false;
                     $temp1['reply_posted_by_user_name'] = $value1->user->user_name ?? 'NA';
@@ -849,7 +849,7 @@ class CommunityController extends Controller
                 $temp['comment'] = $value->comment;
                 $temp['reply'] = $replyArr;
                 $temp['my_comment'] = $value->user_id == auth()->user()->id ? true : false;
-                $temp['posted_date'] = date('d M, Y h:i A', strtotime($value->created_at));
+                $temp['posted_date'] = date('m-d-Y h:i A', strtotime($value->created_at));
                 $temp['posted_by'] = $value->user->name ?? 'NA';
                 $temp['posted_by_user_name'] = $value->user->user_name ?? 'NA';
                 $temp['posted_by_profile_image'] = $value->user->profile;

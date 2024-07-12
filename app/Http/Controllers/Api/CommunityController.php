@@ -269,7 +269,7 @@ class CommunityController extends Controller
                         $temp['posted_by_name'] = $user->name ?? null;
                         $temp['posted_by_user_name'] = $user->user_name ?? null;
                         $temp['posted_by_profile_image'] = isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null;
-                        $temp['created_at'] = date('d M, Y h:i A', strtotime($item->created_at));
+                        $temp['created_at'] = date('m-d-Y h:i A', strtotime($item->created_at));
                         $post[] = $temp;
                     }
 
@@ -650,7 +650,7 @@ class CommunityController extends Controller
                         $commentCount++;
                         $temp1['reply_id'] = $value1->id;
                         $temp1['reply_comment'] = $value1->comment;
-                        $temp1['reply_posted_date'] = date('d M, Y h:i A', strtotime($value1->created_at));
+                        $temp1['reply_posted_date'] = date('m-d-Y h:i A', strtotime($value1->created_at));
                         $temp1['reply_posted_by'] = $value1->user->name ?? 'NA';
                         $temp1['reply_my_comment'] = $value1->user_id == auth()->user()->id ? true : false;
                         $temp1['reply_posted_by_user_name'] = $value1->user->user_name ?? 'NA';
@@ -661,7 +661,7 @@ class CommunityController extends Controller
                     $temp['comment'] = $value->comment;
                     $temp['reply'] = $replyArr;
                     $temp['my_comment'] = $value->user_id == auth()->user()->id ? true : false;
-                    $temp['posted_date'] = date('d M, Y h:i A', strtotime($value->created_at));
+                    $temp['posted_date'] = date('m-d-Y h:i A', strtotime($value->created_at));
                     $temp['posted_by'] = $value->user->name ?? 'NA';
                     $temp['posted_by_user_name'] = $value->user->user_name ?? 'NA';
                     $temp['posted_by_profile_image'] = isset($value->user->profile) ? assets('uploads/profile/'.$value->user->profile) : null;
@@ -676,7 +676,7 @@ class CommunityController extends Controller
                         'reason_id' => $postReport->reason_id ?? null,
                         'reason' => isset($reason->text) ? $reason->text : null,
                         'other_reason' => $postReport->other_reason ?? null,
-                        'report_date' => date('d M, Y h:i A', strtotime($postReport->created_at)),
+                        'report_date' => date('m-d-Y h:i A', strtotime($postReport->created_at)),
                     );
                 } else $postReportArr = array();
                 $response = array(
@@ -696,7 +696,7 @@ class CommunityController extends Controller
                     'posted_by_name' => $user->name,
                     'posted_by_user_name' => $user->user_name,
                     'posted_by_profile' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
-                    'created_at' => date('d M, Y h:i A', strtotime($post->created_at)),
+                    'created_at' => date('m-d-Y h:i A', strtotime($post->created_at)),
                 );
                 Log::channel('post')->info($post);
                 return successMsg('Post details', $response);

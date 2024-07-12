@@ -83,7 +83,7 @@
                                                 <img src="{{ assets('assets/images/calendar.svg') }}">
                                             </div>
                                             <div class="sidebar-member-item-text">
-                                                <h2>{{ date('d M, Y D', $i) }}</h2>
+                                                <h2>{{ date('m-d-Y D', $i) }}</h2>
                                                 <div class="sidebar-member-plan">{{ date('h:i A', strtotime($data->schedule->interval[0]->interval_time)) }}</div>
                                             </div>
                                         </div>
@@ -100,7 +100,7 @@
                                         <h2>Daily</h2>
                                         <div class="sidebar-member-plan">{{ date('h:i A', strtotime($item->interval_time)) }}</div>
                                         @else
-                                        <h2>{{ date('d M, Y D', strtotime($item->created_at)) }}</h2>
+                                        <h2>{{ date('m-d-Y D', strtotime($item->created_at)) }}</h2>
                                         <div class="sidebar-member-plan">{{ date('h:i A', strtotime($item->interval_time)) }}</div>
                                         @endif
                                     </div>

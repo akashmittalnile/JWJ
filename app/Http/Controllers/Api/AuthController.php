@@ -168,7 +168,7 @@ class AuthController extends Controller
                                 'role' => $user->role,
                                 'status' => $user->status,
                                 'fcm_token' => $user->fcm_token,
-                                'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
+                                'created_at' => date('m-d-Y h:i A', strtotime($user->created_at)),
                             ], 'access_token' => $token);
                             return successMsg('Logged In Successfully.', $response);
                         } else  return errorMsg('Invalid Email or Password!');  
@@ -280,8 +280,8 @@ class AuthController extends Controller
             $current_plan = [
                 'name' => $plan->name ?? null,
                 'price' => $plan->price ?? null,
-                'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
-                'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
+                'activated_date' => isset($plan->activated_date) ? date('m-d-Y h:iA', strtotime($plan->activated_date)) : null,
+                'renew_date' => isset($plan->activated_date) ? date('m-d-Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
                 'plan_timeperiod' => isset($plan->plan_timeperiod) ? (($plan->plan_timeperiod == 1) ? 'Monthly' : (($plan->plan_timeperiod == 2) ? 'Yearly' : 'One-Time')) : null,
             ];
             $admin = User::where('role', 2)->where('status', 1)->first();
@@ -298,7 +298,7 @@ class AuthController extends Controller
                 'status' => $user->status,
                 'fcm_token' => $user->fcm_token,
                 'profile_image' => isset($user->profile) ? assets('uploads/profile/'.$user->profile) : null,
-                'created_at' => date('d M, Y h:i A', strtotime($user->created_at)),
+                'created_at' => date('m-d-Y h:i A', strtotime($user->created_at)),
                 'average_mood_data' => $mood,
                 'current_plan' => $current_plan,
                 'today_mood' => isset($todayMood->id) ? ['name' => $todayMood->mood->name, 'logo' => isset($todayMood->mood->logo) ? assets('assets/images/'.$todayMood->mood->logo) : null] : [],

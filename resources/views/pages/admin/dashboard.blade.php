@@ -193,7 +193,7 @@
                                     <div class="jwj-review-card-body">
                                         <span class="review-quotes-shape"></span>
                                         <div class="review-desc">{{ $val->description ?? 'NA' }}</div>
-                                        <div class="review-date">{{ date('d M, Y h:iA', strtotime($val->created_at)) }}</div>
+                                        <div class="review-date">{{ date('m-d-Y h:i A', strtotime($val->created_at)) }}</div>
                                     </div>
                                 </div>
                             </div>

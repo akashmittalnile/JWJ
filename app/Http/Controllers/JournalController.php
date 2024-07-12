@@ -104,7 +104,7 @@ class JournalController extends Controller
                                         </div>
                                         <div class='service-shift-card-text'>
                                             <h2>Submitted On </h2>
-                                            <p>".date('d M, Y h:iA', strtotime($val->created_at))."</p>
+                                            <p>".date('m-d-Y h:iA', strtotime($val->created_at))."</p>
                                         </div>
                                     </div>
                                 </div>

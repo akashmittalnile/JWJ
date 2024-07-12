@@ -193,7 +193,7 @@ h5, h3, p{
                         <img src="data:image/png;base64,{{ base64_encode(file_get_contents('http://3.144.121.102/public/assets/images/calendar.svg')) }}">
                     </td>
                     <td>
-                        <p> Created Date: {{ date('d M, Y h:iA', strtotime($data->created_at)) }}</p>
+                        <p> Created Date: {{ date('m-d-Y h:i A', strtotime($data->created_at)) }}</p>
                     </td>
                 </tr>
             </table>
