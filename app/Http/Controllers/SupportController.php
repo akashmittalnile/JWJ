@@ -190,8 +190,8 @@ class SupportController extends Controller
                         $row->message,
                         $row->past_response ?? null,
                         ($row->status == 1) ? 'Closed' : (($row->status == 2) ? 'In-Progress' : 'Pending'),
-                        date('m-d-Y h:i A', strtotime($row->created_at)),
-                        date('m-d-Y h:i A', strtotime($row->updated_at)),
+                        date('m-d-Y h:i a', strtotime($row->created_at)),
+                        date('m-d-Y h:i a', strtotime($row->updated_at)),
                     ];
 
                     fputcsv($output, $final);

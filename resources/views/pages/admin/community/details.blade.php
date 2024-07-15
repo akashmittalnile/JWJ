@@ -115,7 +115,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="post-date-info">
-                                                    <img src="{{ assets('assets/images/calendar.svg') }}"> Active since: {{ date('m-d-Y h:i A', strtotime($data->created_at)) }}
+                                                    <img src="{{ assets('assets/images/calendar.svg') }}"> Active since: {{ date('m-d-Y h:i a', strtotime($data->created_at)) }}
                                                 </div>
                                             </div>
                                         </div>

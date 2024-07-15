@@ -177,7 +177,7 @@ class DashboardController extends Controller
                         $rating->user->name,
                         $rating->rating,
                         $rating->description,
-                        date('m-d-Y h:iA', strtotime($rating->created_at))
+                        date('m-d-Y h:i a', strtotime($rating->created_at))
                     ];
                     fputcsv($output, $final);
                 }

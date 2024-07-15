@@ -71,7 +71,7 @@
                                         <div class="community-post-description">
                                             <h3>{{ $post->title ?? 'NA' }}</h3>
                                             <div class="post-date-info">
-                                                <img src="{{ assets('assets/images/calendar.svg') }}"> Submitted On : {{ date('m-d-Y h:i A', strtotime($post->created_at)) }}
+                                                <img src="{{ assets('assets/images/calendar.svg') }}"> Submitted On : {{ date('m-d-Y h:i a', strtotime($post->created_at)) }}
                                             </div>
                                             <p>{{ $post->post_description ?? 'NA' }}</p>
                                             <div class="community-post-action">

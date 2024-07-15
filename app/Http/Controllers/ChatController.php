@@ -30,7 +30,7 @@ class ChatController extends Controller
                     if (date('H:i') == date('H:i', strtotime($val->last_msg_datetime)))
                         $time = 'Just Now';
                     elseif (date('Y-m-d') == date('Y-m-d', strtotime($val->last_msg_datetime)))
-                        $time = date('h:i A', strtotime($val->last_msg_datetime));
+                        $time = date('h:i a', strtotime($val->last_msg_datetime));
                     elseif (date('Y-m-d', strtotime("-1 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))
                         $time = 'Yesterday';
                     elseif (date('Y-m-d', strtotime("-2 days")) == date('Y-m-d', strtotime($val->last_msg_datetime)))

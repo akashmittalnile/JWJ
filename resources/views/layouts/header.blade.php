@@ -34,7 +34,7 @@
                                     <div class="notification-item-text">
                                         <h2>{{ $val->title ?? "NA" }}</h2>
                                         <p style="color: #1079c0;;">{{ $val->message ?? "NA" }}</p>
-                                        <p><span><i class="fas fa-clock"></i>{{ date('m-d-Y h:i A', strtotime($val->created_at)) }}</span></p>
+                                        <p><span><i class="fas fa-clock"></i>{{ date('m-d-Y h:i a', strtotime($val->created_at)) }}</span></p>
                                     </div>
                                 </div>
                             </a>
