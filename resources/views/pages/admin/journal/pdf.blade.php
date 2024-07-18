@@ -85,6 +85,8 @@ h5, h3, p{
 </head>
 
 <body width="100%" style="margin: 0; padding: 0 0 20px 0 !important; mso-line-height-rule: exactly; border: 1px solid #e7f5ff;">
+
+@forelse($journals as $data)
     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
         <tr>
           <td valign="top" style="padding: 1em 2.5em; background-color: #e7f5ff; margin-top: 10px">
@@ -118,11 +120,13 @@ h5, h3, p{
           <td valign="middle">
             <table align="center">
                 <tr>
-                @foreach($path as $val)
+                @forelse($data->images as $val)
                 <td>
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents($val['img_path'])) }}" alt="" style="width: 250px; height: auto; margin:10px 0px 14px; display: block;">
+                    @php $img = isset($val->name) ? assets('uploads/journal/'.$val->name) : assets('assets/images/no-image.jpg')  @endphp
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents($img)) }}" alt="" style="width: 250px; height: auto; margin:10px 0px 14px; display: block;">
                 </td>
-                @endforeach
+                @empty
+                @endforelse
                 </tr>
             </table>
           </td>
@@ -134,8 +138,8 @@ h5, h3, p{
                 <tr>
                     <td width="60%" style="text-align: center;">
                         <ul class="btn-group" style="margin: 30px 0 20px 0;">
-                            @foreach($search as $val)
-                                <li><div class="admincommunity-text" style="margin-right: 5px;">{{ $val['name'] ?? 'NA' }}</div></li>
+                            @foreach($data->searchCriteria as $val)
+                                <li><div class="admincommunity-text" style="margin-right: 5px;">{{ $val->criteria->name ?? 'NA' }}</div></li>
                             @endforeach
                         </ul>
                     </td>
@@ -200,5 +204,6 @@ h5, h3, p{
           </td>
         </tr><!-- end tr -->
     </table>
-
+@empty
+@endforelse
 </body>

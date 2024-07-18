@@ -17,6 +17,11 @@ return [
 		'2' => 'Inactive',
 		'3' => 'Rejected',
 	),
+	'gender' => array(
+		1 => 'Male',
+		2 => 'Female',
+		3 => 'Other',
+	),
 	'frequency' => array(
 		'O' => 'Once', 'D' => 'Daily', 'T' => 'Date', 'C' => 'Custom', 'R' => 'Repeat'
 	),

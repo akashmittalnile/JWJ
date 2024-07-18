@@ -93,6 +93,7 @@ class AuthController extends Controller
                 'name' => 'required',
                 'password' => 'required',
                 'email' => 'required|email',
+                'gender' => 'required'
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -111,6 +112,7 @@ class AuthController extends Controller
                         $user->country_code = $request->country_code ?? null;
                         $user->country_flag = $request->country_flag ?? null;
                         $user->mobile = $request->mobile ?? null;
+                        $user->gender = $request->gender ?? 1;
                         $user->password = Hash::make($request->password);
                         $user->role = 1;
                         $user->status = 1;
@@ -161,6 +163,7 @@ class AuthController extends Controller
                                 'name' => $user->name,
                                 'user_name' => $user->user_name,
                                 'email' => $user->email,
+                                'gender' => isset($user->gender) ? config('constant.gender')[$user->gender] : null,
                                 'country_code' => $user->country_code,
                                 'country_flag' => $user->country_flag ?? null,
                                 'mobile' => $user->mobile,
@@ -294,6 +297,7 @@ class AuthController extends Controller
                 'country_code' => $user->country_code ?? null,
                 'country_flag' => $user->country_flag ?? null,
                 'mobile' => $user->mobile ?? null,
+                'gender' => isset($user->gender) ? config('constant.gender')[$user->gender] : null,
                 'role' => $user->role,
                 'status' => $user->status,
                 'fcm_token' => $user->fcm_token,
@@ -340,6 +344,7 @@ class AuthController extends Controller
                     $user->country_code = $request->country_code;
                     $user->country_flag = $request->country_flag;
                     $user->mobile = $request->mobile;
+                    $user->gender = $request->gender ?? null;
                     $user->updated_at = date('Y-m-d H:i:s');
                     $user->save();
                     return successMsg('Profile updated successfully');

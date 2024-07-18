@@ -32,7 +32,7 @@ Route::get('test-push-notification', [AuthController::class, 'testPushNotificati
 Route::get('mood', [JournalController::class, 'mood']);
 Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinenotification']);
 
-Route::get('download-pdf/{id}', [JournalController::class, "generatePDF"]);
+Route::get('download-pdf/{id}/{date}', [JournalController::class, "generatePDF"]);
 
 Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
@@ -70,6 +70,7 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::delete('delete-journal', [JournalController::class, 'deleteJournal']);
     Route::post('create-journal', [JournalController::class, 'createJournal']);
     Route::post('edit-journal', [JournalController::class, 'editJournal']);
+    Route::post('buy-journal-pdf', [JournalController::class, 'buyPdf']);
 
     Route::post('create-criteria', [JournalController::class, 'createCriteria']);
     Route::post('edit-criteria', [JournalController::class, 'editCriteria']);

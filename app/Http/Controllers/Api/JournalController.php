@@ -100,7 +100,7 @@ class JournalController extends Controller
                 $temp['mood_logo'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
                 $temp['images'] = $path;
                 $temp['search_criteria'] = $search;
-                $temp['download_pdf'] = url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', $val->id);
+                $temp['download_pdf'] = null;
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $temp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $response[] = $temp;
@@ -160,41 +160,34 @@ class JournalController extends Controller
         }
     }
 
-    public function generatePDF($id)
+    public function buyPdf(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'start_date' => 'required',
+                'card_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                return successMsg('Payment done', url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', auth()->user()->id).'/'.encrypt_decrypt('encrypt', $request->start_date));
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    public function generatePDF($id, $date)
     {
         $id = encrypt_decrypt('decrypt', $id);
-        $data = Journal::join('journals_search_criteria_mapping as jsc', 'jsc.journal_id', '=', 'journals.id')->where('journals.id', $id)->select('journals.*')->with('images', 'searchCriteria', 'mood')->first();
-        $path = array();
-        foreach($data->images as $item){
-            $temp1['id'] = $item->id;
-            $temp1['img_path'] = isset($item->name) ? assets('uploads/journal/'.$item->name) : null;
-            $path[] = $temp1;
-        }
-        $search = array();
-        foreach($data->searchCriteria as $item){
-            $temp2['id'] = $item->criteria->id;
-            $temp2['name'] = $item->criteria->name;
-            $search[] = $temp2;
-        }
-        $mood = array(
-            'img_path' => isset($data->mood->logo) ? assets('assets/images/'.$data->mood->logo) : null
-        );
-        // dd($search);
-        $html = view('pages.admin.journal.pdf', compact('data', 'path', 'search', 'mood'))->render();
-
-        // Instantiate Dompdf
-
+        $date = encrypt_decrypt('decrypt', $date);
+        $journals = Journal::where('journals.created_by', $id)->with('searchCriteria', 'images', 'mood', 'user')->get();
+        $html = view('pages.admin.journal.pdf', compact('journals'))->render();
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
-
-        // Set paper size and orientation
         $dompdf->setPaper('A4', 'landscape');
-
-        // Render PDF (important step!)
         $dompdf->render();
-
-        // Output PDF to browser
-        return $dompdf->stream('document.pdf');
+        return $dompdf->stream("journal.pdf");
     }
 
     // Dev name : Dishant Gupta
