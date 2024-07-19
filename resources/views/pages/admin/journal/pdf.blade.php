@@ -86,9 +86,29 @@ h5, h3, p{
 
 <body width="100%" style="margin: 0; padding: 0 0 20px 0 !important; mso-line-height-rule: exactly; border: 1px solid #e7f5ff;">
 
-@forelse($journals as $data)
-    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto;">
+    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto; height: 1050px;">
         <tr>
+            @php
+            $logo = assets('assets/images/logo.svg');
+            @endphp
+            <td><img style="margin: 0 0 30px 0;" src="data:image/png;base64,{{ base64_encode(file_get_contents($logo)) }}" alt="logo"></td>
+        </tr>
+        <table style="border: 2px solid; padding: 20px">
+            <tr>
+                <td><p style="font-size: 2rem; color: #1079c0;">The Journal of </p></td>
+            </tr>
+            <tr>
+                <td><p style="font-size: 2rem; color: #f51b1b;">{{ $user->name ?? 'NA' }}</p></td>
+            </tr>
+            <tr>
+                <td><p style="font-size: 2rem;">{{ date('m-d-Y', strtotime($date)) }} - {{ date('m-d-Y', strtotime("+6 months $date")) }}</p></td>
+            </tr>
+        </table>
+    </table>
+
+    @forelse($journals as $data)
+    <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto; height: 1050px">
+        <!-- <tr>
           <td valign="top" style="padding: 1em 2.5em; background-color: #e7f5ff; margin-top: 10px">
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
                 <tr>
@@ -115,7 +135,8 @@ h5, h3, p{
                 </tr>
             </table>
           </td>
-        </tr><!-- end tr -->
+        </tr> -->
+
         <tr>
           <td valign="middle">
             <table align="center">
@@ -204,6 +225,6 @@ h5, h3, p{
           </td>
         </tr><!-- end tr -->
     </table>
-@empty
-@endforelse
+    @empty
+    @endforelse
 </body>

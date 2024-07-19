@@ -7,8 +7,11 @@ use App\Models\Journal;
 use App\Models\JournalImage;
 use App\Models\JournalSearchCriteria;
 use App\Models\MoodMaster;
+use App\Models\PdfPayment;
 use App\Models\SearchCriteria;
+use App\Models\User;
 use Dompdf\Dompdf;
+use Stripe;
 use Dompdf\Options;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -169,7 +172,35 @@ class JournalController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                return successMsg('Payment done', url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', auth()->user()->id).'/'.encrypt_decrypt('encrypt', $request->start_date));
+                $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
+                Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
+                $user = User::where('id', auth()->user()->id)->first();
+                $paymentIntent = $stripe->paymentIntents->create([
+                    'customer' => $user->customer_id,
+                    'amount' => 29.99*100,
+                    'currency' => 'usd',
+                    'payment_method_types' => ['card'],
+                    'payment_method' => $request->card_id,
+                ]);
+                $confirm = $stripe->paymentIntents->confirm(
+                    $paymentIntent->id,
+                );
+                if(isset($confirm->id)){
+                    $pdf = new PdfPayment;
+                    $pdf->user_id = auth()->user()->id;
+                    $pdf->start_date = date('Y-m-d', strtotime($request->start_date));
+                    $pdf->end_date = date('Y-m-d', strtotime("+6 months $request->start_date"));
+                    $pdf->amount = 29.99;
+                    $pdf->card_id = $request->card_id;
+                    $pdf->transaction_id = $confirm->latest_charge;
+                    $pdf->payment_date = date('Y-m-d');
+                    $pdf->status = 1;
+                    $pdf->save();
+                    return successMsg('Payment done', url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', auth()->user()->id).'/'.encrypt_decrypt('encrypt', $request->start_date));
+                } else {
+                    return errorMsg('Payment failed');
+                }
+                
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -181,11 +212,12 @@ class JournalController extends Controller
     {
         $id = encrypt_decrypt('decrypt', $id);
         $date = encrypt_decrypt('decrypt', $date);
-        $journals = Journal::where('journals.created_by', $id)->with('searchCriteria', 'images', 'mood', 'user')->get();
-        $html = view('pages.admin.journal.pdf', compact('journals'))->render();
+        $user = User::where('id', $id)->first();
+        $journals = Journal::where('journals.created_by', $id)->whereDate('created_at', '>=', date('Y-m-d', strtotime($date)))->whereDate('created_at', '<=', date('Y-m-d', strtotime("+6 months $date")))->with('searchCriteria', 'images', 'mood', 'user')->get();
+        $html = view('pages.admin.journal.pdf', compact('journals', 'date', 'user'))->render();
         $dompdf = new Dompdf();
         $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
         return $dompdf->stream("journal.pdf");
     }
