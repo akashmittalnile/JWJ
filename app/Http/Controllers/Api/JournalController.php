@@ -172,6 +172,8 @@ class JournalController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
+                $isAlready = PdfPayment::where('status', 1)->where('user_id', auth()->user()->id)->whereDate('start_date', $request->start_date)->first();
+                if(isset($isAlready->id)) return errorMsg('Already purchased');
                 $stripe = new \Stripe\StripeClient(env("STRIPE_SECRET"));
                 Stripe\Stripe::setApiKey(env("STRIPE_SECRET"));
                 $user = User::where('id', auth()->user()->id)->first();
@@ -202,6 +204,28 @@ class JournalController extends Controller
                 }
                 
             }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    public function journalPdf(Request $request)
+    {
+        try{
+            $pdf = PdfPayment::where('status', 1)->where('user_id', auth()->user()->id);
+            if($request->filled('start_date')) $pdf->whereDate('start_date', $request->start_date);
+            $pdf = $pdf->get();
+            $response = array();
+            foreach($pdf as $val){
+                $temp['start_date'] = date('m-d-Y', strtotime($val->start_date));
+                $temp['end_date'] = date('m-d-Y', strtotime($val->end_date));
+                $temp['payment_date'] = date('m-d-Y', strtotime($val->payment_date));
+                $temp['amount'] = $val->amount;
+                $temp['download_url'] = url('/').'/api/download-pdf/'.encrypt_decrypt('encrypt', $val->user_id).'/'.encrypt_decrypt('encrypt', $val->start_date);
+                $response[] = $temp;
+            }
+            return successMsg('Journal pdf', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

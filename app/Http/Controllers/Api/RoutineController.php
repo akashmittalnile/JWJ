@@ -65,7 +65,7 @@ class RoutineController extends Controller
                 $temp['date'] = date('Y-m-d', strtotime($myroutine->created_at));
                 $temp['category_name'] = $myroutine->category->name;
                 $temp['category_logo'] = isset($myroutine->category->logo) ? assets('uploads/routine/' . $myroutine->category->logo) : assets("assets/images/no-image.jpg");
-                $temp['shared_by_user_name'] = ($myroutine->shared_by != null) ? $myroutine->sharedUser->user_name : null;
+                $temp['shared_by_user_name'] = ($myroutine->shared_by != null) ? ($myroutine->sharedUser->user_name ?? null) : null;
                 $temp['shared_by_profile'] = ($myroutine->shared_by != null) ? assets('uploads/profile/'.$myroutine->sharedUser->profile) : null;
                 $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
@@ -113,7 +113,7 @@ class RoutineController extends Controller
                 $temp['shared_users'] = $users ?? null;
                 $temp['category_name'] = $cat->name ?? null;
                 $temp['category_logo'] = isset($cat->logo) ? assets('uploads/routine/' . $cat->logo) : assets("assets/images/no-image.jpg");
-                $temp['shared_by_user_name'] = ($myroutine->shared_by != null) ? $myroutine->sharedUser->user_name : null;
+                $temp['shared_by_user_name'] = ($myroutine->shared_by != null) ? ($myroutine->sharedUser->user_name ?? null) : null;
                 $temp['shared_by_profile'] = ($myroutine->shared_by != null) ? assets('uploads/profile/'.$myroutine->sharedUser->profile) : null;
                 $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
@@ -200,7 +200,7 @@ class RoutineController extends Controller
                     'category_id' => $routine->category->id ?? null,
                     'category_name' => $routine->category->name ?? null,
                     'category_logo' => isset($routine->category->logo) ? assets('uploads/routine/' . $routine->category->logo) : assets("assets/images/no-image.jpg"),
-                    'shared_by_user_name' => ($routine->shared_by != null) ? $routine->sharedUser->user_name : null,
+                    'shared_by_user_name' => ($routine->shared_by != null) ? ($routine->sharedUser->user_name ?? null) : null,
                     'shared_by_profile' => ($routine->shared_by != null) ? assets('uploads/profile/'.$routine->sharedUser->profile) : null,
                     'created_by' => ($routine->shared_by == null) ? 'mySelf' : 'shared',
                     'my_routine' => (($routine->created_by == auth()->user()->id) && ($routine->shared_by == null)) ? true : false,

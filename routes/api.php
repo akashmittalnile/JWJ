@@ -71,6 +71,7 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::post('create-journal', [JournalController::class, 'createJournal']);
     Route::post('edit-journal', [JournalController::class, 'editJournal']);
     Route::post('buy-journal-pdf', [JournalController::class, 'buyPdf']);
+    Route::get('journal-pdf', [JournalController::class, 'journalPdf']);
 
     Route::post('create-criteria', [JournalController::class, 'createCriteria']);
     Route::post('edit-criteria', [JournalController::class, 'editCriteria']);
