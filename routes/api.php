@@ -33,6 +33,9 @@ Route::get('mood', [JournalController::class, 'mood']);
 Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinenotification']);
 
 Route::get('download-pdf/{id}/{date}', [JournalController::class, "generatePDF"]);
+Route::get('privacy-policy', [UserController::class, "privacyPolicy"]);
+Route::get('terms-condition', [UserController::class, "termsCondition"]);
+Route::get('policies', [UserController::class, "policies"]);
 
 Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);

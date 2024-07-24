@@ -177,7 +177,7 @@ table.heading-name{
                 <table align="center">
                     <tr>
                         @forelse($data->images as $val)
-                        @php $img = isset($val->name) ? assets('uploads/journal/'.$val->name) : assets('assets/images/no-image.jpg')  @endphp
+                        @php $img = (isset($val->name) && file_exists(public_path('uploads/journal/'.$val->name))) ? assets('uploads/journal/'.$val->name) : assets('assets/images/no-image.jpg')  @endphp
                         <td>
                             <img src="data:image/png;base64,{{ base64_encode(file_get_contents($img)) }}" alt="" 
                             style="width: auto; height: 160px; margin:20px 0px 14px; display: block;">

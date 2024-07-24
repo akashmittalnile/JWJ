@@ -190,8 +190,8 @@ class JournalController extends Controller
                 if(isset($confirm->id)){
                     $pdf = new PdfPayment;
                     $pdf->user_id = auth()->user()->id;
-                    $pdf->start_date = date('Y-m-d', strtotime($request->start_date));
-                    $pdf->end_date = date('Y-m-d', strtotime("+6 months $request->start_date"));
+                    $pdf->start_date = \Carbon\Carbon::createFromFormat('m-d-Y', $request->start_date)->format('Y-m-d');
+                    $pdf->end_date = \Carbon\Carbon::createFromFormat('m-d-Y', $request->start_date)->addMonth(6)->format('Y-m-d');
                     $pdf->amount = 29.99;
                     $pdf->card_id = $request->card_id;
                     $pdf->transaction_id = $confirm->latest_charge;

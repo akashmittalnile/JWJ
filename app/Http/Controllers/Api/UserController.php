@@ -483,4 +483,32 @@ class UserController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+
+    public function privacyPolicy(){
+        try{
+            return view('pages.user.policy.policy');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function termsCondition(){
+        try{
+            return view('pages.user.policy.term-condition');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function policies(){
+        try{
+            $response = array(
+                'privacy-policy' => url('/').'/api/privacy-policy',
+                'term-condition' => url('/').'/api/terms-condition',
+            );
+            return successMsg('All policies', $response);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
 }
