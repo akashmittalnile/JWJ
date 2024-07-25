@@ -134,9 +134,15 @@ table.heading-name{
         </tr><!-- end tr -->
     </table>
 
-    @forelse($journals as $data)
+    @php
+        $startDate = date('m-d-Y', strtotime($journals[0]->created_at));
+        $count = 0;
+    @endphp
+    @forelse($journals as $key => $data)
     <table align="center" role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin: auto; height: 1050px">
-
+        @php 
+            $loopDate = date('m-d-Y', strtotime($data->created_at));
+        @endphp
         <tr>
           <td valign="top">
             <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" class="heading-secondary">
@@ -148,7 +154,15 @@ table.heading-name{
                     <td width="80%" style="text-align: left;">
                         <p style="font-family: Montserrat, sans-serif;">Journal with Journals</p>
                         <p style="font-family: Montserrat, sans-serif;">{{ date('m-d-Y h:i a', strtotime($data->created_at)) }}</p>
-                        <p style="font-family: Montserrat, sans-serif;" >First Entry (of Day)</p>
+                        @php
+                        if($startDate == $loopDate)
+                            $count++;
+                        else {
+                            $startDate = $loopDate;
+                            $count = 1;
+                        }
+                        @endphp
+                        <p style="font-family: Montserrat, sans-serif;" > {{$count}}<sup>{{numbers($count)}}</sup> Entry (of Day)</p>
                     </td>
                     <td width="20%" style="text-align: right;">
                         <ul>

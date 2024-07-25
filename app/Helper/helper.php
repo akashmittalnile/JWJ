@@ -368,3 +368,15 @@ if (!function_exists('postLimit')) {
         }
     }
 }
+
+if (!function_exists('numbers')) {
+    function numbers($num)
+    {
+        $num = strval($num);
+        $len = strlen($num);
+        if($num[$len-1] == 1) return 'st';
+        elseif($num[$len-1] == 2) return 'nd';
+        elseif($num[$len-1] == 3) return 'rd';
+        else return 'th';
+    }
+}

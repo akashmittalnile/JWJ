@@ -215,7 +215,7 @@ class JournalController extends Controller
         try{
             $pdf = PdfPayment::where('status', 1)->where('user_id', auth()->user()->id);
             if($request->filled('start_date')) $pdf->whereDate('start_date', $request->start_date);
-            $pdf = $pdf->get();
+            $pdf = $pdf->orderByDesc('id')->get();
             $response = array();
             foreach($pdf as $val){
                 $temp['start_date'] = date('m-d-Y', strtotime($val->start_date));
@@ -243,7 +243,7 @@ class JournalController extends Controller
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-        return $dompdf->stream("journal.pdf");
+        return $dompdf->stream($user->user_name."_".strval(date('dmYhi'))."_journal.pdf");
     }
 
     // Dev name : Dishant Gupta
