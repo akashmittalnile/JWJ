@@ -90,7 +90,7 @@ class RoutineController extends Controller
             $routines = SharingDetail::join('routines as r', 'r.id', '=', 'sharing_details.routine_id')->where('sharing_details.user_id', auth()->user()->id);
             if($request->filled('name')) $routines->whereRaw("(`r`.`name` LIKE '%" . $request->name . "%')");
             if($request->filled('date')) $routines->whereDate('r.created_at', $request->date);
-            $routines = $routines->select('r.*')->orderby('sharing_details.id', 'desc')->distinct('sharing_details.routine_id')->paginate(config('constant.apiPaginatePerPage'));
+            $routines = $routines->whereNull('r.shared_by')->select('r.*')->orderby('sharing_details.id', 'desc')->distinct('sharing_details.routine_id', 'sharing_details.shared_to')->paginate(config('constant.apiPaginatePerPage'));
             // dd($routines);
             $response = array();
             foreach ($routines as $key => $myroutine) {
@@ -114,7 +114,7 @@ class RoutineController extends Controller
                 $temp['category_name'] = $cat->name ?? null;
                 $temp['category_logo'] = isset($cat->logo) ? assets('uploads/routine/' . $cat->logo) : assets("assets/images/no-image.jpg");
                 $temp['shared_by_user_name'] = ($myroutine->shared_by != null) ? ($myroutine->sharedUser->user_name ?? null) : null;
-                $temp['shared_by_profile'] = ($myroutine->shared_by != null) ? assets('uploads/profile/'.$myroutine->sharedUser->profile) : null;
+                $temp['shared_by_profile'] = ($myroutine->shared_by != null) ? (isset($myroutine->sharedUser->profile) ? assets('uploads/profile/'.$myroutine->sharedUser->profile) : assets('assets/images/no-images.jpg')) : null;
                 $temp['created_by'] = ($myroutine->shared_by == null) ? 'mySelf' : 'shared';
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $response[] = $temp;

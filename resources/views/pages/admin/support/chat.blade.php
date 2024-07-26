@@ -27,7 +27,7 @@
                         @foreach($users as $val)
                         <a href="{{ route('admin.chats', encrypt_decrypt('encrypt', $val['id'])) }}">
                             <div class="chat-userlist-item @if(isset($user->id) && ($val['id'] == $user->id)) current-user @endif user-info" data-id="$val->id" data-name="{{ $val['name'] }}" data-img="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}">
-                                <div class="chat-userlist-item-inner">
+                                <div class="chat-userlist-item-inner" style="width: 78%;">
                                     <div class="chat-userlist-item-image">
                                         <img src="{{ (isset($val['profile']) && file_exists(public_path('uploads/profile/'.$val['profile']))) ? assets('uploads/profile/'.$val['profile']) : assets('assets/images/avatar.png') }}" alt="avatar">
                                         <span class="user-status"></span>
@@ -37,7 +37,7 @@
                                         <p class="text-muted last-message-{{ $val['id'] }}">{{ $val['last_msg'] }}</p>
                                     </div>
                                 </div>
-                                <div class="chat-userlist-item-date">
+                                <div class="chat-userlist-item-date" style="width: 22%;">
                                     <div class="chat-userlist-time text-muted time-message-{{ $val['id'] }}">{{ $val['time'] }}</div>
                                     @if( isset($val['unseen_msg_count']) && $val['unseen_msg_count'] != 0 )
                                     <span class="badge bg-danger rounded-pill float-end unseen-count-{{ $val['id'] }}">{{ $val['unseen_msg_count'] }}</span>

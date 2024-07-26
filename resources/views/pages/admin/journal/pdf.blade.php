@@ -197,6 +197,11 @@ table.heading-name{
                             style="width: auto; height: 160px; margin:20px 0px 14px; display: block;">
                         </td>
                         @empty
+                        @php $img = assets('assets/images/no-image.jpg'); @endphp
+                        <td>
+                            <img src="data:image/png;base64,{{ base64_encode(file_get_contents($img)) }}" alt="" 
+                            style="width: auto; height: 160px; margin:20px 0px 14px; display: block;">
+                        </td>
                         @endforelse
                     </tr>
                 </table>
