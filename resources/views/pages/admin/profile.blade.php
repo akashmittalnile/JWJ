@@ -92,7 +92,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <h4>Phone</h4>
-                                        <input type="tel" class="form-control" value="{{ auth()->user()->mobile ?? '' }}" name="mobile" placeholder="Enter Phone">
+                                        <input type="tel" class="form-control" id="phoneNumber" value="{{ auth()->user()->mobile ?? '' }}" name="mobile" placeholder="Enter Phone">
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -166,6 +166,8 @@
 
 @push('js')
 <script>
+    $('#phoneNumber').mask('(000) 000-0000');
+
     $.validator.addMethod("emailValidate", function(value) {
         return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
     }, 'Please enter valid email address.');
