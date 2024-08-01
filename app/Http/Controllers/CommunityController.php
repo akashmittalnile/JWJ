@@ -493,13 +493,13 @@ class CommunityController extends Controller
                 if(isset($community->id)){
                     $commImage = CommunityImage::where('community_id', $community->id)->get();
                     foreach($commImage as $key => $val){
-                        // fileRemove("/uploads/community/$val->name");
+                        fileRemove("/uploads/community/$val->name");
                     }
                     $posts = Post::where('community_id', $community->id)->get();
                     foreach($posts as $key => $val){
                         $postImage = PostImage::where('post_id', $val->id)->get();
                         foreach($postImage as $key1 => $val1){
-                            // fileRemove("/uploads/community/post/$val1->name");
+                            fileRemove("/uploads/community/post/$val1->name");
                         }
                         PostImage::where('post_id', $val->id)->delete();
                         $likes = UserLike::where('object_id', $val->id)->where('object_type', 'post')->delete();
@@ -675,7 +675,7 @@ class CommunityController extends Controller
                 if(isset($post->id)){
                     $postImg = PostImage::where('post_id', $request->postId)->get();
                     foreach($postImg as $key => $val){
-                        // fileRemove("/uploads/community/post/$val->name");
+                        fileRemove("/uploads/community/post/$val->name");
                     }
                     PostImage::where('post_id', $request->postId)->delete();
                     $likes = UserLike::where('object_id', $request->postId)->where('object_type', 'post')->delete();

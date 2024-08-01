@@ -16,6 +16,7 @@ use App\Models\TaskAssignMember;
 use App\Models\User;
 use App\Models\UserHideTask;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class RoutineController extends Controller
@@ -664,7 +665,7 @@ class RoutineController extends Controller
                         if (isset($request->deletefile) && count($request->deletefile) > 0) {
                             foreach ($request->deletefile as $val) {
                                 $taskImage = Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->first();
-                                // fileRemove("/uploads/task/$taskImage->name");
+                                fileRemove("/uploads/task/$taskImage->name");
                                 Attachment::where('id', $val)->where('routine_id', $task->id)->where('routine_type', 'T')->delete();
                             }
                         }
@@ -763,7 +764,7 @@ class RoutineController extends Controller
                         UserHideTask::where('task_id', $task->id)->delete();
                         $attach = Attachment::where('routine_id', $task->id)->where('routine_type', 'T')->get();
                         foreach ($attach as $val) {
-                            // fileRemove("/uploads/task/$val->file");
+                            fileRemove("/uploads/task/$val->file");
                         }
                         Attachment::where('routine_id', $task->id)->where('routine_type', 'T')->delete();
                         Routine::where('id', $request->id)->delete();
@@ -790,6 +791,7 @@ class RoutineController extends Controller
                 ->select('schedule.*', 'schedule_interval.*', 'schedule_interval.id as scheduleintervalid', 'routines.*', 'users.fcm_token', 'users.name as full_name')
                 ->orderby('routines.id', 'desc')
                 ->get();
+            Log::channel('post')->info("Routine cron job running fine ".date('m-d-Y'));
             foreach ($task as $key => $alltask) {
                 if ($alltask->frequency == 'D') {
                     $time = date('H:i', strtotime($alltask->interval_time));

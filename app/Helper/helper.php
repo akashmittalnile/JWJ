@@ -193,7 +193,8 @@ if (!function_exists('getMonthDate')) {
 if (!function_exists('fileUpload')) {
     function fileUpload($file, $path)
     {
-        $name = $file->getClientOriginalName();
+        $name = "IMG_".time().rand().'.'.$file->extension();
+        // $name = $file->getClientOriginalName();
         $file->move(public_path("$path"), $name);
         return $name;
     }
