@@ -17,6 +17,7 @@ use App\Models\Routine;
 use App\Models\RoutineCategory;
 use App\Models\SharingDetail;
 use App\Models\User;
+use App\Models\UserCompletedTask;
 use App\Models\UserFollowedCommunity;
 use App\Models\UserMood;
 use App\Models\UserPlan;
@@ -185,6 +186,7 @@ class UserController extends Controller
                 ->orderby('routines.id', 'desc')
                 ->get();
             foreach ($task as $key => $alltask) {
+                $completedRoutine = UserCompletedTask::where('routine_id','=',$alltask->routineId)->where('routine_time','=',$alltask->interval_time)->whereDate('routine_date','=', date('Y-m-d'))->where('user_id','=', auth()->user()->id)->first();
                 $time = date('H:i', strtotime($alltask->interval_time));
                 $currenttime = date('H:i');
                 if ($alltask->frequency == 'D') {
@@ -195,7 +197,7 @@ class UserController extends Controller
                     $temp['category_name'] = $alltask->category_name;
                     $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                     $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                    $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
+                    $temp['status'] = isset($completedRoutine->id) ? 'Completed' : 'Pending';
                 } elseif ($alltask->frequency == 'T') {
                     if ($alltask->schedule_time == date('Y-m-d')) {
                         $temp['routineid'] = $alltask->routineId;
@@ -205,7 +207,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                        $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
+                        $temp['status'] = isset($completedRoutine->id) ? 'Completed' : 'Pending';
                     } else {
                         continue;
                     }
@@ -220,7 +222,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                        $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
+                        $temp['status'] = isset($completedRoutine->id) ? 'Completed' : 'Pending';
                     } else {
                         continue;
                     }
@@ -250,7 +252,7 @@ class UserController extends Controller
                         $temp['category_name'] = $alltask->category_name;
                         $temp['category_logo'] = assets('uploads/routine/'.$alltask->category_logo);
                         $temp['time'] = date('h:iA', strtotime($alltask->interval_time));
-                        $temp['status'] = ($time <= $currenttime) ? 'Completed' : 'Pending';
+                        $temp['status'] = isset($completedRoutine->id) ? 'Completed' : 'Pending';
                         $temp['day'] = $todayday;
                     } else {
                         continue;
@@ -418,6 +420,8 @@ class UserController extends Controller
                     $routine = Routine::whereDate('created_at', date('Y-m-d', strtotime($date)))->where('created_by', auth()->user()->id)->count();
                     if(($journal || $community || $routine)) $temp['data_available'] = true;
                     else $temp['data_available'] = false;
+
+                    $temp['journal_available'] = $journal ? true : false;
                     
                     $response[] = $temp;
                 }

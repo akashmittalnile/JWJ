@@ -102,6 +102,7 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
 
     Route::get('routine-category', [RoutineController::class, 'routineCategory']);
     Route::get('routine', [RoutineController::class, 'routine']);
+    Route::post('routine-complete', [RoutineController::class, 'routineComplete']);
     Route::get('routine-detail/{id}', [RoutineController::class, 'routineDetail']);
     Route::post('create-routine', [RoutineController::class, 'createRoutine']);
     Route::delete('delete-routine', [RoutineController::class, 'deleteRoutine']);

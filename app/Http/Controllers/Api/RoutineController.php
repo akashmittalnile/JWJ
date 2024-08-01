@@ -14,6 +14,7 @@ use App\Models\ScheduleInterval;
 use App\Models\SharingDetail;
 use App\Models\TaskAssignMember;
 use App\Models\User;
+use App\Models\UserCompletedTask;
 use App\Models\UserHideTask;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -78,6 +79,36 @@ class RoutineController extends Controller
                 'total' => $routines->total()
             );
             return successMsg('My routines', ['data' => $response, 'pagination' => $pagination]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to complete the routine
+    public function routineComplete(Request $request)
+    {
+        try{
+            $validator = Validator::make($request->all(), [
+                'id' => 'required',
+                'time' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $isAlready = UserCompletedTask::where('routine_id','=',$request->id)->where('routine_time','=',date('H:i', strtotime($request->time)))->whereDate('routine_date','=', date('Y-m-d'))->where('user_id','=', auth()->user()->id)->first();
+                if(isset($isAlready->id)){
+                    $isAlready->delete();
+                    return successMsg('Routine has been marked as incompleted');
+                }
+                $usercompleted = new UserCompletedTask;
+                $usercompleted->user_id = auth()->user()->id;
+                $usercompleted->routine_id = $request->id;
+                $usercompleted->routine_date = date('Y-m-d');
+                $usercompleted->routine_time = date('H:i', strtotime($request->time));
+                $usercompleted->save();
+                return successMsg('Routine has been marked as completed');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
