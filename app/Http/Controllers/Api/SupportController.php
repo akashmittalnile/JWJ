@@ -246,4 +246,22 @@ class SupportController extends Controller
             return $e->getMessage();
         }
     }
+
+    // Dev name : Dishant Gupta
+    // This function is used to delete a particular notification
+    public function notificationDelete(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                Notify::where('receiver_id', auth()->user()->id)->where('id', $request->id)->delete();
+                return successMsg('Notification deleted.');
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
 }
