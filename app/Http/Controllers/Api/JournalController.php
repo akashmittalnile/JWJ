@@ -283,8 +283,11 @@ class JournalController extends Controller
                 'content' => 'required',
                 'mood_id' => 'required',
                 'file' => 'array',
+                'file.*' => 'max:5120',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
+            ], [
+                'file.*.max' => 'File must not be greater than 5MB',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -362,10 +365,13 @@ class JournalController extends Controller
                 'content' => 'required',
                 'mood_id' => 'required',
                 'file' => 'array',
+                'file.*' => 'max:5120',
                 'deletefile' => 'array',
                 'criteria' => 'array',
                 'new_criteria' => 'array',
                 'deletecriteria' => 'array',
+            ], [
+                'file.*.max' => 'File must not be greater than 5MB',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
