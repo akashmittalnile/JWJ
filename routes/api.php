@@ -45,7 +45,7 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::post('clear-notifications', [SupportController::class, 'clearNotifications']);
     Route::post('notification-seen', [SupportController::class, 'notificationSeen']);
     Route::get('notification-count', [SupportController::class, 'notificationCount']);
-    Route::delete('notification-delete', [JournalController::class, 'notificationDelete']);
+    Route::delete('notification-delete', [SupportController::class, 'notificationDelete']);
 
     Route::get('plans', [SubscriptionController::class, 'plans']);
     Route::post('buy-plan', [SubscriptionController::class, 'buyPlan']);

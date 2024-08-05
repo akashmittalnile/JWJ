@@ -36,7 +36,7 @@
                         <div class="form-group">
                             <select class="form-control" name="" id="searchSelect">
                                 <option value="">Select Subscription Plan</option>
-                                <option value="100">Select All Users</option>
+                                <option value="100">Select All User</option>
                                 @forelse($plan as $val)
                                 <option value="{{ $val->id }}">{{ $val->name }} Users</option>
                                 @empty
@@ -90,7 +90,7 @@
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <select class="form-control" name="plan">
-                                        <option value="100">Select All Users</option>
+                                        <option value="100">Select All User</option>
                                         @forelse($plan as $val)
                                         <option value="{{ $val->id }}">{{ $val->name }} Users</option>
                                         @empty
