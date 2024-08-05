@@ -276,8 +276,10 @@ class JournalController extends Controller
         try{
             $count = 0;
             if(isset($request->file) && count($request->file) > 0) $count = count($request->file);
-            if(!journalLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
-            if(!journalImageLimit($count)) return errorMsg('Your image limit for this plan has been exhausted. Please upgrade to continue');
+            $journalLimit = journalLimit();
+            $imageLimit = journalImageLimit($count);
+            if(!$journalLimit['status']) return errorMsg($journalLimit['message']);
+            if(!$imageLimit['status']) return errorMsg($imageLimit['message']);
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'content' => 'required',
@@ -358,7 +360,8 @@ class JournalController extends Controller
             if(isset($request->file) && count($request->file) > 0) $newCount = count($request->file);
             $delCount = 0;
             if(isset($request->deletefile) && count($request->deletefile) > 0) $delCount = count($request->deletefile);
-            if(!journalImageLimit($count+$newCount-$delCount)) return errorMsg('Your image limit for this plan has been exhausted. Please upgrade to continue');
+            $imageLimit = journalImageLimit($count+$newCount-$delCount);
+            if(!$imageLimit['status']) return errorMsg($imageLimit['message']);
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'title' => 'required',

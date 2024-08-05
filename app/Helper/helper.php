@@ -195,8 +195,10 @@ if (!function_exists('fileUpload')) {
     {
         try{
             $name = "IMG_".time().rand().'.'.$file->extension();
-            // $name = $file->getClientOriginalName();
-            $file->move(public_path("$path"), $name);
+            // $file->move(public_path("$path"), $name);
+            $img = \Image::make($file);
+            $path = $path.$name;
+            $img->save(public_path($path), 50);
             return $name;
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
@@ -311,10 +313,10 @@ if (!function_exists('journalLimit')) {
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
-            if($journal >= $plan->entries_per_day) return false;
-            return true;
+            if($journal >= $plan->entries_per_day) return ['status' => false, 'message' => "$plan->name allows you to add $plan->entries_per_day journals per day."];
+            return ['status' => true];
         } else {
-            return false;
+            return ['status' => false, 'message' => "Please select a plan first to use the app."];
         }
     }
 }
@@ -325,10 +327,25 @@ if (!function_exists('journalImageLimit')) {
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
-            if($plan->picture_per_day < $count) return false;
-            return true;
+            if($plan->picture_per_day < $count) return ['status' => false, 'message' => "$plan->name allows you to add $plan->picture_per_day images per post."];
+            return ['status' => true];
         } else {
-            return false;
+            return ['status' => false, 'message' => "Please select a plan first to use the app."];
+        }
+    }
+}
+
+if (!function_exists('communityImageLimit')) {
+    function communityImageLimit($count = 0)
+    {
+        $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
+        if(isset($userPlan->id)){
+            $perPost = config('constant.imagePerPost');
+            $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
+            if($perPost < $count) return ['status' => false, 'message' => "$plan->name allows you to add $perPost images per post."];
+            return ['status' => true];
+        } else {
+            return ['status' => false, 'message' => "Please select a plan first to use the app."];
         }
     }
 }
@@ -340,10 +357,10 @@ if (!function_exists('routineLimit')) {
         $userPlan = UserPlan::where('user_id', auth()->user()->id)->where('status', 1)->first();
         if(isset($userPlan->id)){
             $plan = Plan::where('id', $userPlan->plan_id)->where('status', 1)->first();
-            if($routine >= $plan->routines) return false;
-            return true;
+            if($routine >= $plan->routines) return ['status' => false, 'message' => "$plan->name allows you to add $plan->routines routines per day."];
+            return ['status' => true];
         } else {
-            return false;
+            return ['status' => false, 'message' => "Please select a plan first to use the app."];
         }
     }
 }

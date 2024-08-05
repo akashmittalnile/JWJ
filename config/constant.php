@@ -7,6 +7,7 @@ return [
 	'communityPerPage' => 10,
 	'journalsPerPage' => 14,
 	'postPerPage' => 5,
+	'imagePerPost' => 3,
 	'role' => array(
 		'User' => 1,
 		'Admin' => 2,

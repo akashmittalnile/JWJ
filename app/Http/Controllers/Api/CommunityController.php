@@ -316,6 +316,10 @@ class CommunityController extends Controller
     public function createCommunity(Request $request) {
         try{
             if(!communityLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
+            $count = 0;
+            if(isset($request->file) && count($request->file) > 0) $count = count($request->file);
+            $imageLimit = communityImageLimit($count);
+            if(!$imageLimit['status']) return errorMsg($imageLimit['message']);
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required|array',
@@ -371,6 +375,13 @@ class CommunityController extends Controller
     // This function is used to update a community by user
     public function editCommunity(Request $request) {
         try{
+            $count = CommunityImage::where('community_id', $request->id)->count();
+            $newCount = 0;
+            if(isset($request->file) && count($request->file) > 0) $newCount = count($request->file);
+            $delCount = 0;
+            if(isset($request->deletefile) && count($request->deletefile) > 0) $delCount = count($request->deletefile);
+            $imageLimit = communityImageLimit($count+$newCount-$delCount);
+            if(!$imageLimit['status']) return errorMsg($imageLimit['message']);
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'title' => 'required',
@@ -500,6 +511,10 @@ class CommunityController extends Controller
     public function createPost(Request $request) {
         try{
             if(!postLimit()) return errorMsg('Your limit for this plan has been exhausted. Please upgrade to continue');
+            $count = 0;
+            if(isset($request->file) && count($request->file) > 0) $count = count($request->file);
+            $imageLimit = communityImageLimit($count);
+            if(!$imageLimit['status']) return errorMsg($imageLimit['message']);
             $validator = Validator::make($request->all(), [
                 'community_id' => 'required',
                 'title' => 'required',
@@ -557,6 +572,13 @@ class CommunityController extends Controller
     // This function is used to update a post
     public function editPost(Request $request) {
         try{
+            $count = PostImage::where('post_id', $request->id)->count();
+            $newCount = 0;
+            if(isset($request->file) && count($request->file) > 0) $newCount = count($request->file);
+            $delCount = 0;
+            if(isset($request->deletefile) && count($request->deletefile) > 0) $delCount = count($request->deletefile);
+            $imageLimit = communityImageLimit($count+$newCount-$delCount);
+            if(!$imageLimit['status']) return errorMsg($imageLimit['message']);
             $validator = Validator::make($request->all(), [
                 'id' => 'required',
                 'title' => 'required',

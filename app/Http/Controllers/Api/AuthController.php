@@ -93,7 +93,9 @@ class AuthController extends Controller
                 'name' => 'required',
                 'password' => 'required',
                 'email' => 'required|email',
-                'gender' => 'required'
+                'gender' => 'required',
+                'mobile' => 'required',
+                'country_code' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -112,6 +114,8 @@ class AuthController extends Controller
                         $user->country_code = $request->country_code ?? null;
                         $user->country_flag = $request->country_flag ?? null;
                         $user->mobile = $request->mobile ?? null;
+                        $user->country_code = $request->country_code;
+                        $user->country_flag = $request->country_flag;
                         $user->gender = $request->gender ?? 1;
                         $user->password = Hash::make($request->password);
                         $user->role = 1;
@@ -279,9 +283,10 @@ class AuthController extends Controller
 
             $todayMood = UserMood::where('user_id', auth()->user()->id)->whereDate('created_at', date('Y-m-d'))->first();
 
-            $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->where('p.status', 1)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price')->first();
+            $plan = UserPlan::join('plan as p', 'p.id', '=', 'user_plans.plan_id')->where('user_plans.status', 1)->where('user_plans.user_id', auth()->user()->id)->where('p.status', 1)->select('p.name', 'user_plans.plan_timeperiod', 'user_plans.activated_date', 'user_plans.price', 'p.picture_per_day')->first();
             $current_plan = [
                 'name' => $plan->name ?? null,
+                'picture_per_day' => $plan->picture_per_day ?? null,
                 'price' => $plan->price ?? null,
                 'activated_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime($plan->activated_date)) : null,
                 'renew_date' => isset($plan->activated_date) ? date('d M, Y h:iA', strtotime("+1 Month".$plan->activated_date)) : null,
