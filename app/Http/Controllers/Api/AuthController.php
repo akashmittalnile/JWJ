@@ -152,7 +152,7 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $user = User::where('email', $request->email)->first();
+                $user = User::where('email', $request->email)->whereIn('status', [0, 1, 2, 3])->first();
                 if(isset($user->id)){
                     if($user->status == 1){
                         if (Hash::check($request->password, $user->password)) {
@@ -197,20 +197,22 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $user = User::where('email', $request->email)->first();
+                $user = User::where('email', $request->email)->whereIn('status', [0, 1, 2, 3])->first();
                 if(isset($user->id)){
-                    $code = rand(1000,9999);
-                    $user->otp = $code;
-                    $user->updated_at = date('Y-m-d H:i:s');
-                    // $data['subject'] = 'Reset Your Journey with journals password';
-                    // $data['site_title'] = 'Reset Your Journey with journals password';
-                    // $data['view'] = 'pages.user.email.send-otp';
-                    // $data['to_email'] = $request->email;
-                    // $data['otp'] = $code;
-                    // $data['customer_name'] = $user->name;
-                    // sendEmail($data);
-                    $user->save();
-                    return successMsg('OTP sent to your email address', ['otp' => $code]);
+                    if($user->status == 1){
+                        $code = rand(1000,9999);
+                        $user->otp = $code;
+                        $user->updated_at = date('Y-m-d H:i:s');
+                        // $data['subject'] = 'Reset Your Journey with journals password';
+                        // $data['site_title'] = 'Reset Your Journey with journals password';
+                        // $data['view'] = 'pages.user.email.send-otp';
+                        // $data['to_email'] = $request->email;
+                        // $data['otp'] = $code;
+                        // $data['customer_name'] = $user->name;
+                        // sendEmail($data);
+                        $user->save();
+                        return successMsg('OTP sent to your email address', ['otp' => $code]);
+                    } else return errorMsg('Your account is inactived. Please contact administrator');
                 } else return errorMsg('Email is not registered with us');
             }
         } catch (\Exception $e) {

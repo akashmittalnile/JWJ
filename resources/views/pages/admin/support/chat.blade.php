@@ -158,6 +158,10 @@
     window.sendNewMessage = async function(group_id_new2, message, receiver_id, userName, image = '') {
         // alert(6);
         const chatCol = collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages');
+        const date = new Date();
+        function convertTZ(date, tzString) {
+            return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+        }
         let data = {
             text: message ?? "HHH",
             image: image,
@@ -172,7 +176,7 @@
                 _id: 1
             },
             _id: random,
-            createdAt: new Date()
+            createdAt: convertTZ(date, "America/New_York")
         };
 
         let chatMsg
@@ -244,6 +248,18 @@
             $(".chat-userlist-info a").hide();
             $(".chat-userlist-info a:containsi("+text+")").show();
         }
+        let userLength = $(".chat-userlist-info a:visible").length;
+        let noDataLength = $(".chat-userlist-info div.d-flex.justify-content-center").length;
+        if(userLength == 0 && noDataLength == 0){
+            let noData = `<div class="d-flex justify-content-center align-items-center flex-column">
+                    <div>
+                        <img width="350" src="{{ assets('assets/images/no-data.svg') }}" alt="no-data">
+                    </div>
+                </div>`;
+            $(".chat-userlist-info").append(noData);
+        } else if(userLength > 0) {
+            $(".chat-userlist-info div.d-flex.justify-content-center").remove();
+        }
     });
 
     const baseChatUrl = "{{ url('/') }}" + '/public/uploads/chat/';
@@ -258,7 +274,11 @@
             const receiver_id = $("#ajax-chat-url").val();
             const group_id = "1-" + receiver_id;
             let message = $('#message-input');
-            let time = moment().format('MMM DD, YYYY HH:mm A');
+            const date = new Date();
+            function convertTZ(date, tzString) {
+                return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+            }
+            let time = convertTZ(date, "America/New_York");
             let image = '';
             if ($('#upload-file')[0].files[0]) image = URL.createObjectURL($('#upload-file')[0].files[0]);
             else image = '';
