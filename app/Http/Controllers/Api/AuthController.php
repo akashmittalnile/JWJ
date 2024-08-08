@@ -132,6 +132,9 @@ class AuthController extends Controller
                         // $data['customer_name'] = $user->name;
                         // sendEmail($data);
                         $token = $user->createToken("journey_with_journals")->plainTextToken;
+                        User::where('email', $request->email)->where('id', $user->id)->update([
+                            'access_token' => $token
+                        ]);
                         return successMsg('Registered successfully.', ['access_token' => $token]);
                     } else return errorMsg('Email is not verified!');
                 } else return errorMsg('This email is already exist!');
@@ -156,10 +159,14 @@ class AuthController extends Controller
                 if(isset($user->id)){
                     if($user->status == 1){
                         if (Hash::check($request->password, $user->password)) {
+                            if(isset($user->access_token)){
+                                return response()->json(['status' => true, 'message' => 'You seems to be logged in another devices. Please logout from all devices', 'loggedin' => true, 'token' => $user->access_token ?? null]);
+                            }
                             $token = $user->createToken("journey_with_journals")->plainTextToken;
                             if(isset($request->fcm_token)){
                                 User::where('email', $request->email)->where('id', $user->id)->update([
-                                    'fcm_token' => $request->fcm_token
+                                    'fcm_token' => $request->fcm_token,
+                                    'access_token' => $token
                                 ]);
                             }
                             $response = array('user' => [
@@ -410,7 +417,8 @@ class AuthController extends Controller
     public function logout() {
         try{
             User::where('id', auth()->user()->id)->update([
-                'fcm_token' => null
+                'fcm_token' => null,
+                'access_token' => null
             ]);
             Auth::user()->tokens()->delete();
             return successMsg('Logged out successfully');

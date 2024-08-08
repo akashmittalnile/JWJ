@@ -337,6 +337,8 @@ class CommunityController extends Controller
                 $community->description = $request->description;
                 $community->status = 0;
                 $community->created_by = auth()->user()->id ?? null;
+                $community->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $community->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $community->save();
 
                 if (count($request->file) > 0) {
@@ -346,6 +348,8 @@ class CommunityController extends Controller
                         $communityImage->community_id = $community->id;
                         $communityImage->name = $name;
                         $communityImage->type = 'image';
+                        $communityImage->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                        $communityImage->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                         $communityImage->save();
                     }
                 }
@@ -535,6 +539,8 @@ class CommunityController extends Controller
                     $post->title = $request->title;
                     $post->post_description = $request->description;
                     $post->created_by = auth()->user()->id;
+                    $post->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                    $post->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                     $post->save();
 
                     if (count($request->file) > 0) {
@@ -544,6 +550,8 @@ class CommunityController extends Controller
                             $postImage->post_id = $post->id;
                             $postImage->name = $name;
                             $postImage->type = 'image';
+                            $postImage->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                            $postImage->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                             $postImage->save();
                         }
                     }
@@ -556,6 +564,8 @@ class CommunityController extends Controller
                         $notify->image_id = $post->id;
                         $notify->title = 'New Post';
                         $notify->message = '"'. auth()->user()->name .'" posted on your "'. $data->name .'" community';
+                        $notify->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                        $notify->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                         $notify->save();
                     }
 
@@ -584,7 +594,7 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'array',
-                'file.*' => 'array',
+                'file.*' => 'max:5120',
                 'deletefile' => 'array',
             ], [
                 'file.*.max' => 'File must not be greater than 5MB',

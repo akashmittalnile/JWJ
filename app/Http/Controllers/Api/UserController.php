@@ -387,6 +387,8 @@ class UserController extends Controller
                 $mood = new UserMood;
                 $mood->mood_id = $request->mood_id;
                 $mood->user_id = auth()->user()->id;
+                $mood->created_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $mood->updated_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $mood->save();
                 return successMsg('Mood captured');
             }

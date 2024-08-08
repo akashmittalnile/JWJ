@@ -37,6 +37,8 @@ class SupportController extends Controller
                 $support->inquiry_type = $request->type ?? null;
                 $support->status = 3;
                 $support->user_id = auth()->user()->id;
+                $support->created_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $support->updated_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $support->save();
 
                 return successMsg('Thank you submitting you query.');

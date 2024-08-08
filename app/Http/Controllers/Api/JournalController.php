@@ -306,6 +306,8 @@ class JournalController extends Controller
                             $criteria->description = $vaal ?? null;
                             $criteria->created_by = auth()->user()->id;
                             $criteria->status = 1;
+                            $criteria->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                            $criteria->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                             $criteria->save();
                             array_push($newCriteriaArr, $criteria->id);
                         }
@@ -322,6 +324,8 @@ class JournalController extends Controller
                 $journal->mood_id = $request->mood_id;
                 $journal->status = 1;
                 $journal->created_by = auth()->user()->id;
+                $journal->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $journal->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $journal->save();
 
                 if (isset($request->file) && count($request->file) > 0) {
@@ -331,6 +335,8 @@ class JournalController extends Controller
                         $journalImage->journal_id = $journal->id;
                         $journalImage->name = $name;
                         $journalImage->type = 'image';
+                        $journalImage->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                        $journalImage->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                         $journalImage->save();
                     }
                 }
@@ -341,6 +347,8 @@ class JournalController extends Controller
                         $journalCriteria->journal_id = $journal->id;
                         $journalCriteria->search_id = $value;
                         $journalCriteria->status = 1;
+                        $journalCriteria->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                        $journalCriteria->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                         $journalCriteria->save();
                     }
                 }

@@ -451,12 +451,16 @@ class RoutineController extends Controller
                 $routine->category_id = $request->category_id;
                 $routine->created_by = auth()->user()->id;
                 $routine->status = 1;
+                $routine->created_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $routine->updated_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $routine->save();
 
                 $schedule = new Schedule;
                 $schedule->routines_id = $routine->id;
                 $schedule->frequency = $request->frequency;
                 $schedule->is_enable = 1;
+                $schedule->created_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $schedule->updated_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $schedule->save();
 
                 if ($request->frequency == 'O') {
