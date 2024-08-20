@@ -18,6 +18,7 @@ class SupportController extends Controller
     public function supportCommunication(Request $request)
     {
         try {
+            HelpSupport::where('admin_seen', 0)->update(['admin_seen'=> 1]);
             if($request->ajax()){
                 $data = HelpSupport::select('help_and_supports.*');
                 if($request->filled('search')){
@@ -136,6 +137,25 @@ class SupportController extends Controller
                 $support->past_response = $request->message ?? null;
                 $support->updated_at = date('Y-m-d H:i:s');
                 $support->save();
+
+                if(isset($request->message)){
+                    $user = User::where('id', $support->user_id)->first();
+
+                    $notify = new Notify;
+                    $notify->sender_id = auth()->user()->id;
+                    $notify->receiver_id = $user->id;
+                    $notify->type = 'SUPPORT';
+                    $notify->title = 'New Message';
+                    $notify->message = $request->message;
+                    $notify->save();
+
+                    $pushData = array(
+                        'msg' => $request->message,
+                        'title' => 'New Message'
+                    );
+                    sendNotification($user->fcm_token, $pushData);
+                }
+
                 return successMsg('Message sent successfully');
             }
         } catch (\Exception $e) {

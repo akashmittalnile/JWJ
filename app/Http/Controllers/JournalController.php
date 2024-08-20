@@ -16,7 +16,7 @@ class JournalController extends Controller
     {
         try {
             if($request->ajax()){
-                $data = Journal::join('users as u', 'u.id', '=', 'journals.created_by')->select('journals.*')->orderByDesc('id');
+                $data = Journal::join('users as u', 'u.id', '=', 'journals.created_by')->select('journals.*')->orderByDesc('journals.created_at');
                 if($request->filled('search')){
                     $data->whereRaw("(`journals`.`title` LIKE '%" . $request->search . "%' or `u`.`name` LIKE '%" . $request->search . "%' or `u`.`email` LIKE '%" . $request->search . "%' or `u`.`mobile` LIKE '%" . $request->search . "%')");
                 }

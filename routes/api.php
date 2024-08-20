@@ -120,6 +120,8 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::post('create-query', [SupportController::class, 'createQuery']);
     Route::get('query-list', [SupportController::class, 'queryList']);
     Route::get('inquiry-type-list', [SupportController::class, 'inquiryList']);
+    Route::get('unseen_query_count', [SupportController::class, 'unseenSupportCount']);
+    Route::post('seen-support', [SupportController::class, 'seenSupport']);
 
     Route::post('chat-record', [SupportController::class, 'chatRecord']);
     Route::post('chat-image', [SupportController::class, 'chatImage']);

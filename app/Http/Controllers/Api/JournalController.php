@@ -76,7 +76,7 @@ class JournalController extends Controller
             if($request->filled('mood_id')) $journal->where('journals.mood_id', $request->mood_id);
             if($request->filled('date')) $journal->whereDate('journals.created_at', $request->date);
             if($request->filled('search_criteria_id')) $journal->whereIn('jsc.search_id', $request->search_criteria_id);
-            $journal = $journal->select('journals.*')->orderByDesc('journals.id')->distinct('journals.id')->paginate(config('constant.apiPaginatePerPage'));
+            $journal = $journal->select('journals.*')->orderByDesc('journals.created_at')->distinct('journals.id')->paginate(config('constant.apiPaginatePerPage'));
             $response = array();
             foreach($journal as $val){
                 $imgs = JournalImage::where('journal_id', $val->id)->get();
@@ -97,6 +97,7 @@ class JournalController extends Controller
                 $temp['id'] = $val->id;
                 $temp['title'] = $val->title;
                 $temp['content'] = $val->content;
+                $temp['date'] = $val->date;
                 $temp['status'] = $val->status;
                 $temp['mood_id'] = $val->mood_id;
                 $temp['mood_name'] = $mood->name;
@@ -145,6 +146,7 @@ class JournalController extends Controller
                     'title' => $journal->title,
                     'content' => $journal->content,
                     'status' => $journal->status,
+                    'date' => $journal->date,
                     'mood_id' => $journal->mood_id,
                     'mood_name' => $mood->name,
                     'mood_logo' => isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null,
@@ -284,6 +286,7 @@ class JournalController extends Controller
                 'title' => 'required',
                 'content' => 'required',
                 'mood_id' => 'required',
+                'date' => 'required',
                 'file' => 'array',
                 'file.*' => 'max:5120',
                 'criteria' => 'array',
@@ -323,6 +326,7 @@ class JournalController extends Controller
                 $journal->content = $request->content;
                 $journal->mood_id = $request->mood_id;
                 $journal->status = 1;
+                $journal->date = date('Y-m-d H:i:s', strtotime($request->date));
                 $journal->created_by = auth()->user()->id;
                 $journal->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $journal->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
@@ -375,6 +379,7 @@ class JournalController extends Controller
                 'title' => 'required',
                 'content' => 'required',
                 'mood_id' => 'required',
+                'date' => 'required',
                 'file' => 'array',
                 'file.*' => 'max:5120',
                 'deletefile' => 'array',
@@ -391,7 +396,9 @@ class JournalController extends Controller
                 $journal->title = $request->title;
                 $journal->content = $request->content;
                 $journal->mood_id = $request->mood_id;
-                $journal->updated_at = date('Y-m-d H:i:s');
+                $journal->date = date('Y-m-d H:i:s', strtotime($request->date));
+                $journal->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $journal->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $journal->save();
 
                 if(isset($request->deletefile) && count($request->deletefile) > 0){

@@ -68,6 +68,37 @@ class SupportController extends Controller
     }
 
     // Dev name : Dishant Gupta
+    // This function is used to seen all messages which is sended by admin
+    public function seenSupport(Request $request){
+        try {
+            $validator = Validator::make($request->all(), [
+                'id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                HelpSupport::where('user_id', auth()->user()->id)->where('id', $request->id)->update([
+                    'user_seen' => 1
+                ]);  
+                return successMsg('Support seen');
+            }
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to seen all messages which is sended by admin
+    public function unseenSupportCount(){
+        try {
+            $support = HelpSupport::where('user_id', auth()->user()->id)->where('user_seen', 0)->count();
+            return successMsg('Support unseen count', $support);
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to getting the list of user query
     public function queryList(Request $request) {
         try{
@@ -89,6 +120,7 @@ class SupportController extends Controller
                 $temp['admin_profile'] = isset($admin->profile) ? assets('uploads/profile/'.$admin->profile) : null;
                 $temp['type_name'] = config("constant.inquiry_type")[$val->inquiry_type];
                 $temp['type'] = $val->inquiry_type;
+                $temp['seen'] = $val->user_seen == 1 ? true : false;
                 $temp['status'] = $val->status;
                 $temp['status_name'] = ($val->status == 1) ? 'Closed' : (($val->status == 2) ? 'In-Progress' : 'Pending');
                 $temp['query_date'] = date('d M, Y h:i A', strtotime($val->created_at));

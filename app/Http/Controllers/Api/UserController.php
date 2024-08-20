@@ -271,6 +271,7 @@ class UserController extends Controller
     // This function is used to getting the result acc. to search
     public function search(Request $request) {
         try{
+            $now = Carbon::now();
             $journal = Journal::where('journals.created_by', auth()->user()->id);
             if($request->filled('search')) $journal->whereRaw("(`journals`.`title` LIKE '%" . $request->search . "%' or `journals`.`content` LIKE '%" . $request->search . "%')");
             else if($request->filled('date')) $journal->whereDate('journals.created_at', date('Y-m-d', strtotime($request->date)));
@@ -360,7 +361,10 @@ class UserController extends Controller
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $routine[] = $temp;
             }
-            $response = array(['journal' => $journals, 'community' => $community, 'routine' => $routine]);
+            $mood = UserMood::whereDate('created_at', $now)->where('user_id', auth()->user()->id)->first();
+            $moods['mood_name'] = $mood->mood->name ?? null;
+            $moods['mood_image'] = isset($mood->mood->logo) ? assets('assets/images/'.$mood->mood->logo) : null;
+            $response = array(['journal' => $journals, 'community' => $community, 'routine' => $routine, 'today_mood' => $moods]);
             return successMsg('Search', $response);
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

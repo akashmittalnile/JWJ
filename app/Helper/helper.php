@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\DefaultMail;
 use App\Models\Community;
 use App\Models\FirebaseChat;
+use App\Models\HelpSupport;
 use App\Models\Journal;
 use App\Models\Notify;
 use App\Models\Plan;
@@ -282,6 +283,17 @@ if (!function_exists('isAlert')) {
     {
         $chat = FirebaseChat::where('unseen_msg_count', '>=', '1')->count();
         if($chat > 0) return true;
+        return false;
+    }
+}
+
+// Dev name : Dishant Gupta
+// This function is used to check message alert for users
+if (!function_exists('isSupport')) {
+    function isSupport()
+    {
+        $support = HelpSupport::where('admin_seen', '0')->count();
+        if($support > 0) return true;
         return false;
     }
 }

@@ -159,8 +159,15 @@
         // alert(6);
         const chatCol = collection(defaultFirestore, 'jwj_chats/' + group_id_new2 + '/messages');
         const date = new Date();
-        function convertTZ(date, tzString) {
-            return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+        function formatDateToUTC(date) {
+            const pad = (num) => num.toString().padStart(2, '0'); 
+            const year = date.getUTCFullYear();
+            const month = pad(date.getUTCMonth() + 1);
+            const day = pad(date.getUTCDate());
+            const hours = pad(date.getUTCHours());
+            const minutes = pad(date.getUTCMinutes());
+            const seconds = pad(date.getUTCSeconds());
+            return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
         }
         let data = {
             text: message ?? "HHH",
@@ -176,7 +183,7 @@
                 _id: 1
             },
             _id: random,
-            createdAt: convertTZ(date, "America/New_York")
+            createdAt: formatDateToUTC(date)
         };
 
         let chatMsg
@@ -355,7 +362,7 @@
     function admin(row) {
         let userProImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/avatar.png') }}" : $("#ajax-chat-url-img").val();
         let html = '';
-        var formattedDate = moment.unix(row.createdAt.seconds).format('MMM DD, YYYY HH:mm A');
+        var formattedDate = moment.utc(row.createdAt.seconds)?.local()?.format('MMM DD, YYYY hh:mm A');
         if (row.sendto == 1) {
 
             html = `<div class="message-item ">
