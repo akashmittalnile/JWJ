@@ -302,6 +302,7 @@ class UserController extends Controller
                 $journaltemp['mood_logo'] = isset($mood->logo) ? assets('assets/images/'.$mood->logo) : null;
                 $journaltemp['images'] = $path;
                 $journaltemp['search_criteria'] = $search;
+                $journaltemp['date'] = date('Y-m-d H:i:s', strtotime($val->date));
                 $journaltemp['created_at'] = date('d M, Y h:i A', strtotime($val->created_at));
                 $journaltemp['updated_at'] = date('d M, Y h:i A', strtotime($val->updated_at));
                 $journals[] = $journaltemp;
@@ -361,7 +362,7 @@ class UserController extends Controller
                 $temp['created_at'] = date('d M, Y h:i A', strtotime($myroutine->created_at));
                 $routine[] = $temp;
             }
-            $mood = UserMood::whereDate('created_at', $now)->where('user_id', auth()->user()->id)->first();
+            $mood = UserMood::whereDate('created_at', date('Y-m-d', strtotime($request->date)))->where('user_id', auth()->user()->id)->first();
             $moods['mood_name'] = $mood->mood->name ?? null;
             $moods['mood_image'] = isset($mood->mood->logo) ? assets('assets/images/'.$mood->mood->logo) : null;
             $response = array(['journal' => $journals, 'community' => $community, 'routine' => $routine, 'today_mood' => $moods]);

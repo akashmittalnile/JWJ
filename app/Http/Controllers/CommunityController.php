@@ -199,6 +199,7 @@ class CommunityController extends Controller
                 $community->description = $request->description;
                 $community->status = 1;
                 $community->created_by = auth()->user()->id ?? null;
+                $community->created_at = date('Y-m-d H:i:s', strtotime($request->created_at));
                 $community->save();
                 
                 if ($request->hasFile("file")) {

@@ -282,10 +282,17 @@
             const group_id = "1-" + receiver_id;
             let message = $('#message-input');
             const date = new Date();
-            function convertTZ(date, tzString) {
-                return new Date((typeof date === "string" ? new Date(date) : date).toLocaleString("en-US", {timeZone: tzString}));   
+            function formatDateToUTC(date) {
+                const pad = (num) => num.toString().padStart(2, '0'); 
+                const year = date.getUTCFullYear();
+                const month = pad(date.getUTCMonth() + 1);
+                const day = pad(date.getUTCDate());
+                const hours = pad(date.getUTCHours());
+                const minutes = pad(date.getUTCMinutes());
+                const seconds = pad(date.getUTCSeconds());
+                return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
             }
-            let time = convertTZ(date, "America/New_York");
+            let time = formatDateToUTC(date);
             let image = '';
             if ($('#upload-file')[0].files[0]) image = URL.createObjectURL($('#upload-file')[0].files[0]);
             else image = '';
@@ -348,7 +355,7 @@
                                     ${(image !== undefined && image !== '') ? `<img style="border: 1px solid #eee; border-radius: 8px; box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;" src="${image}" alt="avatar"  width="100"/>` : ''}
                                     ${(message !== '' && message !== undefined) ? `<p>${message}</p>` : ''}
                                 </div>
-                                <div class="time">${time}</div>
+                                <div class="time">${ moment.utc(time)?.local()?.format('MMM DD, YYYY hh:mm A') }</div>
                             </div>
                         </div>
                     </div>`;
@@ -362,7 +369,7 @@
     function admin(row) {
         let userProImg = ($("#ajax-chat-url-img").val() == "") ? "{{ assets('assets/images/avatar.png') }}" : $("#ajax-chat-url-img").val();
         let html = '';
-        var formattedDate = moment.utc(row.createdAt.seconds)?.local()?.format('MMM DD, YYYY hh:mm A');
+        var formattedDate = moment.utc(row.createdAt)?.local()?.format('MMM DD, YYYY hh:mm A');
         if (row.sendto == 1) {
 
             html = `<div class="message-item ">

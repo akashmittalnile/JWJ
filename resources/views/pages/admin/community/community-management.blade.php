@@ -117,6 +117,7 @@
         </div>
     </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 @endsection
 
 @push('js')
@@ -150,7 +151,10 @@
         },
         submitHandler: function(form, e) {
             e.preventDefault();
+            const date = new Date();
+            let time = moment.utc(date)?.local()?.format('MMM DD, YYYY hh:mm A');
             let formData = new FormData(form);
+            formData.append('created_at', time);
             $.ajax({
                 type: 'post',
                 url: form.action,

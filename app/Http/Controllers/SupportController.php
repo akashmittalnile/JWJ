@@ -135,7 +135,7 @@ class SupportController extends Controller
                 $support = HelpSupport::where('id', $id)->first();
                 $support->status = $request->status ?? null;
                 $support->past_response = $request->message ?? null;
-                $support->updated_at = date('Y-m-d H:i:s');
+                $support->updated_at = date('Y-m-d H:i:s', strtotime($request->created_at));
                 $support->save();
 
                 if(isset($request->message)){
@@ -304,6 +304,7 @@ class SupportController extends Controller
                 $notification->plan_id = $request->plan;
                 $notification->user_id = auth()->user()->id;
                 $notification->status = 1;
+                $notification->created_at = date('Y-m-d H:i:s', strtotime($request->created_at));
                 $notification->save();
                 if(isset($request->plan) && ($request->plan != 100)){
                     $users = User::where('status', 1)->where('role', 1)->where('plan_id', $request->plan)->get();
