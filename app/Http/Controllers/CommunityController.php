@@ -607,8 +607,6 @@ class CommunityController extends Controller
     public function createPost(Request $request)
     {
         try {
-
-            // Validate incoming request data
             $validator = Validator::make($request->all(), [
                 'title' => 'required|string',
                 'post_description' => 'required|string',
@@ -625,6 +623,7 @@ class CommunityController extends Controller
                 $post->title = $request->input('title');
                 $post->post_description = $request->input('post_description');
                 $post->created_by = auth()->user()->id ?? null;
+                $post->created_at = date('Y-m-d H:i:s', strtotime($request->created_at));
                 $post->save();
                 
                 if ($request->hasFile("images")) {
@@ -732,6 +731,7 @@ class CommunityController extends Controller
                 $comment->object_type = 'post';
                 $comment->comment = $request->comment ?? null;
                 $comment->status = 1;
+                $comment->created_at = date('Y-m-d H:i:s', strtotime($request->created_at));
                 $comment->save();
 
                 if(auth()->user()->id != $post->created_by){
