@@ -181,6 +181,7 @@ table.heading-name{
         <tr>
             <td valign="middle">
                 <table align="center" class="journal-description">
+                    <tr><td><b>{!! $data->title ?? 'Title' !!}</b></td></tr>
                     <tr><td><p>{!! $data->content ?? 'Lorem ipsum, dolor sit amet consectetur adipisicing elit. Natus voluptatem eveniet consequuntur sint vel aut esse debitis voluptatum. Exercitationem ipsam mollitia ipsa et error natus, labore nobis vero dignissimos maiores?' !!}</p></td></tr>
                 </table>
             </td>
@@ -191,7 +192,7 @@ table.heading-name{
                 <table align="center">
                     <tr>
                         @forelse($data->images as $val)
-                        @php $img = (isset($val->name) && file_exists(public_path('uploads/journal/'.$val->name))) ? assets('uploads/journal/'.$val->name) : assets('assets/images/no-image.jpg')  @endphp
+                        @php $img = (isset($val->name) && file_exists(public_path('uploads/journal/thumb/'.$val->name))) ? assets('uploads/journal/thumb/'.$val->name) : assets('assets/images/no-image.jpg')  @endphp
                         <td>
                             <img src="data:image/png;base64,{{ base64_encode(file_get_contents($img)) }}" alt="" 
                             style="width: auto; height: 100px; margin:20px 0px 14px; display: block;">

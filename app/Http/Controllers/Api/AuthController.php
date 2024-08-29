@@ -350,7 +350,7 @@ class AuthController extends Controller
                         if(isset($user->profile)){
                             fileRemove("/uploads/profile/" . $user->profile);
                         }
-                        $name = fileUpload($request->file, "/uploads/profile/");
+                        $name = fileUpload($request->file, "/uploads/profile/", true);
                         $user->profile = $name;
                     }
                     $user->name = ucwords($request->name);

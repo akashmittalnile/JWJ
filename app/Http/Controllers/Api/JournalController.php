@@ -328,13 +328,13 @@ class JournalController extends Controller
                 $journal->status = 1;
                 $journal->date = date('Y-m-d H:i:s', strtotime($request->date));
                 $journal->created_by = auth()->user()->id;
-                $journal->created_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
-                $journal->updated_at =  isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $journal->created_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
+                $journal->updated_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $journal->save();
 
                 if (isset($request->file) && count($request->file) > 0) {
                     foreach ($request->file as $key => $value) {
-                        $name = fileUpload($request->file[$key], "/uploads/journal/");
+                        $name = fileUpload($request->file[$key], "/uploads/journal/", true);
                         $journalImage = new JournalImage;
                         $journalImage->journal_id = $journal->id;
                         $journalImage->name = $name;
@@ -412,7 +412,7 @@ class JournalController extends Controller
                 }
                 if (isset($request->file) && count($request->file) > 0) {
                     foreach ($request->file as $key => $value) {
-                        $name = fileUpload($request->file[$key], "/uploads/journal/");
+                        $name = fileUpload($request->file[$key], "/uploads/journal/", true);
                         $journalImage = new JournalImage;
                         $journalImage->journal_id = $journal->id;
                         $journalImage->name = $name;

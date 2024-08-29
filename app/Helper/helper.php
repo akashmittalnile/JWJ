@@ -192,14 +192,33 @@ if (!function_exists('getMonthDate')) {
 // Dev name : Dishant Gupta
 // This function is used to save a file
 if (!function_exists('fileUpload')) {
-    function fileUpload($file, $path)
+    function fileUpload($file, $path, $thumb = false)
     {
         try{
             $name = "IMG_".time().rand().'.'.$file->extension();
             // $file->move(public_path("$path"), $name);
             $img = \Image::make($file);
-            $path = $path.$name;
-            $img->save(public_path($path), 50);
+            $path1 = $path.$name;
+            $img->save(public_path($path1), 50);
+            if($thumb){
+                $height = \Image::make($file)->height();
+                $width = \Image::make($file)->width();
+                if ($width > $height) {
+                    $image  = \Image::make($file)->resize(151, 100, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                } elseif ($width-$height <= 20) {
+                    $image  = \Image::make($file)->resize(100, 100, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                } else {
+                    $image  = \Image::make($file)->resize(67, 100, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                }
+                $path2 = $path."thumb/".$name;
+                $image->save(public_path($path2), 50);
+            }
             return $name;
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
