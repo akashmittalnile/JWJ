@@ -39,6 +39,7 @@ Route::get('policies', [UserController::class, "policies"]);
 
 Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('logout', [AuthController::class, "logout"]);
+    Route::get('delete-account', [AuthController::class, "deleteAccount"]);
     Route::get('search-criteria', [JournalController::class, 'searchCriteria']);
 
     Route::get('notifications', [SupportController::class, 'notifications']);

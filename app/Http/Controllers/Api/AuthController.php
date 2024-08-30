@@ -155,8 +155,9 @@ class AuthController extends Controller
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $user = User::where('email', $request->email)->whereIn('status', [0, 1, 2, 3])->first();
+                $user = User::where('email', $request->email)->whereIn('status', [0, 1, 2, 3, 4])->first();
                 if(isset($user->id)){
+                    if($user->status == 4) errorMsg('Your account is deleted. Please contact administrator');
                     if($user->status == 1){
                         if (Hash::check($request->password, $user->password)) {
                             if(isset($user->access_token)){
@@ -422,6 +423,22 @@ class AuthController extends Controller
             ]);
             Auth::user()->tokens()->delete();
             return successMsg('Logged out successfully');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to self inactive
+    public function deleteAccount() {
+        try{
+            User::where('id', auth()->user()->id)->update([
+                'status' => 4,
+                'fcm_token' => null,
+                'access_token' => null
+            ]);
+            Auth::user()->tokens()->delete();
+            return successMsg('Account deleted successgully.');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }
