@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactUs;
 use App\Models\HelpSupport;
 use App\Models\Notification;
 use App\Models\Notify;
@@ -329,6 +330,55 @@ class SupportController extends Controller
                 }
                 return successMsg('Notification sent successfully');
             }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function contactList(Request $request) {
+        try{
+            if($request->ajax()){
+                $data = ContactUs::where('status', 1);
+                if($request->filled('search')){
+                    $data->whereRaw("(`name` LIKE '%" . $request->search . "%' or `email` LIKE '%" . $request->search . "%' or `phone` LIKE '%" . $request->search . "%')");
+                }
+                $data = $data->orderByDesc('id')->paginate(config('constant.paginatePerPage'));
+                
+                if($data->total() < 1) return errorMsg("No query found");
+
+                $html = '';
+                foreach($data as $key => $val)
+                {
+                    $pageNum = $data->currentPage();
+                    $index = ($pageNum == 1) ? ($key + 1) : ($key + 1 + (config('constant.paginatePerPage') * ($pageNum - 1)));
+                    $html .= "<tr>
+                    <td>
+                        <div class='sno'>$index</div>
+                    </td>
+                    <td>
+                        $val->name
+                    </td>
+                    <td>
+                        <a href='mailto:".$val->email."'><img width='20' src=".assets('assets/images/sms1.svg')."></a> $val->email
+                    </td>
+                    <td>
+                        <a href='tel:".$val->phone."'><img width='20' src=".assets('assets/images/call1.svg')."></a> $val->phone
+                    </td>
+                    <td>
+                        $val->message
+                    </td>
+                </tr>";
+                }
+
+                $response = array(
+                    'currentPage' => $data->currentPage(),
+                    'lastPage' => $data->lastPage(),
+                    'total' => $data->total(),
+                    'html' => $html,
+                );
+                return successMsg('Query list', $response);
+            }
+            return view('pages.admin.support.contact-us');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

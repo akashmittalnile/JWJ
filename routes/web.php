@@ -130,6 +130,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
         Route::post('/delete-review', [DashboardController::class, 'deleteRating'])->name('rating-review.delete');
         Route::get('/rating-reports', [DashboardController::class, 'ratingDownloadReport'])->name('rating-review.download.report');
 
+        // contact us
+        Route::get('/contact-us', [SupportController::class, 'contactList'])->name('contact.list');
+
         // logout
         Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
     });

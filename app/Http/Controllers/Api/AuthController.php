@@ -40,12 +40,14 @@ class AuthController extends Controller
                         $user->role = 1;
                         $user->status = -1;
                     }
-                    // $data['subject'] = 'Verify Your Email on Journey with journals';
-                    // $data['site_title'] = 'Verify Your Email on Journey with journals';
-                    // $data['view'] = 'pages.user.email.email-verify';
-                    // $data['to_email'] = $request->email;
-                    // $data['otp'] = $code;
-                    // sendEmail($data);
+
+                    $data['subject'] = 'Verify Your Email on Journey with journals';
+                    $data['site_title'] = 'Verify Your Email on Journey with journals';
+                    $data['view'] = 'pages.user.email.email-verify';
+                    $data['to_email'] = $request->email;
+                    $data['otp'] = $code;
+                    sendEmail($data);
+
                     $user->save();
                     return successMsg('OTP sended to your email address.', ['otp' => $code]);
                 } else return errorMsg('This email is already exist!');
@@ -93,9 +95,6 @@ class AuthController extends Controller
                 'name' => 'required',
                 'password' => 'required',
                 'email' => 'required|email',
-                'gender' => 'required',
-                'mobile' => 'required',
-                'country_code' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -114,9 +113,9 @@ class AuthController extends Controller
                         $user->country_code = $request->country_code ?? null;
                         $user->country_flag = $request->country_flag ?? null;
                         $user->mobile = $request->mobile ?? null;
-                        $user->country_code = $request->country_code;
-                        $user->country_flag = $request->country_flag;
-                        $user->gender = $request->gender ?? 1;
+                        $user->country_code = $request->country_code ?? null;
+                        $user->country_flag = $request->country_flag ?? null; 
+                        $user->gender = $request->gender ?? null;
                         $user->password = Hash::make($request->password);
                         $user->role = 1;
                         $user->status = 1;
@@ -125,12 +124,14 @@ class AuthController extends Controller
                             $user->fcm_token = $request->fcm_token;
                         }
                         $user->save();
-                        // $data['subject'] = 'Welcome to Journey with journals';
-                        // $data['site_title'] = 'Welcome to Journey with journals';
-                        // $data['view'] = 'pages.user.email.registration-successful';
-                        // $data['to_email'] = $request->email;
-                        // $data['customer_name'] = $user->name;
-                        // sendEmail($data);
+
+                        $data['subject'] = 'Welcome to Journey with journals';
+                        $data['site_title'] = 'Welcome to Journey with journals';
+                        $data['view'] = 'pages.user.email.registration-successful';
+                        $data['to_email'] = $request->email;
+                        $data['customer_name'] = $user->name;
+                        sendEmail($data);
+
                         $token = $user->createToken("journey_with_journals")->plainTextToken;
                         User::where('email', $request->email)->where('id', $user->id)->update([
                             'access_token' => $token
@@ -157,7 +158,7 @@ class AuthController extends Controller
             } else {
                 $user = User::where('email', $request->email)->whereIn('status', [0, 1, 2, 3, 4])->first();
                 if(isset($user->id)){
-                    if($user->status == 4) errorMsg('Your account is deleted. Please contact administrator');
+                    if($user->status == 4) errorMsg('Your account is inactive. Please contact administrator for the same');
                     if($user->status == 1){
                         if (Hash::check($request->password, $user->password)) {
                             if(isset($user->access_token)){
@@ -211,13 +212,15 @@ class AuthController extends Controller
                         $code = rand(1000,9999);
                         $user->otp = $code;
                         $user->updated_at = date('Y-m-d H:i:s');
-                        // $data['subject'] = 'Reset Your Journey with journals password';
-                        // $data['site_title'] = 'Reset Your Journey with journals password';
-                        // $data['view'] = 'pages.user.email.send-otp';
-                        // $data['to_email'] = $request->email;
-                        // $data['otp'] = $code;
-                        // $data['customer_name'] = $user->name;
-                        // sendEmail($data);
+
+                        $data['subject'] = 'Reset Your Journey with journals password';
+                        $data['site_title'] = 'Reset Your Journey with journals password';
+                        $data['view'] = 'pages.user.email.send-otp';
+                        $data['to_email'] = $request->email;
+                        $data['otp'] = $code;
+                        $data['customer_name'] = $user->name;
+                        sendEmail($data);
+
                         $user->save();
                         return successMsg('OTP sent to your email address', ['otp' => $code]);
                     } else return errorMsg('Your account is inactived. Please contact administrator');
@@ -339,8 +342,6 @@ class AuthController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
                 'user_name' => 'required',
-                'mobile' => 'required',
-                'country_code' => 'required',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -356,9 +357,9 @@ class AuthController extends Controller
                     }
                     $user->name = ucwords($request->name);
                     $user->user_name = strtolower($request->user_name);
-                    $user->country_code = $request->country_code;
-                    $user->country_flag = $request->country_flag;
-                    $user->mobile = $request->mobile;
+                    $user->country_code = $request->country_code ?? null;
+                    $user->country_flag = $request->country_flag ?? null;
+                    $user->mobile = $request->mobile ?? null;
                     $user->gender = $request->gender ?? null;
                     $user->updated_at = date('Y-m-d H:i:s');
                     $user->save();
@@ -438,7 +439,7 @@ class AuthController extends Controller
                 'access_token' => null
             ]);
             Auth::user()->tokens()->delete();
-            return successMsg('Account deleted successgully.');
+            return successMsg('Account deleted successfully.');
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

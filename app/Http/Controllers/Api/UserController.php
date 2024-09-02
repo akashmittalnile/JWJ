@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Community;
 use App\Models\CommunityImage;
+use App\Models\ContactUs;
 use App\Models\Journal;
 use App\Models\JournalImage;
 use App\Models\JournalSearchCriteria;
@@ -507,6 +508,39 @@ class UserController extends Controller
     public function termsCondition(){
         try{
             return view('pages.user.policy.term-condition');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function contactUs(){
+        try{
+            return view('pages.user.policy.contact-us');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    public function contactStore(Request $request){
+        try{
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'email' => 'required',
+                'phone' => 'required',
+                'message' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $contact = new ContactUs;
+                $contact->name = $request->name; 
+                $contact->email = $request->email; 
+                $contact->phone = $request->phone; 
+                $contact->message = $request->message; 
+                $contact->status = 1; 
+                $contact->save();
+                return successMsg('Query has been submitted successfully.'); 
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

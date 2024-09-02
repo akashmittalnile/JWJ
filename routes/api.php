@@ -35,6 +35,8 @@ Route::get('send-routine-notification', [RoutineController::class, 'sendRoutinen
 Route::get('download-pdf/{id}/{date}', [JournalController::class, "generatePDF"]);
 Route::get('privacy-policy', [UserController::class, "privacyPolicy"]);
 Route::get('terms-condition', [UserController::class, "termsCondition"]);
+Route::get('contact-us', [UserController::class, "contactUs"]);
+Route::post('contact-store', [UserController::class, "contactStore"]);
 Route::get('policies', [UserController::class, "policies"]);
 
 Route::middleware(["auth:sanctum", "activeUser"])->group(function () {

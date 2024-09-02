@@ -137,8 +137,12 @@ if (!function_exists('assets')) {
 if (!function_exists('sendEmail')) {
     function sendEmail($data)
     {
-        $data['from_email'] = config('constant.mailFromAddress');
-        Mail::to($data['to_email'])->send(new DefaultMail($data));
+        try{
+            $data['from_email'] = config('constant.mailFromAddress');
+            Mail::to($data['to_email'])->send(new DefaultMail($data));
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
     }
 }
 
