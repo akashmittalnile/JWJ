@@ -7,6 +7,7 @@ use App\Models\MoodMaster;
 use App\Models\User;
 use App\Models\UserMood;
 use App\Models\UserPlan;
+use App\Models\UserReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -440,6 +441,32 @@ class AuthController extends Controller
             ]);
             Auth::user()->tokens()->delete();
             return successMsg('Account deleted successfully.');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    // This function is used to report a post
+    public function userReport(Request $request) {
+        try{
+            if(isset($request->reason_id)) $valid = array('id' => 'required', 'reason_id' => 'required');
+            else $valid = array('id' => 'required', 'other_reason' => 'required');
+            $validator = Validator::make($request->all(), $valid);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $report = UserReport::where('user_id', $request->id)->where('reported_by', auth()->user()->id)->first();
+                if(isset($report->id)) return errorMsg('Already reported to this user');
+                $report = new UserReport;
+                $report->user_id = $request->id;
+                $report->reported_by = auth()->user()->id;
+                $report->reason_id = $request->reason_id ?? null;
+                $report->other_reason = $request->other_reason ?? null;
+                $report->status = 1;
+                $report->save();
+                return successMsg('Post reported successfully.');
+            }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());
         }

@@ -71,6 +71,7 @@ Route::middleware(["auth:sanctum", "activeUser"])->group(function () {
     Route::get('profile', [AuthController::class, 'profile']);
     Route::post('update-profile', [AuthController::class, 'updateProfile']);
     Route::post('change-password', [AuthController::class, 'changePassword']);
+    Route::post('user-report', [AuthController::class, 'userReport']);
 
     Route::get('journals', [JournalController::class, 'journal']);
     Route::get('journal/{id}', [JournalController::class, 'journalDetails']);
