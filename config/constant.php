@@ -56,7 +56,7 @@ return [
     'storageBucket' => env('STORAGEBUCKET', "chatapp-29659.appspot.com"),
     'messagingSenderId' => env('MESSAGINGSENDERID', "1010083815791"),
     'appId' => env('APPID', "1:1010083815791:web:e26a047de4420d04a3889a"),
-	'mailFromAddress' => env('MAIL_FROM_ADDRESS', 'JourneyWJournals@gmail.com'),
+	'mailFromAddress' => env('MAIL_FROM_ADDRESS', 'journeywithjournals1@gmail.com'),
 	'stripeWebhookSecret' => env('STRIPE_WEBHOOK_SECRET', 'whsec_i0kI6D0v85qLzWqRyBgZZZQh04CXk0l4')
 ];
 

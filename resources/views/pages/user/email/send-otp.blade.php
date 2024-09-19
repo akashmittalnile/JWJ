@@ -14,7 +14,10 @@
             <tr>
                 <td style="font-family:tahoma, geneva, sans-serif;color:#29054a;font-size:12px; padding:10px;background: #ffffff;text-align: center;">
                     <a href="javascript:void(0)" title="Journey_with_journals">
-                        <img alt="Journey_with_journals" src="{{ assets('assets/images/logo.svg') }}" height="60">
+                        @php
+                            $logo = assets('assets/images/logo.svg');
+                        @endphp
+                        <img alt="Journey_with_journals" src="data:image/png;base64,{{ base64_encode(file_get_contents($logo)) }}" height="60">
                     </a>
                 </td>
             </tr>

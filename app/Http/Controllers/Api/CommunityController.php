@@ -55,6 +55,7 @@ class CommunityController extends Controller
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
+                $temp['created_by'] = $val->created_by;
                 $temp['image'] = $images;
                 $temp['follow'] = isset($ufc->id) ? true : false;
                 $temp['member_follow_count'] = $followCount ?? 0;
@@ -122,6 +123,7 @@ class CommunityController extends Controller
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
+                $temp['created_by'] = $val->created_by;
                 $temp['reject_reason'] = $val->reject_reason ?? null;
                 $temp['status_name'] = $status_name;
                 $temp['image'] = $images;
@@ -183,6 +185,7 @@ class CommunityController extends Controller
                 $temp['name'] = $val->name;
                 $temp['description'] = $val->description;
                 $temp['status'] = $val->status;
+                $temp['created_by'] = $val->created_by;
                 $temp['status_name'] = $status_name;
                 $temp['image'] = $images;
                 $temp['follow'] = true;
@@ -261,6 +264,7 @@ class CommunityController extends Controller
                         $temp['id'] = $item->id;
                         $temp['title'] = $item->title;
                         $temp['description'] = $item->post_description;
+                        $temp['created_by'] = $item->created_by;
                         $temp['image'] = $image;
                         $temp['is_liked'] = (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0;
                         $temp['likes_count'] = $item->likeCount() ?? 0;
@@ -286,6 +290,7 @@ class CommunityController extends Controller
                         'name' => $data->name,
                         'description' => $data->description,
                         'status' => $data->status,
+                        'created_by' => $data->created_by,
                         'image' => $images,
                         'my_community' => ($data->created_by == auth()->user()->id) ? true : false,
                         'follow' => isset($ufc->id) ? true : false,
@@ -727,6 +732,7 @@ class CommunityController extends Controller
                     'id' => $post->id,
                     'title' => $post->title,
                     'description' => $post->post_description,
+                    'created_by' => $post->created_by,
                     'image' => $image,
                     'is_liked' => (isset($isLiked->id) && $isLiked->status == 1) ? 1 : 0,
                     'likes_count' => $likesCount ?? 0,
@@ -934,7 +940,7 @@ class CommunityController extends Controller
                         $report->other_reason = $request->other_reason ?? null;
                         $report->status = 1;
                         $report->save();
-                        return successMsg('Post reported successfully.');
+                        return successMsg('Post has been reported successfully please allow us a time of 24 hours to check the same we will remove the content or we will delete the user who has posted the content.');
                     } else return errorMsg('Please follow community first.');
                 } else return errorMsg('Post not found');
             }

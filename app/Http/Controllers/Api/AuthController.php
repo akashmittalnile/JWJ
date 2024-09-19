@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\MoodMaster;
 use App\Models\User;
+use App\Models\UserBlock;
 use App\Models\UserMood;
 use App\Models\UserPlan;
 use App\Models\UserReport;
@@ -450,22 +451,63 @@ class AuthController extends Controller
     // This function is used to report a post
     public function userReport(Request $request) {
         try{
-            if(isset($request->reason_id)) $valid = array('id' => 'required', 'reason_id' => 'required');
-            else $valid = array('id' => 'required', 'other_reason' => 'required');
+            if(isset($request->reason_id)) $valid = array('id' => 'required', 'reason_id' => ['required', 'exists:report_reasons,id'], 'type' => 'required|in:1,2,3');
+            else $valid = array('id' => 'required', 'other_reason' => 'required', 'type' => 'required|in:1,2,3');
             $validator = Validator::make($request->all(), $valid);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
             } else {
-                $report = UserReport::where('user_id', $request->id)->where('reported_by', auth()->user()->id)->first();
-                if(isset($report->id)) return errorMsg('Already reported to this user');
+                $report = UserReport::where('type_id', $request->id)->where('type', $request->type)->where('reported_by', auth()->user()->id)->first();
+                if(isset($report->id)) return errorMsg('You already reported for the same!');
                 $report = new UserReport;
-                $report->user_id = $request->id;
+                $report->type_id = $request->id;
                 $report->reported_by = auth()->user()->id;
+                $report->type = $request->type;
                 $report->reason_id = $request->reason_id ?? null;
                 $report->other_reason = $request->other_reason ?? null;
                 $report->status = 1;
                 $report->save();
-                return successMsg('Post reported successfully.');
+                if($request->type == 1)
+                    $msg = "User has been reported successfully please allow us a time of 24 hours to check the same we will delete the user who has posted the content.";
+                elseif($request->type == 3)
+                    $msg = "Community has been reported successfully please allow us a time of 24 hours to check the same we will remove the content or we will delete the user who has posted the content.";
+                else
+                    $msg = "Post has been reported successfully please allow us a time of 24 hours to check the same we will remove the content or we will delete the user who has posted the content.";
+                return successMsg($msg ?? 'Post has been reported successfully please allow us a time of 24 hours to check the same we will remove the content or we will delete the user who has posted the content.');
+            }
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+     // Dev name : Dishant Gupta
+    // This function is used to block a user
+    public function userBlock(Request $request) {
+        try{
+            $validator = Validator::make($request->all(), [
+                'user_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return errorMsg($validator->errors()->first());
+            } else {
+                $alreadyBlock = UserBlock::where('user_id', $request->user_id)->where('blocked_by', auth()->user()->id)->first();
+                if(isset($alreadyBlock->id)){
+                    $state = $alreadyBlock->status;
+                    $alreadyBlock->user_id = $request->user_id;
+                    $alreadyBlock->blocked_by = auth()->user()->id;
+                    $alreadyBlock->reason = $request->reason ?? null;
+                    $alreadyBlock->status = ($state==1) ? 2 : 1;
+                    $msg = ($state==1) ? "This user has been unblocked and you will now be able to see the content that this user has posted." : "This user has been blocked and you will not be shown the content that this user has posted.";
+                    return successMsg($msg);
+                } else {
+                    $block = new UserBlock;
+                    $block->user_id = $request->user_id;
+                    $block->blocked_by = auth()->user()->id;
+                    $block->reason = $request->reason ?? null;
+                    $block->status = 1;
+                    $block->save();
+                    return successMsg('This user has been blocked and you will not be shown the content that this user has posted.');
+                }
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

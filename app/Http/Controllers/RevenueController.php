@@ -158,10 +158,20 @@ class RevenueController extends Controller
                     $plan->save();
                 } else {
                     $plan = new Plan();
-                    $plan->monthly_price = $price->unit_amount / 100;
-                    $plan->monthly_price_id = $price->id ?? null;
+                    foreach ($price->data as $val) {
+                        if (isset($val->recurring->interval) && ($val->recurring->interval == 'month')) {
+                            $plan->monthly_price = $val->unit_amount / 100;
+                            $plan->monthly_price_id = $val->id ?? null;
+                        } else {
+                            $plan->monthly_price = $val->unit_amount / 100;
+                            $plan->monthly_price_id = $val->id ?? null;
+                            $plan->anually_price = $val->unit_amount / 100;
+                            $plan->anually_price_id = $val->id ?? null;
+                        }
+                        $plan->currency = $val->currency;
+                    }
                     $plan->name = $item->name;
-                    $plan->currency = $price->currency;
+                    $plan->image = $item->description ?? null;
                     $plan->product_id = $product_id;
                     $plan->status = 1;
                     $plan->save();
