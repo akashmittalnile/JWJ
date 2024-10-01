@@ -40,6 +40,9 @@ Route::get('/phpinfo', function () {
 
 Route::stripeWebhooks('stripe-auto-payment');
 
+Route::get('/', function () {
+    return view('welcome');
+});
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     // admin login panel
     Route::get('/', [AuthController::class, 'login'])->name('login');

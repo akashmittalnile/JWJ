@@ -1,0 +1,37 @@
+.banner-section .container {max-width: 95%;}
+.banner-media-content {position: relative;  }
+.banner-media{width: 100%; height: 170px; display: block; background: #f8f4d9;/* border-radius: 4px; */overflow: hidden; margin-right: 20px; }
+.banner-media:after {content: ''; position: absolute; background: rgba(19, 96, 254, 0.3); left: 0; right: 0; top: 0; bottom: 0; }
+.banner-media img {width: 100%; height: 100%; -o-object-fit: cover; object-fit: cover; -o-object-position: center; object-position: center;}
+.banner-content {padding: 20px; width: 70%; position: absolute; z-index: 99; height: 100%; align-items: center; top: 0; margin: 0 auto; left: 0; right: 0; display: flex; }
+.banner-content h2 {font-size: 30px; color: #f8fafd; text-align: center; font-weight: 500; padding: 0; margin: 0; }
+.faq-page-section .container {max-width: 95%;}
+
+.account-page-section{padding:2rem 0 5rem;}
+.register-content-card{background: #FFFFFF; /* box-shadow: 0px 4px 14px rgb(225, 237, 249); */ border-radius: 6px; position: relative; margin: 0 auto; border: 1px solid #e5eaec; }
+.account-content-card {background: #FFFFFF; /* box-shadow: 0px 4px 14px rgb(225, 237, 249); */ border-radius: 6px; position: relative; width: 80%; margin: 0 auto; border: 1px solid #e5eaec; }
+.account-form {position: relative; padding: 24px 0px 24px 24px; border-radius: 6px; background: #fff; height: 100%; }
+.account-form form {-ms-flex-positive: 1; flex-grow: 1; display: -ms-flexbox; display: flex; -ms-flex-direction: column; flex-direction: column; -ms-flex-pack: distribute; justify-content: space-around; }
+.account-form h2 {font-size: 18px; font-weight: bold; color: #182c44; padding: 15px 0; border-radius: 2px; }
+.account-form form .row{margin-left: -5px; margin-right: -5px;}
+.account-form form .row .col-sm-4,
+.account-form form .row .col-sm-6,
+.account-form form .row .col-sm-12{padding-left:5px; padding-right:5px;}
+.account-form form .form-group label{font-size: 13px; margin-bottom: 0; font-weight: 600; } 
+.account-form form .form-group input.form-control{border-radius: 2px; font-size: 13px; padding: 10px; height: 40px; color: #393e40; } 
+.account-form form .form-group select.form-control{border-radius: 2px; font-size: 13px; padding: 10px; height: 40px; color: #393e40; } 
+.account-form form .form-group textarea.form-control{border-radius: 2px; font-size: 13px; padding: 10px; height: 70px; color: #393e40; }
+.phone-group {position: relative; }
+.phone-control {position: absolute;width:65px; border: 1px solid #ced4da; border-radius: 2px; font-size: 13px; padding: 10px; height: 40px; color: #393e40; }
+.phone-group input.form-control {padding-left: 75px !important; }
+.forgot-text{margin:10px 0;}
+.forgot-text a {font-size: 12px; color: #adbad4; text-align: center; }
+ button.btn-submit {background: #1360fe; padding: 8px 20px; border-radius: 3px; color: #fff; position: relative; text-align: center; font-weight: 600; font-size: 14px; border: none; box-shadow: none; }
+
+
+.login-content-info {border-radius: 0px 6px 6px 0; height: 100%; padding: 24px; position: relative; background: #f4f9fc; background: -moz-linear-gradient(top, #f4f9fc 0%, #ffffff 99%); background: -webkit-linear-gradient(top, #f4f9fc 0%,#ffffff 99%); background: linear-gradient(to bottom, #f4f9fc 0%,#ffffff 99%); filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f4f9fc', endColorstr='#ffffff',GradientType=0 ); }
+
+.login-content-info h2{font-size: 18px; font-weight: 700; color: #091e42; margin: 0; padding-top: 0;}
+.login-content-info p {font-size: 13px; color: #091e42; text-align: justify; margin-bottom: 10px; }
+a.btn-click {color: #ffffff !important; border: 2px solid #182c44; padding: 1px 15px; font-weight: 600; display: inline-block; margin-bottom: 20px; background: #182c44; font-size: 12px; border-radius: 4px; text-decoration: none !important; }
+.login-content-info a{text-decoration: underline;    color: #1360fe}

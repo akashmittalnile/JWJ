@@ -45,7 +45,7 @@ class JournalController extends Controller
     // This function is used to show the list of search criteria for journals
     public function searchCriteria(Request $request) {
         try{
-            $mood = SearchCriteria::where('status', 1);
+            $mood = SearchCriteria::where('status', 1)->whereIn('created_by', [1, auth()->user()->id]);
             if($request->filled('name')) $mood->where('name', 'LIKE', '%'.$request->name.'%');
             $mood = $mood->get();
             $response = array();
