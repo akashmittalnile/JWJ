@@ -41,7 +41,7 @@ class SupportController extends Controller
                 $support->updated_at = isset($request->created_at) ? date('Y-m-d H:i:s', strtotime($request->created_at)) : date('Y-m-d H:i:s');
                 $support->save();
 
-                return successMsg('Thank you submitting you query.');
+                return successMsg('Your query has been submitted successfully');
             }
         } catch (\Exception $e) {
             return errorMsg('Exception => ' . $e->getMessage());

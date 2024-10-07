@@ -328,10 +328,10 @@ class CommunityController extends Controller
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
                 'file' => 'required|array',
-                'file.*' => 'max:5120',
+                'file.*' => 'max:8192',
                 'description' => 'required',
             ], [
-                'file.*.max' => 'File must not be greater than 5MB',
+                'file.*.max' => 'File must not be greater than 8MB',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -395,11 +395,11 @@ class CommunityController extends Controller
                 'id' => 'required',
                 'title' => 'required',
                 'file' => 'array',
-                'file.*' => 'max:5120',
+                'file.*' => 'max:8192',
                 'deletefile' => 'array',
                 'description' => 'required',
             ], [
-                'file.*.max' => 'File must not be greater than 5MB',
+                'file.*.max' => 'File must not be greater than 8MB',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -529,9 +529,9 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'required|array',
-                'file.*' => 'max:5120',
+                'file.*' => 'max:8192',
             ], [
-                'file.*.max' => 'File must not be greater than 5MB',
+                'file.*.max' => 'File must not be greater than 8MB',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
@@ -599,10 +599,10 @@ class CommunityController extends Controller
                 'title' => 'required',
                 'description' => 'required',
                 'file' => 'array',
-                'file.*' => 'max:5120',
+                'file.*' => 'max:8192',
                 'deletefile' => 'array',
             ], [
-                'file.*.max' => 'File must not be greater than 5MB',
+                'file.*.max' => 'File must not be greater than 8MB',
             ]);
             if ($validator->fails()) {
                 return errorMsg($validator->errors()->first());
