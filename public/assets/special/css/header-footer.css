@@ -8,6 +8,20 @@
 @import 'owlcarousel/css/owl.carousel.min.css';
 @import 'flaticon/font/flaticon.css';
 
+
+:root {
+    --lightkblue:#3DA1E3;
+    --blue:#1079C0;
+    --sky:#66c2f9;
+    --green:#45B14A;
+    --orange:#F19A3A;
+    --gray:#959FA6;
+    --red:#F51B1B;
+    --lightgray:#B8B8B8;
+    --white:#ffffff;
+    --body:#F0F0F0;
+    --black:#505A61;
+}
 /*----------------------------
 Add font
 ----------------------------*/
@@ -68,7 +82,7 @@ a.Sell-btn i {background: #fff; width: 30px; height: 30px; border-radius: 50%; l
 
 .footer{position: relative;}
 .footer:before {content: ''; position: absolute; height: 125px; width: 100%; top: -48px; margin: 0 auto; left: 0; right: 0; background: url(../images/foot-shape.svg); }
-.top-footer{background: #182c44; padding: 2rem 0}
+.top-footer{background: #182c44; padding: 1rem 0}
 
 .top-footer .container,
 .bottom-footer .container{max-width: 95%;}
@@ -95,7 +109,7 @@ a.Sell-btn i {background: #fff; width: 30px; height: 30px; border-radius: 50%; l
 
 
 .bottom-footer{background: #1e3550;border-top: 1px solid #455668;}
-.footer-copyright{padding: 10px 0;}
+.footer-copyright{padding: 10px 0;    text-align: center;}
 .footer-copyright p {font-size: 12px; color: #c7cdd5; margin-bottom: 0; }
 .footer-copyright p a{color: #c7cdd5; }
 
@@ -103,3 +117,18 @@ a.Sell-btn i {background: #fff; width: 30px; height: 30px; border-radius: 50%; l
 .footer-nav-list ul{ margin: 0; padding: 0; list-style: none; }
 .footer-nav-list ul li{ display: inline-block; padding: 10px 15px; }
 .footer-nav-list ul li a {text-align: center; font-size: 12px; color: #c7cdd5; }
+
+
+.footer-contact-info-box {padding: 15px 0; position: relative; border-top: 1px solid #455668; border-bottom: 1px solid #455668; margin-bottom: 1rem; display: flex; justify-content: space-between; }
+
+.fwidget-list {list-style: none; text-align: center; margin: 0; padding: 0; }
+
+.fwidget-list li{display: inline-block; padding: 0 10px;}
+.fwidget-list li a {font-size: 14px;font-weight: 500;color: #ffffff;line-height: 30px;}
+.fwidget-list li a:hover {color:#fff; }
+
+.footer-social ul{margin: 0;padding:0;    text-align: center; position: relative;}
+.footer-social ul li {display: inline-block; vertical-align: text-top; }
+.footer-social ul li a {display: block; color: #7281b8; text-align: center; line-height: 30px; height: 30px; width: 30px; background: #dee4fc; border-radius: 50%; }
+.footer-social ul li a i{color: #7281b8;line-height: 30px;text-align: center;font-size: 13px;}
+.footer-widget-logo {text-align: center; background: #fff; padding: 10px; width: 140px; border-radius: 5px; margin:0 auto 1rem auto; filter: drop-shadow(0px 0px 0px black); }

@@ -8,30 +8,31 @@
     <title>Journey with Journals</title>    
 	<link rel="stylesheet" type="text/css" href="{{ assets('assets/special/css/header-footer.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ assets('assets/special/css/home.css') }}">
+	<link rel="stylesheet" type="text/css" href="{{ assets('assets/special/css/responsive.css') }}">
 </head>
 <body>
 	<header class="header">
 		<div class="bottom-header">
 			<div class="container">
-				<div class="row align-items-center">
-					<div class="col-md-3">
+				<div class="row align-items-center justify-content-between">
+					<div class="col-md-10">
 						<div class="logo"><a href="#"><img  src="{{ assets('assets/images/logo.svg') }}" height="100"></a></div>
 					</div>
-					<div class="col-md-9">
+					<div class="col-md-2">
 						<div class="row">
-							<div class="col-md-3">
+							<div class="col-md-12">
 								<div class="header-contact-card">
 									<div class="header-contact-icon">
 										<img src="{{ assets('assets/special/images/mail.svg') }}">
 									</div>
 									<div class="header-contact-content">
-										<p>Eamil Address</p>
-										<h2><a href="mailto:support@virtdrop.com">support@virtdrop.com</a></h2>
+										<p>Email Address</p>
+										<h2><a href="mailto:concerns@journeywithjournals.com">concerns@journeywithjournals.com</a></h2>
 									</div>
 								</div>
 							</div>
 
-							<div class="col-md-3">
+							<!-- <div class="col-md-3">
 								<div class="header-contact-card">
 									<div class="header-contact-icon">
 										<img src="{{ assets('assets/special/images/phone.svg') }}">
@@ -64,7 +65,7 @@
 				                		<li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
 				                	</ul>
 								</div>
-							</div>
+							</div> -->
 						</div>
 					</div>
 				</div>
@@ -77,32 +78,35 @@
 				<div id="Main-Slider" class="owl-carousel owl-theme">
 		    		<div class="item">
 		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/slider1.jpg') }}" >
+			    			<img src="{{ assets('assets/special/images/casual.jpg') }}" style="height: 88vh; object-fit:cover; object-position: center;" >
 			    		</div>
 						<div class="main-slider-content">
 							<h2>Document your Journey </h2>
 							<p>Has your penmanship lost its flair? Do your fingers not type as fast?</p>
 							<p>Try our Voice-to-Text</p>
+							<a class="submit-btn" style="text-decoration: none; color: #fff" href="#why-journey-id">Why Journal?</a>
 						</div>
 		    		</div>
 		    		<div class="item">
 		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/slider1.jpg') }}" >
+			    			<img src="{{ assets('assets/special/images/starts.jpg') }}" style="height: 88vh; object-fit:cover; object-position: center;" >
 			    		</div>
 						<div class="main-slider-content">
 							<h2>Routines</h2>
 							<p>Set yourself friendly reminders for Routines you want to become Habits</p>
 							<p>Change your reminders when you need changes</p>
+							<a class="submit-btn" style="text-decoration: none; color: #fff" href="#routines-id">Why the Need</a>
 						</div>
 		    		</div>
 		    		<div class="item">
 		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/slider1.jpg') }}" >
+			    			<img src="{{ assets('assets/special/images/com.jpg') }}" style="height: 88vh; object-fit:cover; object-position: center;" >
 			    		</div>
 						<div class="main-slider-content">
 							<h2>Communities</h2>
 							<p>Follow or Create </p>
 							<p>Read or Contribute to conversations with like-minded people</p>
+							<a class="submit-btn" style="text-decoration: none; color: #fff" href="#community-id">Benefits of Communities</a>
 						</div>
 		    		</div>
 		    	</div>
@@ -110,7 +114,7 @@
 		    </div>
 	</section>
 
-	<section class="about-section">
+	<section class="about-section" id="why-journey-id">
 		<div class="container">
 			<div class="row">
 				<div class="col-md-8 col-lg-6 col-sm-8">
@@ -175,8 +179,8 @@
 					</div>
 				</div>
 			</div>
-			<div class="service-list">
-				<div class="row">
+			<div class="service-list" id="routines-id">
+				<div class="row mt-2">
 					<div class="col-md-7 col-lg-7 col-sm-7">
 						<div class="service-content-info">
 							<h1>Routines </h1>
@@ -202,8 +206,8 @@
 				</div>
 			</div>
 
-			<div class="service-list">
-				<div class="row">
+			<div class="service-list" id="community-id">
+				<div class="row mt-2">
 					<div class="col-md-5 col-lg-5 col-sm-5">
 						<div class="service-media">
 							<img src="{{ assets('assets/special/images/coummnities.svg') }}">
@@ -453,17 +457,17 @@
 				<div class="footer-widget-logo"><img  src="{{ assets('assets/images/logo.svg') }}" height="120"></div>
 				<div class="footer-contact-info-box">
 				  	<ul class="fwidget-list">
-					    <li><a href="javascript:void(0);">Home</a></li>
-					    <li><a href="javascript:void(0);">Terms and Conditions</a></li>
-					    <li><a href="javascript:void(0);"> Privacy Policy</a></li>
+					    <li><a target="_blank" href="{{ url('/api/terms-condition') }}">Terms and Conditions</a></li>
+					    <li><a target="_blank" href="{{ url('/api/privacy-policy') }}"> Privacy Policy</a></li>
+					    <li><a target="_blank" href="{{ url('/api/contact-us') }}"> Contact Us </a></li>
 					</ul>
 					<div class="footer-social">
-						<ul>
+						<!-- <ul>
 	                		<li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
 	                		<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
 	                		<li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
 	                		<li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
-	                	</ul>
+	                	</ul> -->
 					</div>
 				</div>
 				<div class="footer-copyright">
