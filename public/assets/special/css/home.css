@@ -7,12 +7,13 @@
 .main-slider-section .container{max-width: 95%;}
 .main-slider-img-fluid{left: 0; position: absolute; width: 100%; display: block; height: auto; top: 0; right: 0; bottom: 0; } 
 .main-slider-content{-moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; padding-left: 30px; padding-right: 30px; position: absolute; text-align: center; z-index: 1; width: 100%; top: 30%; }
+.main-slider-content p{color: #fff;}
 .Main-Slider-media:after {content: ''; position: absolute; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0/67%); }
-.main-slider-content {text-align: left; width: 55%; }
+.main-slider-content {text-align: left; width: 55%; padding-left:60px; }
 .main-slider-content h2 {font-size: 40px; color: #f8fafd; text-align: left; padding-top: 0; margin-bottom: 20px; margin-top: 0; }
 .main-slider-content h2 span{font-weight: bold;}
 .explore-btn {background: #1360fe; padding: 15px 20px; border-radius: 5px; color: #fff !important; font-size: 14px; font-weight: 600; }
-
+.submit-btn {background: #1079c0; color: #fff; padding: 8px 20px; border: none;}
 
 #Main-Slider .owl-dots {position: absolute;left: 0;right: 16.5%;bottom:33.5%;}
 #Main-Slider .owl-dots, 
@@ -21,6 +22,8 @@
 #Main-Slider .owl-dots .owl-dot span {width: 13px; height:13px; border-radius: 20px; margin: 5px 5px;background: #fff;display: block;-webkit-backface-visibility: visible;transition: opacity .2s ease;}
 #Main-Slider .owl-dots .owl-dot.active span, 
 #Main-Slider .owl-dots .owl-dot:hover span {background: #ffae00;}
+
+.Main-Slider-media img{height: 88vh; object-fit: cover; object-position: center;}
 
 /**====================================================================
   What does Virtdrop do? 
@@ -99,7 +102,7 @@
   Plans & Pricing
 ====================================================================
 ***/
-.pricing-section{padding:3rem 0 7rem 0; position: relative;}
+.pricing-section{padding:3rem 0 4rem 0; position: relative;}
 .pricing-section .heading-title {width: 50%; margin: 0 auto 3rem auto; }
 
 .pricing-section .heading-title h2 {text-align: center; font-size: 25px; font-weight: 700; color: #091e42; margin: 0; padding-top: 0; }
@@ -112,10 +115,41 @@
 
 .pricing-body ul {margin: 0; padding: 0; list-style: none; }
 .pricing-body ul li{font-size: 14px; text-align: center; color: #77808a; }
+.pricing-body ul li img{height: 20px; margin-right: 8px;}
 
 .price-info {display: flex;     justify-content: center;align-items: center; position: relative; padding-top: 20px; padding-bottom: 20px; }
 .price-value {font-size: 30px; font-weight: 700; margin: 0; padding: 0; color: #1d2127; }
 .price-per {font-size: 12px; padding-left: 15px; color: #8c949e; font-weight: 600; }
 
 .pricing-foot {padding: 15px 0px; text-align: center; } 
-.btn-conversion {background: transparent; color: #1360fe; font-size: 14px; padding: 6px 25px; border-radius: 2px; font-weight: 600; border: 1px solid #1360fe; display: inline-block; }
+.btn-conversion {background: transparent; color: #1079c0; font-size: 14px; padding: 6px 25px; border-radius: 2px; font-weight: 600; border: 1px solid #1079c0; display: inline-block; }
+
+.footer{margin-top: 80px;}
+
+#Main-Slider .owl-nav {
+    position: relative;
+    top: -340px;
+    bottom: 0;
+    align-items: center;
+    display: flex;
+}
+
+button.owl-prev  {
+    font-size: 40px !important;
+    position: absolute;
+    left: 0 !important;
+    background: #1079c0 !important;
+    color: #fff !important;
+    height: 40px;
+    width: 22px;
+}
+
+button.owl-next {
+    font-size: 40px !important;
+    position: absolute;
+    right: 0 !important;
+    background: #1079c0 !important;
+    height: 40px;
+    width: 22px;
+    color: #fff !important;
+}

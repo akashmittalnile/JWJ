@@ -47,7 +47,7 @@ h1, h2, h3, h4, h5, h6 {padding: 5px 0 15px 0;color: #333;font-weight: normal;-w
 .top-header {background: #f9fafe; padding: 5px 0; position: relative; }
 .top-header .container,
 .bottom-header .container{max-width: 95%;}
-.header-contact-card {display: flex; align-items: center;}
+.header-contact-card {display: flex; align-items: center; justify-content: end;}
 .header-contact-icon {width:30px; margin-right: 10px; } 
 .header-contact-icon img{height: 30px} 
 .header-contact-content p {color: #a4a6b8; font-size: 11px; line-height: 1; margin-bottom:5px; font-weight: 500; } 

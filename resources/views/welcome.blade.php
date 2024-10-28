@@ -15,58 +15,54 @@
 		<div class="bottom-header">
 			<div class="container">
 				<div class="row align-items-center justify-content-between">
-					<div class="col-md-10">
+					<div class="col-lg-8 col-md-8 col-sm-6 ">
 						<div class="logo"><a href="#"><img  src="{{ assets('assets/images/logo.svg') }}" height="100"></a></div>
 					</div>
-					<div class="col-md-2">
-						<div class="row">
-							<div class="col-md-12">
-								<div class="header-contact-card">
-									<div class="header-contact-icon">
-										<img src="{{ assets('assets/special/images/mail.svg') }}">
-									</div>
-									<div class="header-contact-content">
-										<p>Email Address</p>
-										<h2><a href="mailto:concerns@journeywithjournals.com">concerns@journeywithjournals.com</a></h2>
-									</div>
-								</div>
+					<div class="col-lg-4 col-md-4 col-sm-6 ">
+						<div class="header-contact-card">
+							<div class="header-contact-icon">
+								<img src="{{ assets('assets/special/images/mail.svg') }}">
 							</div>
-
-							<!-- <div class="col-md-3">
-								<div class="header-contact-card">
-									<div class="header-contact-icon">
-										<img src="{{ assets('assets/special/images/phone.svg') }}">
-									</div>
-									<div class="header-contact-content">
-										<p>Phone Number</p>
-										<h2><a href="tel:+22140 006754">+22 140 006 754</a></h2>
-									</div>
-								</div>
+							<div class="header-contact-content">
+								<p>Email Address</p>
+								<h2><a href="mailto:concerns@journeywithjournals.com">concerns@journeywithjournals.com</a></h2>
 							</div>
-
-							<div class="col-md-3">
-								<div class="header-contact-card">
-									<div class="header-contact-icon">
-										<img src="{{ assets('assets/special/images/location.svg') }}">
-									</div>
-									<div class="header-contact-content">
-										<p>Office Address</p>
-										<h2>576 Fifth Avenue,New York</h2>
-									</div>
-								</div>
-							</div>
-
-							<div class="col-md-3">
-								<div class="header-social">
-									<ul>
-				                		<li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
-				                		<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
-				                		<li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
-				                		<li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
-				                	</ul>
-								</div>
-							</div> -->
 						</div>
+
+						<!-- <div class="col-md-3">
+							<div class="header-contact-card">
+								<div class="header-contact-icon">
+									<img src="{{ assets('assets/special/images/phone.svg') }}">
+								</div>
+								<div class="header-contact-content">
+									<p>Phone Number</p>
+									<h2><a href="tel:+22140 006754">+22 140 006 754</a></h2>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-3">
+							<div class="header-contact-card">
+								<div class="header-contact-icon">
+									<img src="{{ assets('assets/special/images/location.svg') }}">
+								</div>
+								<div class="header-contact-content">
+									<p>Office Address</p>
+									<h2>576 Fifth Avenue,New York</h2>
+								</div>
+							</div>
+						</div>
+
+						<div class="col-md-3">
+							<div class="header-social">
+								<ul>
+			                		<li><a href="#"><i class="fa fa-facebook" aria-hidden="true"></i></a></li>
+			                		<li><a href="#"><i class="fa fa-twitter" aria-hidden="true"></i></a></li>
+			                		<li><a href="#"><i class="fa fa-linkedin" aria-hidden="true"></i></a></li>
+			                		<li><a href="#"><i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+			                	</ul>
+							</div>
+						</div> -->
 					</div>
 				</div>
 			</div>
@@ -78,7 +74,7 @@
 				<div id="Main-Slider" class="owl-carousel owl-theme">
 		    		<div class="item">
 		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/casual.jpg') }}" style="height: 88vh; object-fit:cover; object-position: center;" >
+			    			<img src="{{ assets('assets/special/images/casual.jpg') }}"  >
 			    		</div>
 						<div class="main-slider-content">
 							<h2>Document your Journey </h2>
@@ -89,7 +85,7 @@
 		    		</div>
 		    		<div class="item">
 		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/starts.jpg') }}" style="height: 88vh; object-fit:cover; object-position: center;" >
+			    			<img src="{{ assets('assets/special/images/route.jpg') }}" >
 			    		</div>
 						<div class="main-slider-content">
 							<h2>Routines</h2>
@@ -100,7 +96,7 @@
 		    		</div>
 		    		<div class="item">
 		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/com.jpg') }}" style="height: 88vh; object-fit:cover; object-position: center;" >
+			    			<img src="{{ assets('assets/special/images/com.jpg') }}" >
 			    		</div>
 						<div class="main-slider-content">
 							<h2>Communities</h2>
@@ -153,7 +149,7 @@
 							<p>Journey with Journals will give you more flexibility now than ever. For those who journal now in a hard book, this will give you more ease of use. Imagine having a hard day, climbing in bed and turning off the lights. Then as you lay there you realize that you didn’t write in your journal. Now you can simply pick up your phone and dictate your experience with voice-to-text right into your journal. Attach a photo and then sleep tight as that worry is now off your mind.</p>
 							<p>You can have the ability to add multiple journals a day. This could be very helpful on those busy days. Saturday morning comes and you start off at a pancake breakfast with friends. You simply record your thoughts and who was there. Then take a group photo and add it to the entry. Then just after lunch your son has a soccer game. You record the event and take a picture of him scoring his goal, and now you have a second journal entry for the day. Then evening comes around and you go to the in-laws for dinner. Who just happened to invite a couple of Aunts and Uncles to join. You discuss vacation plans and before you know it, you have a third entry with a family photo or two or three. The day comes to an end, and you are feeling really blessed by the lord that you have so many good people in your life. Now you have the need to record your grateful moments and maybe this one doesn’t need a photo. It’s your choice. Since you tagged each entry, you can go back and easily find the entry to relive those good times.</p>
 							<p>You can have the ability to add multiple journals a day. This could be very helpful on those busy days. Saturday morning comes and you start off at a pancake breakfast with friends. You simply record your thoughts and who was there. Then take a group photo and add it to the entry. Then just after lunch your son has a soccer game. You record the event and take a picture of him scoring his goal, and now you have a second journal entry for the day. Then evening comes around and you go to the in-laws for dinner. Who just happened to invite a couple of Aunts and Uncles to join. You discuss vacation plans and before you know it, you have a third entry with a family photo or two or three. The day comes to an end, and you are feeling really blessed by the lord that you have so many good people in your life. Now you have the need to record your grateful moments and maybe this one doesn’t need a photo. It’s your choice. Since you tagged each entry, you can go back and easily find the entry to relive those good times.</p>
-							<p>Ideas for a journal entry:</p>
+							<p><b>Ideas for a journal entry:</b></p>
 							<ul>
 								<li>Family gathering</li>
 								<li>Friends getting together</li>
@@ -186,7 +182,7 @@
 							<h1>Routines </h1>
 							<p>Routines are an important part of Journey with Journals. If you are not in the habit of writing in a journal each night, this is a simple way to message yourself with a reminder. Think of routines as a way to make a desire to become a habit. Routines can be shared with others. It is often easier to accomplish things when you have someone on your side or making the journey with you. You will find many categories to schedule your routines under such as: Fitness, Learning, Wellness, Wealth, Health, and Meditation.</p>
 							<p>Simply pick a category, label the routine, set the recurrence, and give a description of what you want to accomplish. Then either keep it to yourself or share the routine with someone else. Once you no longer need to be reminded simply change it to a new routine. Your reminder will come as a notification to your phone. </p>
-							<p>Ideas for Reminders:</p>
+							<p><b>Ideas for Reminders:</b></p>
 							<ul>
 								<li>To write in my journal daily @ 9 pm</li>
 								<li>To read my scriptures in the morning</li>

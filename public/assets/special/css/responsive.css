@@ -21,14 +21,14 @@
 .service-section .heading-title{width: 100%;}
 .pricing-section .heading-title{width: 100%;}
 .contactus-page-section .heading-title{width: 100%;}
-.main-slider-content {background: rgb(0 0 0 / 60%); padding: 30px 10px 30px 10px; }
+/*.main-slider-content {background: rgb(0 0 0 / 60%); padding: 30px 10px 30px 10px; }*/
 } 
 @media only screen and (max-width : 767px) {
 .textle-section .container { max-width: 100%;}
-.main-slider-content{background: rgb(0 0 0 / 60%); padding: 30px 10px 30px 10px;}
+/*.main-slider-content{background: rgb(0 0 0 / 60%); padding: 30px 10px 30px 10px;}*/
 .main-slider-content h2{font-size: 24px; padding-bottom: 0px;}
-.submit-btn{margin-top: 16px;}
-.main-slider-content p{font-size: 14px; width: 70%; margin: auto;}
+.submit-btn{margin-top: 16px; display: inline-block;}
+.main-slider-content p{font-size: 14px; margin: auto;}
 .main-slider-content{width: 100%;}
 .about-media img{width: 100%;}
 .service-media img{width: 100%;}
@@ -40,18 +40,34 @@
 .about-section{padding: 0rem 0;}
 .service-list{margin-bottom: 0px;}
 .footer-contact-info-box{justify-content: center;}
+.about-content-info{margin-top: 30px;}
+.header-contact-card{justify-content: }
+
+
+}
+
+@media only screen and (max-width : 575px) {
+.logo{text-align: center; margin-bottom: 20px;}
+.header-contact-card{background: #f4fbff; padding: 8px; border: 1px solid #dceaf3; justify-content: start !important;}
+
+.main-slider-content{top: 25% !important;}
+.main-slider-section{height: 320px; min-height: 320px;}
+
+.Main-Slider-media img{height: 52vh;}
+.service-section{padding: 1rem 0;}
+.pricing-section{padding: 1rem 0 3rem 0;}
+.about-content-info{text-align: center;}
+.service-content-info {text-align: center; }
+.service-content-info p{text-align: center;}
+.about-content-info p{text-align: center;}
+
+.contactus-page-section .heading-title{text-align: center;}
 
 }
  
 @media only screen and (max-width : 480px) {
-.logo{text-align: center; margin-bottom: 20px;}
-.header-contact-card{justify-content: center;}
-.header-contact-content{text-align: center;}
-
-
-
-
-
-
+/*.logo{text-align: center; margin-bottom: 20px;}
+.header-contact-card{background: #f4fbff; padding: 8px; border: 1px solid #dceaf3;}*/
+/*.header-contact-content{text-align: center;}*/
 
 }
