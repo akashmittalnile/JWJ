@@ -41,6 +41,13 @@ if (!function_exists('sendNotification')) {
                 'notification' => [
                     'title' => $data['title'],
                     'body' => $data['msg']
+                ],
+                'apns' => [
+                    'payload' => [
+                        'aps' => [
+                            'sound' => 'default',
+                        ]
+                    ]
                 ]
             ]
         ];

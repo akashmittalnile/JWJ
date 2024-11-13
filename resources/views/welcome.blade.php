@@ -122,7 +122,7 @@
 				</div>
 				<div class="col-md-4 col-lg-6 col-sm-4">
 					<div class="about-media">
-						<img src="{{ assets('assets/special/images/gl-media.png') }}">
+						<img width="60%" src="{{ assets('assets/images/what.png') }}">
 					</div>
 				</div>
 			</div>
