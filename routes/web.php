@@ -40,9 +40,7 @@ Route::get('/phpinfo', function () {
 
 Route::stripeWebhooks('stripe-auto-payment');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [AuthController::class, 'homePage'])->name('homepage');
 Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     // admin login panel
     Route::get('/', [AuthController::class, 'login'])->name('login');
@@ -53,6 +51,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.'], function () {
     Route::post('/send-verify', [AuthController::class, 'sendVerify'])->name('send.verify');
     Route::get('/reset-password/{email}', [AuthController::class, 'resetPassword'])->name('reset.password');
     Route::post('/reset-password', [AuthController::class, 'changePassword'])->name('change.password');
+    Route::get('/refresh-captcha', [AuthController::class, 'refreshCaptcha'])->name('refresh.captcha');
+    Route::get('/get-captcha', [AuthController::class, 'getCaptcha'])->name('captcha.image');
+    Route::post('/verify-captcha', [AuthController::class, 'verifyCaptcha'])->name('captcha.verify');
 
     Route::middleware(["isAdmin"])->group(function () {
         // notification

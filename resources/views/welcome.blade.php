@@ -1,22 +1,25 @@
-
 <!DOCTYPE html>
 
 <html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Journey with Journals</title>    
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="icon" type="image/x-icon" href="{{ assets('assets/images/logo.svg') }}">
+	<title>@yield('title',config('constant.siteTitle'))</title>
 	<link rel="stylesheet" type="text/css" href="{{ assets('assets/special/css/header-footer.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ assets('assets/special/css/home.css') }}">
 	<link rel="stylesheet" type="text/css" href="{{ assets('assets/special/css/responsive.css') }}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" integrity="sha512-3pIirOrwegjM6erE5gPSwkUzO+3cTjpnV9lexlNZqvupR64iZBnOOTiiLPb9M36zpMScbmUNIcHUqKD47M719g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 <body>
 	<header class="header">
 		<div class="bottom-header">
 			<div class="container">
 				<div class="row align-items-center justify-content-between">
 					<div class="col-lg-8 col-md-8 col-sm-6 ">
-						<div class="logo"><a href="#"><img  src="{{ assets('assets/images/logo.svg') }}" height="100"></a></div>
+						<div class="logo"><a href="#"><img src="{{ assets('assets/images/logo.svg') }}" height="100"></a></div>
 					</div>
 					<div class="col-lg-4 col-md-4 col-sm-6 ">
 						<div class="header-contact-card">
@@ -67,47 +70,47 @@
 				</div>
 			</div>
 		</div>
-	</header>  
+	</header>
 
 	<section class="main-slider-section">
-			<div class="main-slider-media">
-				<div id="Main-Slider" class="owl-carousel owl-theme">
-		    		<div class="item">
-		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/casual.jpg') }}"  >
-			    		</div>
-						<div class="main-slider-content">
-							<h2>Document your Journey </h2>
-							<p>Has your penmanship lost its flair? Do your fingers not type as fast?</p>
-							<p>Try our Voice-to-Text</p>
-							<a class="submit-btn" style="text-decoration: none; color: #fff" href="#why-journey-id">Why Journal?</a>
-						</div>
-		    		</div>
-		    		<div class="item">
-		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/route.jpg') }}" >
-			    		</div>
-						<div class="main-slider-content">
-							<h2>Routines</h2>
-							<p>Set yourself friendly reminders for Routines you want to become Habits</p>
-							<p>Change your reminders when you need changes</p>
-							<a class="submit-btn" style="text-decoration: none; color: #fff" href="#routines-id">Why the Need</a>
-						</div>
-		    		</div>
-		    		<div class="item">
-		    			<div class="Main-Slider-media">
-			    			<img src="{{ assets('assets/special/images/com.jpg') }}" >
-			    		</div>
-						<div class="main-slider-content">
-							<h2>Communities</h2>
-							<p>Follow or Create </p>
-							<p>Read or Contribute to conversations with like-minded people</p>
-							<a class="submit-btn" style="text-decoration: none; color: #fff" href="#community-id">Benefits of Communities</a>
-						</div>
-		    		</div>
-		    	</div>
-		    	
-		    </div>
+		<div class="main-slider-media">
+			<div id="Main-Slider" class="owl-carousel owl-theme">
+				<div class="item">
+					<div class="Main-Slider-media">
+						<img src="{{ assets('assets/special/images/casual.jpg') }}">
+					</div>
+					<div class="main-slider-content">
+						<h2>Document your Journey </h2>
+						<p>Has your penmanship lost its flair? Do your fingers not type as fast?</p>
+						<p>Try our Voice-to-Text</p>
+						<a class="submit-btn" style="text-decoration: none; color: #fff" href="#why-journey-id">Why Journal?</a>
+					</div>
+				</div>
+				<div class="item">
+					<div class="Main-Slider-media">
+						<img src="{{ assets('assets/special/images/route.jpg') }}">
+					</div>
+					<div class="main-slider-content">
+						<h2>Routines</h2>
+						<p>Set yourself friendly reminders for Routines you want to become Habits</p>
+						<p>Change your reminders when you need changes</p>
+						<a class="submit-btn" style="text-decoration: none; color: #fff" href="#routines-id">Why the Need</a>
+					</div>
+				</div>
+				<div class="item">
+					<div class="Main-Slider-media">
+						<img src="{{ assets('assets/special/images/com.jpg') }}">
+					</div>
+					<div class="main-slider-content">
+						<h2>Communities</h2>
+						<p>Follow or Create </p>
+						<p>Read or Contribute to conversations with like-minded people</p>
+						<a class="submit-btn" style="text-decoration: none; color: #fff" href="#community-id">Benefits of Communities</a>
+					</div>
+				</div>
+			</div>
+
+		</div>
 	</section>
 
 	<section class="about-section" id="why-journey-id">
@@ -132,8 +135,8 @@
 	<section class="service-section">
 		<div class="container">
 			<div class="heading-title">
-			 <h2>Our Services</h2>
-			 <p>Journey with Journals is more than just a recording of memories. Now with Voice-to-Text it is easier than ever. It can help you organize your priorities with reminders. Helping you to make ideas become habits. In our community section you can share ideas and photos with like-minded individuals.</p>
+				<h2>Our Services</h2>
+				<p>Journey with Journals is more than just a recording of memories. Now with Voice-to-Text it is easier than ever. It can help you organize your priorities with reminders. Helping you to make ideas become habits. In our community section you can share ideas and photos with like-minded individuals.</p>
 			</div>
 			<div class="service-list">
 				<div class="row">
@@ -145,7 +148,7 @@
 					<div class="col-md-7 col-lg-7 col-sm-7">
 						<div class="service-content-info">
 							<h1>Journals </h1>
-							<p>Journals are a valuable resource for helping us organize our thoughts. Journals can help us structure our thoughts in a way that allows them to make sense. At times we come up with brilliant ideas that we cannot explore at the moment.  Journey with Journals allows us to add a tag so we can go back and expand on it later. Having your phone with you can allow you to record on the go, attach photos of your memories and then add to them later. If you forgot to record that important event when it happened, you can go back to that day on your calendar and add it in as if you never missed it.</p>
+							<p>Journals are a valuable resource for helping us organize our thoughts. Journals can help us structure our thoughts in a way that allows them to make sense. At times we come up with brilliant ideas that we cannot explore at the moment. Journey with Journals allows us to add a tag so we can go back and expand on it later. Having your phone with you can allow you to record on the go, attach photos of your memories and then add to them later. If you forgot to record that important event when it happened, you can go back to that day on your calendar and add it in as if you never missed it.</p>
 							<p>Journey with Journals will give you more flexibility now than ever. For those who journal now in a hard book, this will give you more ease of use. Imagine having a hard day, climbing in bed and turning off the lights. Then as you lay there you realize that you didn’t write in your journal. Now you can simply pick up your phone and dictate your experience with voice-to-text right into your journal. Attach a photo and then sleep tight as that worry is now off your mind.</p>
 							<p>You can have the ability to add multiple journals a day. This could be very helpful on those busy days. Saturday morning comes and you start off at a pancake breakfast with friends. You simply record your thoughts and who was there. Then take a group photo and add it to the entry. Then just after lunch your son has a soccer game. You record the event and take a picture of him scoring his goal, and now you have a second journal entry for the day. Then evening comes around and you go to the in-laws for dinner. Who just happened to invite a couple of Aunts and Uncles to join. You discuss vacation plans and before you know it, you have a third entry with a family photo or two or three. The day comes to an end, and you are feeling really blessed by the lord that you have so many good people in your life. Now you have the need to record your grateful moments and maybe this one doesn’t need a photo. It’s your choice. Since you tagged each entry, you can go back and easily find the entry to relive those good times.</p>
 							<p>You can have the ability to add multiple journals a day. This could be very helpful on those busy days. Saturday morning comes and you start off at a pancake breakfast with friends. You simply record your thoughts and who was there. Then take a group photo and add it to the entry. Then just after lunch your son has a soccer game. You record the event and take a picture of him scoring his goal, and now you have a second journal entry for the day. Then evening comes around and you go to the in-laws for dinner. Who just happened to invite a couple of Aunts and Uncles to join. You discuss vacation plans and before you know it, you have a third entry with a family photo or two or three. The day comes to an end, and you are feeling really blessed by the lord that you have so many good people in your life. Now you have the need to record your grateful moments and maybe this one doesn’t need a photo. It’s your choice. Since you tagged each entry, you can go back and easily find the entry to relive those good times.</p>
@@ -215,7 +218,7 @@
 							<p>Communities were built into the Journey with Journals app as a bonus. It is a fun way to stay interacted with the app. With the end goal of keeping recording in your journal fresh in your mind. The more you interact with the app, the more likely you are to record your memories as you journey through life. Which is the reason you are interested in keeping a journal. As mentioned before, years down the road when you can go back and see your struggles as well as your accomplishments, it is our hope that it will bring you joy to see just how far you have come.</p>
 							<p>Depending on your Plan level you will have the opportunity to view, participate, or create in the Community Section of the App. Seeing what others who have the same interests as you do, can be enlightening. Share your thoughts, find solutions to your struggles with others who have been down the same road. You can share pictures and ideas that have brought you success in your hobbies, work accomplishments, or places you recommend to others.</p>
 							<p>It is exciting to create a community that others find of interest. Having new people give you ideas and share experiences about what you hold special can be a growing experience. You can make community topics a local experience or a worldwide interest. We are sure you will find it exciting to explore all the new communities that are being added all of the time.</p>
-							<p>We strive to keep our communities professional and respectful. Please make sure you read the Terms and Conditions for Communities before participating. We want everyone to feel comfortable with what they read and see in your posts. We always expect our patrons to report anything they feel is inappropriate.  Remember you only see Communities that you are following. You won’t see things you are not interested in.</p>
+							<p>We strive to keep our communities professional and respectful. Please make sure you read the Terms and Conditions for Communities before participating. We want everyone to feel comfortable with what they read and see in your posts. We always expect our patrons to report anything they feel is inappropriate. Remember you only see Communities that you are following. You won’t see things you are not interested in.</p>
 							<p>Ideas for Communities:</p>
 							<ul>
 								<li>Hobbies</li>
@@ -237,7 +240,7 @@
 			</div>
 		</div>
 	</section>
-	
+
 	<!-- <section class="whyus-section">
 		<div class="container">
 			<div class="row">
@@ -283,8 +286,8 @@
 	<section class="pricing-section">
 		<div class="container">
 			<div class="heading-title">
-				 <h2>Plans & Pricing</h2>
-				 <p>We have multiple plans to meet your needs. You may change at any time. Pricing will cover you to the end of the term you choose. All payments are recurring based on the plan you choose. If you delete your account, your data will be deleted too. Make sure you have printed your journals before ending your plan. Prices are subject to change until you enroll.</p>
+				<h2>Plans & Pricing</h2>
+				<p>We have multiple plans to meet your needs. You may change at any time. Pricing will cover you to the end of the term you choose. All payments are recurring based on the plan you choose. If you delete your account, your data will be deleted too. Make sure you have printed your journals before ending your plan. Prices are subject to change until you enroll.</p>
 			</div>
 			<div class="row">
 				<div class="col-md-4">
@@ -302,10 +305,10 @@
 						</div>
 						<div class="pricing-foot">
 							<div class="price-info">
-		                        <div class="price-value">$0.99</div>
-		                        <span class="price-per">/Month</span>
-		                     </div>
-		                     <a href="javascript:void(0)" class="btn-conversion">Sign UP Now</a>
+								<div class="price-value">$0.99</div>
+								<span class="price-per">/Month</span>
+							</div>
+							<a href="javascript:void(0)" class="btn-conversion">Sign UP Now</a>
 						</div>
 					</div>
 				</div>
@@ -328,14 +331,14 @@
 						</div>
 						<div class="pricing-foot">
 							<div class="price-info">
-		                        <div class="price-value">$4.99</div>
-		                        <span class="price-per">/Month</span>
-		                     </div>
+								<div class="price-value">$4.99</div>
+								<span class="price-per">/Month</span>
+							</div>
 							<div class="price-info">
-		                        <div class="price-value">$54.90</div>
-		                        <span class="price-per">/Year</span>
-		                     </div>
-		                     <a href="javascript:void(0)" class="btn-conversion">Sign UP Now</a>
+								<div class="price-value">$54.90</div>
+								<span class="price-per">/Year</span>
+							</div>
+							<a href="javascript:void(0)" class="btn-conversion">Sign UP Now</a>
 						</div>
 					</div>
 				</div>
@@ -355,14 +358,14 @@
 						</div>
 						<div class="pricing-foot">
 							<div class="price-info">
-		                        <div class="price-value">$7.99</div>
-		                        <span class="price-per">/Month</span>
-		                     </div>
+								<div class="price-value">$7.99</div>
+								<span class="price-per">/Month</span>
+							</div>
 							<div class="price-info">
-		                        <div class="price-value">$87.90</div>
-		                        <span class="price-per">/Year</span>
-		                     </div>
-		                     <a href="javascript:void(0)" class="btn-conversion">Sign UP Now</a>
+								<div class="price-value">$87.90</div>
+								<span class="price-per">/Year</span>
+							</div>
+							<a href="javascript:void(0)" class="btn-conversion">Sign UP Now</a>
 						</div>
 					</div>
 				</div>
@@ -371,12 +374,12 @@
 	</section>
 
 	<section class="contactus-page-section">
-		
+
 		<div class="contactus-page-form">
 			<div class="container">
 				<div class="heading-title">
-				<h2>Get in touch us</h2>
-				 <p>Lorem Ipsum is composed in a pseudo-Latin language which more or less corresponds to 'proper' Latin. It contains a series of real Latin words. </p>
+					<h2>Get in touch us</h2>
+					<p>Lorem Ipsum is composed in a pseudo-Latin language which more or less corresponds to 'proper' Latin. It contains a series of real Latin words. </p>
 				</div>
 				<div class="row">
 					<div class="col-md-7 col-lg-7 col-sm-7">
@@ -386,61 +389,55 @@
 					</div>
 					<div class="col-md-5 col-lg-5 col-sm-5">
 						<div class="contactus-form">
-	        				<h2>Send us a Message</h2>
-	        				<form method="post" id="submit-whitepaper" novalidate="novalidate">
-				            <div id="form-messages" class="notification contact"></div>
-				            <input type="hidden" name="whitepaper_name" value="cer" id="whitepaper_name">
-				            <div class="row">
-				               <div class="col-sm-6">
-				                  <div class="form-group">
-				                      <label for="first_name">First Name :</label>
-				                      <input id="first_name" class="form-control" name="first_name" required="" type="text" placeholder="First Name">  
-				                  </div>
-				               </div>
-				               <div class="col-sm-6">
-				                  <div class="form-group">
-				                      <label for="last_name">Last Name :</label>
-				                      <input id="last_name" class="form-control" name="last_name" type="text" placeholder="Last Name"> 
-				                  </div>
-				               </div>
-				            </div>
-				            <div class="row">
-				               <div class="col-sm-6">
-				                <div class="form-group">
-				                   <label for="email">Email Address:</label>
-				                   <input id="email" class="form-control" name="email" required="" type="text" placeholder="Email Address">
-
-				                </div>
-				              </div>
-				              <div class="col-sm-6">
-				                <div class="form-group">
-				                   <label for="Phone">Phone :</label>
-				                   <input id="Phone" class="form-control" name="phone" type="number" placeholder="Phone">
-				                </div>
-				              </div>
-				            <div class="col-sm-12">	
-					            <div class="form-group">
-					               <label for="type_user">Type of user</label>
-					               <select class="form-control">
-					               		<option>Business looking to hire</option>
-					               		<option>Virtual assistant looking for work</option>
-					               </select>
-					            </div>
-					        </div>
-					        
-				            <div class="col-sm-12">	
-					            <div class="form-group">
-					               <label for="message">Message :</label>
-					               <textarea id="message" class="form-control" name="message" rows="2" placeholder="Message"></textarea>
-					            </div>
-					        </div>
-					        <div class="col-sm-12">	
-					            <button type="submit" class="submit-btn"> SUBMIT</button>
-				        	</div>
-				        </div>
-
-				         </form>
-	        			</div>
+							<h2>Send us a Message</h2>
+							<form class="pt-5" method="post" action="{{ url('/api/contact-store') }}" id="login-form">@csrf
+								<div id="form-messages" class="notification contact"></div>
+								<input type="hidden" name="whitepaper_name" value="cer" id="whitepaper_name">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label for="first_name">Name :</label>
+											<input type="text" class="form-control" name="name" placeholder="Name">
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="email">Email Address:</label>
+											<input type="email" class="form-control" name="email" placeholder="Email Address">
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label for="Phone">Phone :</label>
+											<input type="tel" id="phoneNumber" class="form-control" name="phone" placeholder="Phone Number">
+										</div>
+									</div>
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label for="message">Message :</label>
+											<textarea class="form-control" name="message" placeholder="Your Message"></textarea>
+										</div>
+									</div>
+									<div class="col-sm-12">
+										<div class="form-group d-flex">
+											<div id="captchadiv"><img id="captchaImage" src="{{ captcha_src('math') }}" alt="Captcha Image"></div>
+											<div><button type="button" class="btn btn-danger mx-3" id="reloadCaptcha"><i class="fa fa-refresh" aria-hidden="true"></i></button></div>
+										</div>
+									</div>
+									<div class="col-sm-12">
+										<div class="form-group">
+											<input type="text" class="form-control" id="captchaInput" name="captcha" placeholder="Enter captcha">
+											<span id="captchaError" class="text-danger d-none"></span>
+										</div>
+									</div>
+									<div class="col-sm-12">
+										<button type="submit" class="submit-btn">SUBMIT</button>
+									</div>
+								</div>
+							</form>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -450,12 +447,12 @@
 	<footer class="footer">
 		<div class="top-footer">
 			<div class="container">
-				<div class="footer-widget-logo"><img  src="{{ assets('assets/images/logo.svg') }}" height="120"></div>
+				<div class="footer-widget-logo"><img src="{{ assets('assets/images/logo.svg') }}" height="120"></div>
 				<div class="footer-contact-info-box">
-				  	<ul class="fwidget-list">
-					    <li><a target="_blank" href="{{ url('/api/terms-condition') }}">Terms and Conditions</a></li>
-					    <li><a target="_blank" href="{{ url('/api/privacy-policy') }}"> Privacy Policy</a></li>
-					    <li><a target="_blank" href="{{ url('/api/contact-us') }}"> Contact Us </a></li>
+					<ul class="fwidget-list">
+						<li><a target="_blank" href="{{ url('/api/terms-condition') }}">Terms and Conditions</a></li>
+						<li><a target="_blank" href="{{ url('/api/privacy-policy') }}"> Privacy Policy</a></li>
+						<li><a target="_blank" href="{{ url('/api/contact-us') }}"> Contact Us </a></li>
 					</ul>
 					<div class="footer-social">
 						<!-- <ul>
@@ -469,18 +466,163 @@
 				<div class="footer-copyright">
 					<p>© Journey With Journals. All rights reserved. Powered By: <a href="http://niletechnologies.com/" target="_blank">Nile Technologies</a></p>
 				</div>
-				
+
 			</div>
 		</div>
-		
+
 	</footer>
 
 
 
 
-<script src="{{ assets('assets/special/js/jquery-3.4.1.min.js') }}" type="text/javascript"></script>
-<script src="{{ assets('assets/special/css/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>
-<script src="{{ assets('assets/special/css/owlcarousel/js/owl.carousel.min.js') }}" type="text/javascript"></script>
-<script src="{{ assets('assets/special/js/function.js') }}" type="text/javascript"></script>
+	<script src="{{ assets('assets/special/js/jquery-3.4.1.min.js') }}" type="text/javascript"></script>
+	<script src="{{ assets('assets/special/css/bootstrap/js/bootstrap.min.js') }}" type="text/javascript"></script>
+	<script src="{{ assets('assets/special/css/owlcarousel/js/owl.carousel.min.js') }}" type="text/javascript"></script>
+	<script src="{{ assets('assets/special/js/function.js') }}" type="text/javascript"></script>
+	<script src="{{ assets('assets/plugins/jquery-validation/jquery.validate.min.js') }}" type="text/javascript"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" integrity="sha512-VEd+nq25CkR676O+pLBnDW09R7VQX9Mdiij052gVCp5yVH3jGtH70Ho/UUv4mJDsEdTvqRCFZg0NKGiojGnUCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.10/jquery.mask.js"></script>
+	<script>
+		$(document).ready(function() {
+			// Reload Captcha
+			$('#reloadCaptcha').click(function() {
+				$.get("{{ route('admin.captcha.image') }}",
+					function(data) {
+						$('#captchaImage').attr('src', data.captcha);
+					});
+			});
+
+			// Form submission via AJAX
+			$('#login-form').submit(function(e) {
+				e.preventDefault();
+				let captcha = $('#captchaInput').val();
+
+				$.ajax({
+					url: "{{ route('admin.captcha.verify') }}",
+					method: 'POST',
+					data: {
+						_token: '{{ csrf_token() }}',
+						captcha: captcha
+					},
+					success: function(response) {
+						if (response.success) {
+							$('#captchaError').text('');
+							$('#captchaError').addClass('d-none');
+							let formData = new FormData();
+							formData.append('name', $("input[name='name']").val());
+							formData.append('email', $("input[name='email']").val())
+							formData.append('phone', $("input[name='phone']").val())
+							formData.append('message', $("input[name='message']").val())
+							$.ajax({
+								type: 'post',
+								url: "{{ url('/api/contact-store') }}",
+								data: formData,
+								dataType: 'json',
+								contentType: false,
+								processData: false,
+								beforeSend: function() {
+									$("#preloader").show()
+								},
+								success: function(response) {
+									if (response.status) {
+										toastr.success(response.message);
+										setInterval(() => {
+											window.location.reload()
+										}, 2000);
+										return false;
+									} else {
+										// toastr.error(response.message);
+										return false;
+									}
+								},
+								error: function(data, textStatus, errorThrown) {
+									jsonValue = jQuery.parseJSON(data.responseText);
+									console.error(jsonValue.message);
+								},
+								complete: function() {
+									$("#preloader").hide()
+								},
+							})
+						}
+					},
+					error: function(response) {
+						if (response.status === 422) {
+							$('#captchaError').text(response.responseJSON.message);
+							$('#captchaError').removeClass('d-none');
+							$.get("{{ route('admin.captcha.image') }}",
+								function(data) {
+									$('#captchaImage').attr('src', data.captcha);
+								});
+						}
+					}
+				});
+			});
+		});
+
+		$('#phoneNumber').mask('(000) 000-0000');
+		$.validator.addMethod("emailValidate", function(value) {
+			return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value);
+		}, 'Please enter valid email address.');
+
+		$.validator.addMethod("phoneValidate", function(value) {
+			return /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im.test(value);
+		}, 'Please enter valid phone number.');
+
+		$('#login-form').validate({
+			rules: {
+				name: {
+					required: true,
+				},
+				captcha: {
+					required: true,
+				},
+				message: {
+					required: true,
+				},
+				email: {
+					required: true,
+					emailValidate: true,
+				},
+				phone: {
+					required: true,
+					phoneValidate: true
+				},
+			},
+			messages: {
+				name: {
+					required: 'Please enter name',
+				},
+				captcha: {
+					required: 'Please enter captcha',
+				},
+				message: {
+					required: 'Please enter your message',
+				},
+				email: {
+					required: 'Please enter email address',
+				},
+				phone: {
+					required: 'Please enter your phone number',
+				},
+			},
+			submitHandler: function(form, e) {
+				e.preventDefault();
+				
+			},
+			errorElement: "span",
+			errorPlacement: function(error, element) {
+				error.addClass("invalid-feedback");
+				element.closest(".form-group").append(error);
+			},
+			highlight: function(element, errorClass, validClass) {
+				$(element).addClass("is-invalid");
+			},
+			unhighlight: function(element, errorClass, validClass) {
+				$(element).removeClass("is-invalid");
+			},
+		});
+	</script>
+
 </body>
+
 </html>

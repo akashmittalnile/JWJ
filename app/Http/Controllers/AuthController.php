@@ -14,6 +14,16 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
     // Dev name : Dishant Gupta
+    public function homePage(Request $request)
+    {
+        try {
+            return view('welcome');
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
     // This function is used to show admin login page
     public function login()
     {
@@ -286,4 +296,35 @@ class AuthController extends Controller
             return errorMsg('Exception => ' . $e->getMessage());
         }
     }
+
+    // Dev name : Dishant Gupta
+    public function refreshCaptcha(Request $request)
+    {
+        try{
+            return response()->json(['captcha'=> captcha_src('math')]);
+        } catch (\Exception $e) {
+            return errorMsg('Exception => ' . $e->getMessage());
+        }
+    }
+
+    // Dev name : Dishant Gupta
+    public function getCaptcha()
+    {
+        return response()->json([
+            'captcha' => captcha_src('math'),
+        ]);
+    }
+
+    // Dev name : Dishant Gupta
+    public function verifyCaptcha(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'captcha' => 'required|captcha',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => 'Invalid captcha code'], 422);
+        }
+        return response()->json(['success' => true, 'message' => 'Captcha verified successfully.']);
+    }
+
 }
