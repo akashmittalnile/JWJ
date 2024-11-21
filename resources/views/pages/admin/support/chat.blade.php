@@ -122,12 +122,12 @@
     } from "https://www.gstatic.com/firebasejs/9.1.3/firebase-firestore.js";
 
     const firebaseConfig = {
-        apiKey: "{{ config('constant.apiKey') }}",
-        authDomain: "{{ config('constant.authDomain') }}",
-        projectId: "{{ config('constant.projectId') }}",
-        storageBucket: "{{ config('constant.storageBucket') }}",
-        messagingSenderId: "{{ config('constant.messagingSenderId') }}",
-        appId: "{{ config('constant.appId') }}"
+        apiKey: "AIzaSyAhSHSkx4OZHtupJ8YmDuUh0Uaik7F8vsc",
+        authDomain: "journeywithjournals-6b254.firebaseapp.com",
+        projectId: "journeywithjournals-6b254",
+        storageBucket: "journeywithjournals-6b254.firebasestorage.app",
+        messagingSenderId: "623461172957",
+        appId: "1:623461172957:web:8f29312d5330aa55f1bd34"
     };
 
     const receiver_id = $("#ajax-chat-url").val();
